@@ -1,0 +1,44 @@
+#: code/widget.php:5
+msgid "Add simple link to LinkedIn Profile page."
+msgstr ""
+
+#: forms/form_new.php:1
+#: forms/form_old.php:1
+msgid "Title"
+msgstr ""
+
+#: forms/form_new.php:6
+#: forms/form_old.php:6
+msgid "Settings"
+msgstr ""
+
+#: forms/form_new.php:7
+#: forms/form_old.php:7
+msgid "Text"
+msgstr ""
+
+#: forms/form_new.php:10
+#: forms/form_old.php:9
+msgid "Description"
+msgstr ""
+
+#: forms/form_new.php:13
+#: forms/form_old.php:11
+msgid "LinkedIn URL"
+msgstr ""
+
+#: forms/form_new.php:16
+#: forms/form_old.php:13
+msgid "URL Target"
+msgstr ""
+
+#: forms/form_new.php:19
+#: forms/form_old.php:15
+msgid "Alignment"
+msgstr ""
+
+#: forms/form_new.php:25
+#: forms/form_old.php:20
+msgid "Badge Style"
+msgstr ""
+

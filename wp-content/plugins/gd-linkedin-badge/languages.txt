@@ -1,0 +1,67 @@
+= GD LinkedIn Badge =
+
+== Languages ==
+
+=== English ===
+  * version: 2.3
+  * author: Milan Petrovic
+  * email: milan@gdragon.info
+  * web: http://www.dev4press.com/
+
+=== Serbian ===
+  * version: 2.3
+  * author: Milan Petrovic
+  * email: milan@gdragon.info
+  * web: http://www.dev4press.com/
+
+=== Lithuanian ===
+  * version: 2.2.1
+  * author: Vincent G
+  * web: http://www.host1free.com/
+
+=== Danish ===
+  * version: 2.1.2
+  * author: Georg S. Adamsen
+  * email: wordpress at blogos dot dk
+  * web: http://wordpress.blogos.dk/
+
+=== Norwegian ===
+  * version: 2.1.2
+  * author: Knut Urbye
+  * email: knut at urbye dot net
+
+=== Spanish ===
+  * version: 2.1.1
+  * author: Milan Petrovic
+  * email: milan@gdragon.info
+  * web: http://www.dev4press.com/
+
+=== German ===
+  * version: 2.1.2
+  * author: Milan Petrovic
+  * email: milan@gdragon.info
+  * web: http://www.dev4press.com/
+
+=== French ===
+  * version: 2.1.2
+  * author: Milan Petrovic
+  * email: milan@gdragon.info
+  * web: http://www.dev4press.com/
+
+=== Portuguese ===
+  * version: 2.1.2
+  * author: Milan Petrovic
+  * email: milan@gdragon.info
+  * web: http://www.dev4press.com/
+
+=== Dutch ===
+  * version: 2.1.2
+  * author: Milan Petrovic
+  * email: milan@gdragon.info
+  * web: http://www.dev4press.com/
+
+=== Russian ===
+  * version: 2.1.2
+  * author: Milan Petrovic
+  * email: milan@gdragon.info
+  * web: http://www.dev4press.com/
