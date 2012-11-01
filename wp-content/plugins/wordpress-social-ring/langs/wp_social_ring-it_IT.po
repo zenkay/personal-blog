@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WordPress Social Ring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-12 17:15+0100\n"
-"PO-Revision-Date: 2012-08-12 17:15+0100\n"
+"POT-Creation-Date: 2012-10-29 00:08+0100\n"
+"PO-Revision-Date: 2012-10-29 00:12+0100\n"
 "Last-Translator: Niccolo Tapparo\n"
 "Language-Team: AlterVista\n"
 "MIME-Version: 1.0\n"
@@ -13,147 +13,174 @@ msgstr ""
 "X-Poedit-Basepath: ../\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: admin/admin.php:9
-msgid "WordPress Social Ring Settings"
-msgstr "Impostazioni WordPress Social Ring"
+#: admin/admin.php:168
+msgid "Social Sharing"
+msgstr "Condivisione Social Network"
 
-#: admin/admin.php:19
+#: admin/admin.php:176
+msgid "Social Network Settings"
+msgstr "Impostazioni Condivisione Social Network"
+
+#: admin/admin.php:185
 msgid "Extra"
 msgstr "Extra"
 
-#: admin/admin.php:22
+#: admin/admin.php:188
 msgid "<b>Custom position</b>"
 msgstr "<b>Posizione personalizzata</b>"
 
-#: admin/admin.php:25
+#: admin/admin.php:191
 msgid "You can give Social buttons a custom position by calling this function in your theme."
 msgstr "I bottoni social possono essere posizionati a piacere inserendo nel tema il seguente codice:"
 
-#: admin/admin.php:29
+#: admin/admin.php:195
 msgid "Pay Attention: it must called <b>inside the loop</b> to work properly!"
 msgstr "Attenzione: deve essere utilizzato <b>all'interno del loop</b> per funzionare correttamente."
 
-#: admin/admin.php:32
+#: admin/admin.php:198
 msgid "<b>Shortcode</b>"
 msgstr "<b>Shortcode</b>"
 
-#: admin/admin.php:35
+#: admin/admin.php:201
 msgid "You can also place social buttons inside your posts by using the shortcode:"
 msgstr "I bottoni social possono essere anche inseriti all'interno dei post utilizzando il seguente shortcode:"
 
-#: admin/admin.php:40
+#: admin/admin.php:206
 msgid "Save Changes"
 msgstr "Salva Impostazioni"
 
-#: admin/admin.php:46
+#: admin/admin.php:211
+msgid "Help"
+msgstr "Aiuto"
+
+#: admin/admin.php:218
+msgid "News"
+msgstr "News"
+
+#: admin/admin.php:236
 msgid "http://en.altervista.org/create-free-blog.html?ref=socialring"
 msgstr "http://it.altervista.org/crea-blog-gratis.php?ref=socialring"
 
-#: admin/admin.php:47
+#: admin/admin.php:237
 msgid "Create your free blog!"
 msgstr "Crea il tuo blog gratis!"
 
-#: admin/admin.php:70
-#: includes/library.php:203
-msgid "en_US"
-msgstr "it_IT"
-
-#: admin/admin.php:90
+#: admin/admin.php:266
 msgid "General Settings"
 msgstr "Impostazioni Generali"
 
-#: admin/admin.php:96
+#: admin/admin.php:272
 msgid "Buttons"
 msgstr "Pulsanti"
 
-#: admin/admin.php:103
+#: admin/admin.php:279
 msgid "Position"
 msgstr "Posizione"
 
-#: admin/admin.php:110
+#: admin/admin.php:286
 msgid "Show on"
 msgstr "Mostra su"
 
-#: admin/admin.php:119
-msgid "Choose Social Ring position and behavior"
+#: admin/admin.php:293
+msgid "Counter"
+msgstr "Contatore"
+
+#: admin/admin.php:300
+msgid "Buttons Language"
+msgstr "Lingua dei Bottoni"
+
+#: admin/admin.php:309
+msgid "Choose sharing buttons position and behavior"
 msgstr "Scegli la posizione e il comportamento dei pulsanti di condivisione sui social network"
 
-#: admin/admin.php:133
+#: admin/admin.php:317
+msgid "Horizontal"
+msgstr "Orizzontale"
+
+#: admin/admin.php:321
+msgid "Vertical"
+msgstr "Verticale"
+
+#: admin/admin.php:325
+msgid "None"
+msgstr "Nessuno"
+
+#: admin/admin.php:335
 msgid "Before content"
 msgstr "Prima del contenuto"
 
-#: admin/admin.php:137
+#: admin/admin.php:339
 msgid "After content"
 msgstr "Dopo il contenuto"
 
-#: admin/admin.php:152
+#: admin/admin.php:350
 msgid "Facebook Like"
 msgstr "Facebook Mi Piace"
 
-#: admin/admin.php:157
+#: admin/admin.php:355
 msgid "Facebook Send"
 msgstr "Facebook Invia"
 
-#: admin/admin.php:163
+#: admin/admin.php:361
 msgid "Facebook Share"
 msgstr "Facebook Condividi"
 
-#: admin/admin.php:168
+#: admin/admin.php:366
 msgid "Twitter"
 msgstr "Twitter"
 
-#: admin/admin.php:169
+#: admin/admin.php:367
 msgid "I use WordPress Social Ring on my blog"
 msgstr "Io uso WordPress Social Ring sul mio blog"
 
-#: admin/admin.php:173
+#: admin/admin.php:371
 msgid "Google +1"
 msgstr "Google +1"
 
-#: admin/admin.php:174
-#: admin/admin.php:186
+#: admin/admin.php:372
+#: admin/admin.php:384
 msgid "http://wordpress.altervista.org/"
 msgstr "http://wordpress.altervista.org/"
 
-#: admin/admin.php:179
+#: admin/admin.php:377
 msgid "LinkedIn"
 msgstr "LinkedIn"
 
-#: admin/admin.php:185
+#: admin/admin.php:383
 msgid "Pin it"
 msgstr "Pin it"
 
-#: admin/admin.php:186
+#: admin/admin.php:384
 msgid "WordPress tutorials, plugin and themes."
 msgstr "Tutorial WordPress, temi e plugin."
 
-#: admin/admin.php:202
+#: admin/admin.php:388
+msgid "StumbleUpon"
+msgstr "StumbleUpon"
+
+#: admin/admin.php:400
 msgid "Home"
 msgstr "Home"
 
-#: admin/admin.php:206
+#: admin/admin.php:404
 msgid "Pages"
 msgstr "Pagine"
 
-#: admin/admin.php:210
+#: admin/admin.php:408
 msgid "Posts"
 msgstr "Post"
 
-#: admin/admin.php:214
+#: admin/admin.php:412
 msgid "Categories"
 msgstr "Categorie"
 
-#: admin/admin.php:218
+#: admin/admin.php:416
 msgid "Archive"
 msgstr "Archivi"
 
-#: admin/admin.php:256
-msgid "Social Ring settings"
-msgstr "Impostazioni Social Ring"
-
-#: admin/admin.php:256
-msgid "Social Ring"
-msgstr "Social Ring"
+#: admin/admin.php:429
+msgid "LinkedIn, Pin It and StumbleUpon don't support localization"
+msgstr "LinkedIn, Pin It e StumbleUpon non supportano la traduzione"
 
 #: includes/widgets.php:11
 msgid "Use this widget to add Tweet, Facebook Like and Google Plus One to your sidebar"
@@ -225,6 +252,12 @@ msgstr "Padding Widget"
 #: includes/widgets.php:98
 msgid "Border Color"
 msgstr "Colore Bordo"
+
+#~ msgid "WordPress Social Ring Settings"
+#~ msgstr "Impostazioni WordPress Social Ring"
+
+#~ msgid "en_US"
+#~ msgstr "it_IT"
 
 #~ msgid "Your free WordPress blog, <b>without space and traffic limits</b>"
 #~ msgstr ""
@@ -318,9 +351,6 @@ msgstr "Colore Bordo"
 #~ msgstr ""
 #~ "La toolbar di AlterVista viene disattivata quando è attiva l'Admin Bar di "
 #~ "WordPress per evitare problemi grafici. Se vuoi, puoi riattivarla."
-
-#~ msgid "none"
-#~ msgstr "nessuno"
 
 #~ msgid "AV Optimizer"
 #~ msgstr "AV Optimizer"

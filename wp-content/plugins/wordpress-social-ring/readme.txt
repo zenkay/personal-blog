@@ -4,8 +4,8 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=nicco
 Tags: Google +1, Facebook, Facebook Like, Facebook Share, Open Graph Meta Tag, Twitter, Retweet, Google+, Social Network, Linkedin
 Requires at least: 3.3
 Tested up to: 3.4.2
-Version: 1.1.9
-Stable tag: 1.1.9
+Version: 1.2.1
+Stable tag: 1.2.1
 
 WordPress Social Ring adds sharing buttons for Facebook, Twitter, Google+, Pinteres and LinkedIn.
 
@@ -33,6 +33,19 @@ http://wordpress.altervista.org/category/wordpress-social-ring/
 2. Social sharing buttons on single post.
 
 == Changelog ==
+
+= 1.2.1 =
+
+* Bugfix
+
+= 1.2.0 =
+
+* Totally rewritten with object oriented approach
+* Added StumbleUpon Button
+* Added Button Language
+* Added Counter Style
+* Changed Facebook Share Button
+* Bugfix
 
 = 1.1.9 =
 

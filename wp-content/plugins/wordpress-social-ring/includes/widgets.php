@@ -29,8 +29,8 @@ function form($instance) {
 				'tweet_hint_desc' => '',
 				'tweet_text' => get_bloginfo('name').' - '.get_bloginfo('description'),
 				'border_color' => 'D0D0D0',
-				'box_padding' => 24,
-				'button_margin' => 12
+				'box_padding' => 20,
+				'button_margin' => 8
 			);
 		
 		$instance = wp_parse_args( (array) $instance, $defaults );
@@ -129,10 +129,11 @@ function form($instance) {
 	if ( isset($instance['widget_title']) ) {
 		echo $before_title . $instance['widget_title'] . $after_title."\n";
 	}
+	$options = get_option(WP_SOCIAL_RING.'_options');
 	?>
 	<div class="SocialRing_Widget_inside" style="-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;border:1px solid #<?php echo $instance['border_color']; ?>;padding:12px <?php echo $instance['box_padding']; ?>px;min-height:62px;">
 		<div style="float:left;margin:0 <?php echo $instance['button_margin']; ?>px">
-			<a href="https://twitter.com/share" class="sr-twitter-button twitter-share-button" data-text="<?php echo $instance['tweet_text']; ?>" data-url="<?php echo $instance['tweet_url']; ?>" data-count="vertical" data-via="<?php echo $instance['tweet_account']; ?>" data-related="<?php echo $instance['tweet_hint_account']; ?>:<?php echo $instance['tweet_hint_desc']; ?>"></a>
+			<a href="https://twitter.com/share" lang="<?php echo $options['twitter_language']; ?>" class="sr-twitter-button twitter-share-button" data-text="<?php echo $instance['tweet_text']; ?>" data-url="<?php echo $instance['tweet_url']; ?>" data-count="vertical" data-via="<?php echo $instance['tweet_account']; ?>" data-related="<?php echo $instance['tweet_hint_account']; ?>:<?php echo $instance['tweet_hint_desc']; ?>"></a>
 		</div>
 		<div style="float:left;margin:0 <?php echo $instance['button_margin']; ?>px;padding-top:2px">
 			<g:plusone href="<?php echo $instance['gplus_url']; ?>" size="tall"></g:plusone>
