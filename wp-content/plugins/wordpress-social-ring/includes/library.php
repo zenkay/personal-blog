@@ -121,6 +121,9 @@ class WordPress_Social_Ring {
 				margin: 0 5px 0 0 !important;
 				padding: 0 !important;
 			}
+			.social-ring .social-ring-button iframe {
+				max-width: none !important;
+			}
 		</style>
 	<?php
 	}

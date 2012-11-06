@@ -233,6 +233,7 @@ class WordPress_Social_Ring_Admin {
 				<div class="postbox">
 					<h3><?php _e('News', WP_SOCIAL_RING); ?></h3>
 					<ul style="list-style:circle; padding:10px 0 10px 30px;">
+						<li><a target="_blank" href="http://wordpress.altervista.org/wordpress-social-ring-1-2-2/">WordPress Social Ring 1.2.2</a></li>
 						<li><a target="_blank" href="http://wordpress.altervista.org/wp-social-ring-1-2-0/">WordPress Social Ring 1.2.0</a></li>
 						<li><a target="_blank" href="http://wordpress.altervista.org/wordpress-social-ring-1-1-9/">WordPress Social Ring 1.1.9</a></li>
 						<li><a target="_blank" href="http://wordpress.altervista.org/wordpress-social-ring-1-1-2-shortcode/">WordPress Social Ring 1.1.2</a></li>
