@@ -236,7 +236,7 @@ function Twitterfeedreader($atts) {
 		if ($liclass != ""){
 			$entry = "\n<li class=\"".$liclass."\">".$avatar.$tweet."</li>";
 		} else {
-			$entry = "\n<li style=\"display: inline-block; margin-bottom: 5px; padding-bottom: 5px;\">".$avatar.$tweet."</li>";
+			$entry = "\n<li style=\"margin-bottom: 10px;\">".$avatar.$tweet."</li>";
 		}
 		$wholetweet = $wholetweet."".$entry;
 		$imgclass='';
