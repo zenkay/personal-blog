@@ -12,8 +12,6 @@
  * Domain Path: /languages/
  */
 
-define( 'JETPACK_CLIENT__HTTPS', 'NEVER' );
-
 defined( 'JETPACK__API_BASE' ) or define( 'JETPACK__API_BASE', 'https://jetpack.wordpress.com/jetpack.' );
 define( 'JETPACK__API_VERSION', 1 );
 define( 'JETPACK__MINIMUM_WP_VERSION', '3.2' );
