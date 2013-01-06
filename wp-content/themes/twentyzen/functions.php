@@ -157,12 +157,36 @@ function twentyeleven_setup() {
 
 	// Default custom headers packaged with the theme. %s is a placeholder for the theme template directory URI.
 	register_default_headers( array(
-		'wheel' => array(
-			'url' => '%s/images/headers/boraboraatoll.jpg',
-			'thumbnail_url' => '%s/images/headers/boraboraatoll-thumbnail.jpg',
+		// 'borabora-atoll' => array(
+		// 	'url' => '%s/images/headers/borabora-atoll.jpg',
+		// 	'thumbnail_url' => '%s/images/headers/borabora-atoll-thumbnail.jpg',
+		// 	/* translators: header image description */
+		// 	'description' => __( 'Bora Bora Atoll', 'twentyeleven' )
+		// ),
+		'polinesia-beach' => array(
+			'url' => '%s/images/headers/polinesia-beach.jpg',
+			'thumbnail_url' => '%s/images/headers/polinesia-beach-thumbnail.jpg',
 			/* translators: header image description */
-			'description' => __( 'Bora Bora Atoll', 'twentyeleven' )
+			'description' => __( 'Bora Bora Beach', 'twentyeleven' )
 		),
+		'maldives-beach' => array(
+			'url' => '%s/images/headers/maldives-beach.jpg',
+			'thumbnail_url' => '%s/images/headers/maldives-beach-thumbnail.jpg',
+			/* translators: header image description */
+			'description' => __( 'Maldives Beach', 'twentyeleven' )
+		),
+		'seychelles-beach' => array(
+			'url' => '%s/images/headers/seychelles-beach.jpg',
+			'thumbnail_url' => '%s/images/headers/seychelles-beach-thumbnail.jpg',
+			/* translators: header image description */
+			'description' => __( 'Seychelles Beach', 'twentyeleven' )
+		),
+		'cookislands-beach' => array(
+			'url' => '%s/images/headers/cookislands-beach.jpg',
+			'thumbnail_url' => '%s/images/headers/cookislands-beach-thumbnail.jpg',
+			/* translators: header image description */
+			'description' => __( 'Cook Islands Beach', 'twentyeleven' )
+		)
 	) );
 }
 endif; // twentyeleven_setup
