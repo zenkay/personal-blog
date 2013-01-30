@@ -2,8 +2,8 @@
 Contributors: dnesscarkey
 Tags: mobile theme, mobile theme switcher, mobile browser detect, mobile detect, theme redirection based on mobile device
 Requires at least: 3.0.
-Tested up to: 3.4.2
-Stable tag: 0.7
+Tested up to: 3.5.1
+Stable tag: 1.0
 
 This Plugin detects mobile browser and display the theme as the setting done from admin. Usefull for switch to Mobile Theme. 
 
@@ -15,12 +15,15 @@ Detects all the Mobile Browsers and loads the mobile theme as per your settings 
 * Ipad
 * Parm Os
 * Android
+* Android Tab
 * Windows Mobile
 * Blackberry
 * Opera Mini
 * Others Mobile Browsers
 
 You can select a different mobile theme for each mobile browser. You can select different mobile themes for each of the options above.
+
+Want Mobile Theme ? Get it from <a href="http://goo.gl/eWXZp">here</a>.
 
 Please visit our <a href="http://dineshkarki.com.np/forums/forum/mobile-theme-switcher" target="_blank">support forum</a> for any issues.
 
@@ -42,6 +45,11 @@ Yes it detect most of the mobile browsers and redirects it to its mobile theme s
 1. Admin Setting For Mobile Theme selection repective to their platform.
 
 == Changelog ==
+
+= 1.0 =
+* Added option for Andriod Tab
+* User Agents Update
+* Tested With 3.5
 
 = 0.7 =
 * New Interface

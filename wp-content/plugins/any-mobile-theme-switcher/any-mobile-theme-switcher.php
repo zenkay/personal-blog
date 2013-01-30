@@ -2,9 +2,9 @@
 /* 
 Plugin Name: Any Mobile Theme Switcher
 Plugin URI: http://dineshkarki.com.np/any-mobile-theme-switcher
-Description: This plugin allow you to detect all mobile platform and switch the theme. Supports most of the mobile platform including iphone, ipad, ipod, windows mobile, parm os, blackberry, android.
+Description: This plugin allow you to detect all mobile platform and switch the theme. Supports most of the mobile platform including iphone, ipad, ipod, windows mobile, parm os, blackberry, android, andriod tab.
 Author: Dinesh Karki
-Version: 0.7
+Version: 1.0
 Author URI: http://www.dineshkarki.com.np
 */
 
@@ -33,8 +33,14 @@ $accept           = $_SERVER['HTTP_ACCEPT']; // get the content accept value - t
     break; // break out and skip the rest if we've had a match on the iphone or ipod
 
     case (preg_match('/android/i',$user_agent));  // we find android in the user agent
-      $mobile_browser = get_option('android_theme'); // mobile browser is either true or false depending on the setting of android when calling the function
-      $status = 'Android';      
+      if (preg_match('/mobile/i',$user_agent)):
+		  $mobile_browser = get_option('android_theme'); // mobile browser is either true or false depending on the setting of android when calling the function
+		  $status = 'Android';      
+	  else :
+	  	  $mobile_browser = get_option('android_tab_theme'); // mobile browser is either true or false depending on the setting of android when calling the function
+		  $status = 'Android Tab';      
+	  endif;
+	  
     break; // break out and skip the rest if we've had a match on android
 
     case (preg_match('/opera mini/i',$user_agent)); // we find opera mini in the user agent
@@ -98,7 +104,6 @@ if (isset($_SESSION['am_force_theme_layout'])){ //IF USER FORCE FOR THE THEME
 		$shown_theme = 'mobile';
 	}
 }
-
 
 function loadMobileStyle(){
 	global $mobile_browser;
