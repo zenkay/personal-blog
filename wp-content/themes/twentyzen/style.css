@@ -2717,9 +2717,3 @@ p.comment-form-comment {
 #ie8 section.feature-image.large img {
 	width: 100%;
 }
-
-/* CUSTOM */
-
-td.code > pre {
-	font-size: 15px !important;
-}

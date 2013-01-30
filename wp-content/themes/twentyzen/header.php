@@ -65,6 +65,7 @@
 	 */
 	wp_head();
 ?>
+<link rel="stylesheet" type="text/css" media="all" href="<?php echo get_template_directory_uri(); ?>/custom.css" />
 </head>
 
 <body <?php body_class(); ?>>
