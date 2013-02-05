@@ -11,7 +11,7 @@ if ( !defined('ABSPATH')) exit;
  * @file           blog.php
  * @package        Responsive 
  * @author         Emil Uzelac 
- * @copyright      2003 - 2012 ThemeID
+ * @copyright      2003 - 2013 ThemeID
  * @license        license.txt
  * @version        Release: 1.1.0
  * @filesource     wp-content/themes/responsive/blog.php

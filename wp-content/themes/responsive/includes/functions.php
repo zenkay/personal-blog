@@ -10,9 +10,9 @@ if ( !defined('ABSPATH')) exit;
  * @file           functions.php
  * @package        Responsive 
  * @author         Emil Uzelac 
- * @copyright      2003 - 2012 ThemeID
+ * @copyright      2003 - 2013 ThemeID
  * @license        license.txt
- * @version        Release: 1.2.0
+ * @version        Release: 1.2.1
  * @filesource     wp-content/themes/responsive/includes/functions.php
  * @link           http://codex.wordpress.org/Theme_Development#Functions_File
  * @since          available since Release 1.0
@@ -169,7 +169,38 @@ function responsive_page_menu_args( $args ) {
 add_filter( 'wp_page_menu_args', 'responsive_page_menu_args' );
 
 /**
- * Remove div from wp_page_menu() and replace with ul.
+ * This function removes .menu class from custom menus
+ * in widgets only and fallback's on default widget lists
+ * and assigns new unique class called .menu-widget
+ * 
+ * Marko Heijnen Contribution
+ *
+ */
+class responsive_widget_menu_class {
+	public function __construct() {
+		add_action( 'widget_display_callback', array( $this, 'menu_different_class' ), 10, 2 );
+	}
+ 
+	public function menu_different_class( $settings, $widget ) {
+		if( $widget instanceof WP_Nav_Menu_Widget )
+			add_filter( 'wp_nav_menu_args', array( $this, 'wp_nav_menu_args' ) );
+ 
+		return $settings;
+	}
+ 
+	public function wp_nav_menu_args( $args ) {
+		remove_filter( 'wp_nav_menu_args', array( $this, 'wp_nav_menu_args' ) );
+ 
+		if( 'menu' == $args['menu_class'] )
+			$args['menu_class'] = 'menu-widget';
+ 
+		return $args;
+	}
+}
+new responsive_widget_menu_class();
+
+/**
+ * Removes div from wp_page_menu() and replace with ul.
  */
 function responsive_wp_page_menu ($page_markup) {
     preg_match('/^<div class=\"([a-z0-9-_]+)\">/i', $page_markup, $matches);
@@ -182,13 +213,53 @@ function responsive_wp_page_menu ($page_markup) {
 add_filter('wp_page_menu', 'responsive_wp_page_menu');
 
 /**
+ * wp_title() Filter for better SEO.
+ *
+ * Adopted from Twenty Twelve
+ * @see http://codex.wordpress.org/Plugin_API/Filter_Reference/wp_title
+ *
+ */
+function responsive_wp_title( $title, $sep ) {
+	global $paged, $page;
+
+	if ( is_feed() )
+		return $title;
+
+	// Add the site name.
+	$title .= get_bloginfo( 'name' );
+
+	// Add the site description for the home/front page.
+	$site_description = get_bloginfo( 'description', 'display' );
+	if ( $site_description && ( is_home() || is_front_page() ) )
+		$title = "$title $sep $site_description";
+
+	// Add a page number if necessary.
+	if ( $paged >= 2 || $page >= 2 )
+		$title = "$title $sep " . sprintf( __( 'Page %s', 'responsive' ), max( $paged, $page ) );
+
+	return $title;
+}
+add_filter( 'wp_title', 'responsive_wp_title', 10, 2 );
+
+/**
+ * wp_title() Filter removal for the sake of SEO plugins
+ *
+ */
+function responsive_wp_title_check() {
+	if ( defined( 'AIOSEOP_VERSION' ) ) {
+		remove_filter( 'wp_title', 'responsive_wp_title', 10, 2 );
+	}
+}
+add_action( 'after_setup_theme', 'responsive_wp_title_check', 5 );
+
+/**
  * Filter 'get_comments_number'
  * 
  * Filter 'get_comments_number' to display correct 
  * number of comments (count only comments, not 
  * trackbacks/pingbacks)
  *
- * Adopted from Chip Bennett
+ * Chip Bennett Contribution
  */
 function responsive_comment_count( $count ) {  
 	if ( ! is_admin() ) {
@@ -270,10 +341,14 @@ function responsive_remove_recent_comments_style() {
 }
 add_action( 'widgets_init', 'responsive_remove_recent_comments_style' );
 
-if (!function_exists('responsive_post_meta_data')) :
 /**
  * This function prints post meta data.
+ *
+ * Ulrich Pogson Contribution 
+ *
  */
+if (!function_exists('responsive_post_meta_data')) :
+
 function responsive_post_meta_data() {
 	printf( __( '<span class="%1$s">Posted on </span>%2$s<span class="%3$s"> by </span>%4$s', 'responsive' ),
 	'meta-prep meta-prep-author posted', 
@@ -457,8 +532,8 @@ endif;
 			// JS at the bottom for fast page loading. 
 			// except for Modernizr which enables HTML5 elements & feature detects.
 			wp_enqueue_script('modernizr', get_template_directory_uri() . '/js/responsive-modernizr.js', array('jquery'), '2.6.1', false);
-            wp_enqueue_script('responsive-scripts', get_template_directory_uri() . '/js/responsive-scripts.js', array('jquery'), '1.2.1', true);
-			wp_enqueue_script('responsive-plugins', get_template_directory_uri() . '/js/responsive-plugins.js', array('jquery'), '1.1.1', true);
+            wp_enqueue_script('responsive-scripts', get_template_directory_uri() . '/js/responsive-scripts.js', array('jquery'), '1.2.3', true);
+			wp_enqueue_script('responsive-plugins', get_template_directory_uri() . '/js/responsive-plugins.js', array('jquery'), '1.2.2', true);
         }
 
     }
@@ -482,16 +557,16 @@ endif;
     
     <div id="info-box-wrapper" class="grid col-940">
         <div class="info-box notice">
-            <a class="blue button" href="<?php echo esc_url(__('http://themeid.com/support/','responsive')); ?>" title="<?php esc_attr_e('Theme Support', 'responsive'); ?>" target="_blank">
+            <a class="button" href="<?php echo esc_url(__('http://themeid.com/support/','responsive')); ?>" title="<?php esc_attr_e('Theme Support', 'responsive'); ?>" target="_blank">
             <?php printf(__('Theme Support','responsive')); ?></a>
             
-            <a class="gray button" href="<?php echo esc_url(__('http://themeid.com/themes/','responsive')); ?>" title="<?php esc_attr_e('More Themes', 'responsive'); ?>" target="_blank">
+            <a class="button" href="<?php echo esc_url(__('http://themeid.com/themes/','responsive')); ?>" title="<?php esc_attr_e('More Themes', 'responsive'); ?>" target="_blank">
             <?php printf(__('More Themes','responsive')); ?></a>
             
-            <a class="gray button" href="<?php echo esc_url(__('http://themeid.com/showcase/','responsive')); ?>" title="<?php esc_attr_e('Showcase', 'responsive'); ?>" target="_blank">
+            <a class="button" href="<?php echo esc_url(__('http://themeid.com/showcase/','responsive')); ?>" title="<?php esc_attr_e('Showcase', 'responsive'); ?>" target="_blank">
             <?php printf(__('Showcase','responsive')); ?></a>
             
-            <a class="gold button" href="<?php echo esc_url(__('http://themeid.com/donate/','responsive')); ?>" title="<?php esc_attr_e('Donate Now', 'responsive'); ?>" target="_blank">
+            <a class="button-primary" href="<?php echo esc_url(__('http://themeid.com/donate/','responsive')); ?>" title="<?php esc_attr_e('Donate Now', 'responsive'); ?>" target="_blank">
             <?php printf(__('Donate Now','responsive')); ?></a>
         </div>
     </div>

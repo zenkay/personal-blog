@@ -1,5 +1,5 @@
 /*!
- * Responsive JS Plugins v1.1.0
+ * Responsive JS Plugins v1.2.2
  */
 // Placeholder
 jQuery(function(){
@@ -18,7 +18,12 @@ jQuery(document).ready(function(){
 
 // Responsive Menu (TinyNav)
 jQuery(".menu").tinyNav({
-    active: 'current_page_item', // Set the "active" class
+	active: 'current_page_item', // Set the "active" class for default menu
 	label: '', // String: Sets the <label> text for the <select> (if not set, no label will be added)
     header: '' // String: Specify text for "header" and show header instead of the active item
+});
+
+// Responsive Menu (Selectbox)
+jQuery(function () {
+    jQuery(".tinynav").selectbox();
 });

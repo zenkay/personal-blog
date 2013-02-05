@@ -10,7 +10,7 @@ if ( !defined('ABSPATH')) exit;
  * @file           archive.php
  * @package        Responsive 
  * @author         Emil Uzelac 
- * @copyright      2003 - 2012 ThemeID
+ * @copyright      2003 - 2013 ThemeID
  * @license        license.txt
  * @version        Release: 1.1
  * @filesource     wp-content/themes/responsive/archive.php

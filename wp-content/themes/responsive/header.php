@@ -10,7 +10,7 @@ if ( !defined('ABSPATH')) exit;
  * @file           header.php
  * @package        Responsive 
  * @author         Emil Uzelac 
- * @copyright      2003 - 2012 ThemeID
+ * @copyright      2003 - 2013 ThemeID
  * @license        license.txt
  * @version        Release: 1.3
  * @filesource     wp-content/themes/responsive/header.php
@@ -29,12 +29,24 @@ if ( !defined('ABSPATH')) exit;
 <meta charset="<?php bloginfo('charset'); ?>" />
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
 
-<title><?php wp_title('&#124;', true, 'right'); ?><?php bloginfo('name'); ?></title>
+<title>
+<?php
+if ( defined( 'WPSEO_VERSION' ) ) {
+    // WordPress SEO is activated
+        wp_title();
+
+} else {
+	
+    // WordPress SEO is not activated
+	wp_title( '&#124;', true, 'right' );
+}
+?>
+</title>
 
 <link rel="profile" href="http://gmpg.org/xfn/11" />
 <link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
 
-<?php wp_enqueue_style('responsive-style', get_stylesheet_uri(), false, '1.8.6');?>
+<?php wp_enqueue_style('responsive-style', get_stylesheet_uri(), false, '1.8.9');?>
 
 <?php wp_head(); ?>
 </head>

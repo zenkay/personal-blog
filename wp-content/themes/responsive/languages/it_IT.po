@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Responsive Theme\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-04-25 13:42:58 UTC\n"
-"PO-Revision-Date: 2012-12-18 21:36+0100\n"
+"PO-Revision-Date: 2013-01-03 17:53+0100\n"
 "Last-Translator: Ulrich Pogson <grapplerulrich@gmail.com>\n"
 "Language-Team: Italian, Italy\n"
 "MIME-Version: 1.0\n"
@@ -301,7 +301,7 @@ msgstr "Widget Home 1"
 #: sidebar-home.php
 msgid ""
 "This is your first home widget box. To edit please go to Appearance > "
-"Widgets and choose 6th widget from the top in area six called Home Widget 1. "
+"Widgets and choose 6th widget from the top in area 6 called Home Widget 1. "
 "Title is also manageable from widgets as well."
 msgstr ""
 "Questo &#232; il tuo primo widget box della home. Per modificarlo vai su "
@@ -315,8 +315,8 @@ msgstr "Widget Home 2"
 #: sidebar-home.php
 msgid ""
 "This is your second home widget box. To edit please go to Appearance > "
-"Widgets and choose 7th widget from the top in area seven called Home Widget "
-"2. Title is also manageable from widgets as well."
+"Widgets and choose 7th widget from the top in area 7 called Home Widget 2. "
+"Title is also manageable from widgets as well."
 msgstr ""
 "Questo &#232; il tuo secondo widget box della home. Per modificarlo vai su "
 "Aspetto > Widget e scegli il settimo widget dall&#39;alto chiamato Widget "
@@ -329,8 +329,8 @@ msgstr "Widget Home 3"
 #: sidebar-home.php
 msgid ""
 "This is your third home widget box. To edit please go to Appearance > "
-"Widgets and choose 8th widget from the top in area eight called Home Widget "
-"3. Title is also manageable from widgets as well."
+"Widgets and choose 8th widget from the top in area 8 called Home Widget 3. "
+"Title is also manageable from widgets as well."
 msgstr ""
 "Questo &#232; il tuo terzo widget box della home. Per modificarlo vai su "
 "Aspetto > Widget e scegli l&#39;ottavo widget dall&#39;alto chiamato Widget "
@@ -490,19 +490,19 @@ msgstr "Area Nine - sidebar-gallery.php"
 
 #: includes/functions.php
 msgid "Colophon Widget"
-msgstr ""
+msgstr "Colophon Widget"
 
 #: includes/functions.php
 msgid "Area 10 - sidebar-colophon.php"
-msgstr ""
+msgstr "Area 10 - sidebar-colophon.php"
 
 #: includes/functions.php
 msgid "Top Widget"
-msgstr ""
+msgstr "Top Widget"
 
 #: includes/functions.php
 msgid "Area 11 - sidebar-top.php"
-msgstr ""
+msgstr "Area 11 - sidebar-top.php"
 
 #: includes/theme-options.php
 msgid "Theme Options"
@@ -606,7 +606,7 @@ msgstr "Vedi Documentazione"
 
 #: includes/theme-options.php
 msgid "Paste your shortcode, video or image source"
-msgstr ""
+msgstr "Incolla il codice sorgente della tua immagine, video o shortcode"
 
 #: includes/theme-options.php
 msgid "Webmaster Tools"
@@ -768,32 +768,32 @@ msgstr "Inserisci il tuo stile CSS personalizzato"
 
 #: includes/theme-options.php
 msgid "Custom Scripts"
-msgstr ""
+msgstr "Script personalizzati"
 
 #: includes/theme-options.php
 msgid "Custom Scripts for Header and Footer"
-msgstr ""
+msgstr "Script personalizzati per Header e Footer"
 
 #: includes/theme-options.php
 msgid "http://codex.wordpress.org/Using_Javascript"
-msgstr ""
+msgstr "http://codex.wordpress.org/Using_Javascript"
 
 #: includes/theme-options.php
 msgid "Quick Tutorial"
-msgstr ""
+msgstr "Guida veloce"
 
 #: includes/theme-options.php
 msgid "Embeds to header.php &darr;"
-msgstr ""
+msgstr "Incorpora in header.php"
 
 #: includes/theme-options.php
 msgid "Enter your custom header script."
-msgstr ""
+msgstr "Inserisci il tuo script personalizzato per l'header."
 
 #: includes/theme-options.php
 msgid "Embeds to footer.php &darr;"
-msgstr ""
+msgstr "Incorpora in footer.php"
 
 #: includes/theme-options.php
 msgid "Enter your custom footer script."
-msgstr ""
+msgstr "Inserisci il tuo script personalizzato per il footer"

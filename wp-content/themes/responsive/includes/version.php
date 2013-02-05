@@ -11,7 +11,7 @@ if ( !defined('ABSPATH')) exit;
  * @package        WordPress 
  * @subpackage     Responsive 
  * @author         Emil Uzelac 
- * @copyright      2003 - 2012 ThemeID
+ * @copyright      2003 - 2013 ThemeID
  * @license        license.txt
  * @version        Release: 1.2
  * @filesource     wp-content/themes/responsive/includes/version.php
@@ -69,6 +69,9 @@ function get_responsive_template_version() {
 	
 /**
  * < 3.4 Backward Compatibility
+ *
+ * Konstantin Kovshenin Contribution
+ *
  */
 	
 $theme_data = get_theme_data(STYLESHEETPATH . '/style.css');

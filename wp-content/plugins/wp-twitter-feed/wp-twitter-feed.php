@@ -1,14 +1,14 @@
 <?php
 /*
 Plugin Name:  Twitter Feed for WordPress
-Plugin URI:   http://pleer.co.uk/wordpress/plugins/wp-twitter-feed/
+Plugin URI:   http://3doordigital.com/wordpress/plugins/wp-twitter-feed/?utm_source=WordPress&utm_medium=Admin&utm_campaign=Twitter%2BFeed
 Description:  A simple Twitter feed that outputs your latest tweets in HTML into any post, page, template or sidebar widget. Customisable and easy to install!
-Version:      1.2.1
-Author:       Alex Moss
-Author URI:   http://alex-moss.co.uk/
-Contributors: pleer
+Version:      1.2.2
+Author: Alex Moss
+Author URI: http://alex-moss.co.uk/
+License: GPL v3
 
-Copyright (C) 2010-2010, Alex Moss
+Copyright (C) 2010-2010, Alex Moss - alex@3doordigital.com
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -28,6 +28,7 @@ function Twitterfeedreader($atts) {
 		"userintent" => 'yes',
 		"twitterJS" => 'no',
 		"other" => '',
+		"decode" => '',
 		"num" => '5',
 		"img" => 'yes',
 		"imgclass" => '',
@@ -123,7 +124,8 @@ function Twitterfeedreader($atts) {
 		} else {
 			$tweet = $item->get_title();
 		}
-		if ($encoding == "fix") {$tweet = htmlentities($tweet);}
+		if ($encoding == "yes") {$tweet = htmlentities($tweet);}
+		if ($decode == "yes") {$tweet = htmlspecialchars_decode($tweet, ENT_QUOTES);}
 		if ($page != "") {if (!strpos($tweet, $page) === false) {continue;}}
 		$when = ($now - strtotime($item->get_date()));
 		$posted = "";
@@ -236,7 +238,7 @@ function Twitterfeedreader($atts) {
 		if ($liclass != ""){
 			$entry = "\n<li class=\"".$liclass."\">".$avatar.$tweet."</li>";
 		} else {
-			$entry = "\n<li style=\"margin-bottom: 10px;\">".$avatar.$tweet."</li>";
+			$entry = "\n<li style=\"display: inline-block; list-style: none; border-bottom: 1px #ccc dotted; margin-bottom: 5px; padding-bottom: 5px;\">".$avatar.$tweet."</li>";
 		}
 		$wholetweet = $wholetweet."".$entry;
 		$imgclass='';
@@ -266,8 +268,8 @@ function Twitterfeedreader($atts) {
 			$linktofeed = ("<a href=\"http://twitter.com/search?q=%23".$hashtag."\" rel=\"ofollow\">view search results for \"#".$hashtag."\" on twitter</a><br />\n");
 		}
 	}
-	if ($linklove != "no"){ $pleer = "\nPowered by <a href=\"http://pleer.co.uk/wordpress/plugins/wp-twitter-feed/\">Twitter Feed</a><br />\n"; }
-	$whole = "\n<!-- WordPress Twitter Feed Plugin: http://pleer.co.uk/wordpress/plugins/wp-twitter-feed/ -->\n".$divstart.$ulstart.$wholetweet."\n</ul>\n".$linktofeed.$pleer.$divend."\n";
+	if ($linklove != "no"){ $pleer = "\nPowered by <a href=\"http://3doordigital.com/wordpress/plugins/wp-twitter-feed/\">Twitter Feed</a><br />\n"; }
+	$whole = "\n<!-- WordPress Twitter Feed Plugin: http://3doordigital.com/wordpress/plugins/wp-twitter-feed/ -->\n".$divstart.$ulstart.$wholetweet."\n</ul>\n".$linktofeed.$pleer.$divend."\n";
 	return $whole;
 	}
 
