@@ -259,6 +259,12 @@ function twentyeleven_setup() {
 			/* translators: header image description */
 			'description' => __( 'Polinesia', 'twentyeleven' )
 		),
+		'thailand-3' => array(
+			'url' => '%s/images/headers/thailand-3.jpg',
+			'thumbnail_url' => '%s/images/headers/thailand-3t.jpg',
+			/* translators: header image description */
+			'description' => __( 'Polinesia', 'twentyeleven' )
+		),
 		'cookislands-1' => array(
 			'url' => '%s/images/headers/cookislands-1.jpg',
 			'thumbnail_url' => '%s/images/headers/cookislands-1t.jpg',
