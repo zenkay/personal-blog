@@ -111,7 +111,7 @@ function twentyeleven_setup() {
 	) );
 
 	// This theme uses Featured Images (also known as post thumbnails) for per-post/per-page Custom Header images
-	add_theme_support( 'post-thumbnails' );
+	add_theme_support( 1ts' );
 
 	// Add support for custom headers.
 	$custom_header_support = array(
@@ -157,35 +157,113 @@ function twentyeleven_setup() {
 
 	// Default custom headers packaged with the theme. %s is a placeholder for the theme template directory URI.
 	register_default_headers( array(
-		// 'borabora-atoll' => array(
-		// 	'url' => '%s/images/headers/borabora-atoll.jpg',
-		// 	'thumbnail_url' => '%s/images/headers/borabora-atoll-thumbnail.jpg',
-		// 	/* translators: header image description */
-		// 	'description' => __( 'Bora Bora Atoll', 'twentyeleven' )
-		// ),
-		'polinesia-beach' => array(
-			'url' => '%s/images/headers/polinesia-beach.jpg',
-			'thumbnail_url' => '%s/images/headers/polinesia-beach-thumbnail.jpg',
+		'polinesia-1' => array(
+			'url' => '%s/images/headers/polinesia-1.jpg',
+			'thumbnail_url' => '%s/images/headers/polinesia-1t.jpg',
 			/* translators: header image description */
-			'description' => __( 'Bora Bora Beach', 'twentyeleven' )
+			'description' => __( 'Polinesia', 'twentyeleven' )
 		),
-		'maldives-beach' => array(
-			'url' => '%s/images/headers/maldives-beach.jpg',
-			'thumbnail_url' => '%s/images/headers/maldives-beach-thumbnail.jpg',
+		'polinesia-2' => array(
+			'url' => '%s/images/headers/polinesia-2.jpg',
+			'thumbnail_url' => '%s/images/headers/polinesia-2t.jpg',
 			/* translators: header image description */
-			'description' => __( 'Maldives Beach', 'twentyeleven' )
+			'description' => __( 'Polinesia', 'twentyeleven' )
 		),
-		'seychelles-beach' => array(
-			'url' => '%s/images/headers/seychelles-beach.jpg',
-			'thumbnail_url' => '%s/images/headers/seychelles-beach-thumbnail.jpg',
+		'polinesia-3' => array(
+			'url' => '%s/images/headers/polinesia-3.jpg',
+			'thumbnail_url' => '%s/images/headers/polinesia-3t.jpg',
 			/* translators: header image description */
-			'description' => __( 'Seychelles Beach', 'twentyeleven' )
+			'description' => __( 'Polinesia', 'twentyeleven' )
 		),
-		'cookislands-beach' => array(
-			'url' => '%s/images/headers/cookislands-beach.jpg',
-			'thumbnail_url' => '%s/images/headers/cookislands-beach-thumbnail.jpg',
+		'maldives-1' => array(
+			'url' => '%s/images/headers/maldives-1.jpg',
+			'thumbnail_url' => '%s/images/headers/maldives-1t.jpg',
 			/* translators: header image description */
-			'description' => __( 'Cook Islands Beach', 'twentyeleven' )
+			'description' => __( 'Maldives', 'twentyeleven' )
+		),
+		'maldives-2' => array(
+			'url' => '%s/images/headers/maldives-2.jpg',
+			'thumbnail_url' => '%s/images/headers/maldives-2t.jpg',
+			/* translators: header image description */
+			'description' => __( 'Maldives', 'twentyeleven' )
+		),
+		'maldives-3' => array(
+			'url' => '%s/images/headers/maldives-3.jpg',
+			'thumbnail_url' => '%s/images/headers/maldives-3t.jpg',
+			/* translators: header image description */
+			'description' => __( 'Maldives', 'twentyeleven' )
+		),
+		'maldives-4' => array(
+			'url' => '%s/images/headers/maldives-4.jpg',
+			'thumbnail_url' => '%s/images/headers/maldives-4t.jpg',
+			/* translators: header image description */
+			'description' => __( 'Maldives', 'twentyeleven' )
+		),
+		'maldives-5' => array(
+			'url' => '%s/images/headers/maldives-5.jpg',
+			'thumbnail_url' => '%s/images/headers/maldives-5t.jpg',
+			/* translators: header image description */
+			'description' => __( 'Maldives', 'twentyeleven' )
+		),
+		'maldives-6' => array(
+			'url' => '%s/images/headers/maldives-6.jpg',
+			'thumbnail_url' => '%s/images/headers/maldives-6t.jpg',
+			/* translators: header image description */
+			'description' => __( 'Maldives', 'twentyeleven' )
+		),
+		'seychelles-1' => array(
+			'url' => '%s/images/headers/seychelles-1.jpg',
+			'thumbnail_url' => '%s/images/headers/seychelles-1t.jpg',
+			/* translators: header image description */
+			'description' => __( 'Seychelles', 'twentyeleven' )
+		),
+		'seychelles-2' => array(
+			'url' => '%s/images/headers/seychelles-2.jpg',
+			'thumbnail_url' => '%s/images/headers/seychelles-2t.jpg',
+			/* translators: header image description */
+			'description' => __( 'Seychelles', 'twentyeleven' )
+		),
+		'seychelles-3' => array(
+			'url' => '%s/images/headers/seychelles-3.jpg',
+			'thumbnail_url' => '%s/images/headers/seychelles-3t.jpg',
+			/* translators: header image description */
+			'description' => __( 'Seychelles', 'twentyeleven' )
+		),
+		'seychelles-4' => array(
+			'url' => '%s/images/headers/seychelles-4.jpg',
+			'thumbnail_url' => '%s/images/headers/seychelles-4t.jpg',
+			/* translators: header image description */
+			'description' => __( 'Seychelles', 'twentyeleven' )
+		),		
+		'antilles-1' => array(
+			'url' => '%s/images/headers/antilles-1.jpg',
+			'thumbnail_url' => '%s/images/headers/antilles-1t.jpg',
+			/* translators: header image description */
+			'description' => __( 'Polinesia', 'twentyeleven' )
+		),
+		'antilles-2' => array(
+			'url' => '%s/images/headers/antilles-2.jpg',
+			'thumbnail_url' => '%s/images/headers/antilles-2t.jpg',
+			/* translators: header image description */
+			'description' => __( 'Polinesia', 'twentyeleven' )
+		),
+		'thailand-1' => array(
+			'url' => '%s/images/headers/thailand-1.jpg',
+			'thumbnail_url' => '%s/images/headers/thailand-1t.jpg',
+			/* translators: header image description */
+			'description' => __( 'Polinesia', 'twentyeleven' )
+		),
+		'thailand-2' => array(
+			'url' => '%s/images/headers/thailand-2.jpg',
+			'thumbnail_url' => '%s/images/headers/thailand-2t.jpg',
+			/* translators: header image description */
+			'description' => __( 'Polinesia', 'twentyeleven' )
+		),
+		'cookislands-1' => array(
+			'url' => '%s/images/headers/cookislands-1.jpg',
+			'thumbnail_url' => '%s/images/headers/cookislands-1t.jpg',
+			/* translators: header image description */
+			'description' => __( 'Cook Islands', 'twentyeleven' )
 		)
 	) );
 }
