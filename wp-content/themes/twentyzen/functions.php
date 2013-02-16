@@ -239,31 +239,31 @@ function twentyeleven_setup() {
 			'url' => '%s/images/headers/antilles-1.jpg',
 			'thumbnail_url' => '%s/images/headers/antilles-1t.jpg',
 			/* translators: header image description */
-			'description' => __( 'Polinesia', 'twentyeleven' )
+			'description' => __( 'Antilles', 'twentyeleven' )
 		),
 		'antilles-2' => array(
 			'url' => '%s/images/headers/antilles-2.jpg',
 			'thumbnail_url' => '%s/images/headers/antilles-2t.jpg',
 			/* translators: header image description */
-			'description' => __( 'Polinesia', 'twentyeleven' )
+			'description' => __( 'Antilles', 'twentyeleven' )
 		),
 		'thailand-1' => array(
 			'url' => '%s/images/headers/thailand-1.jpg',
 			'thumbnail_url' => '%s/images/headers/thailand-1t.jpg',
 			/* translators: header image description */
-			'description' => __( 'Polinesia', 'twentyeleven' )
+			'description' => __( 'Thailand', 'twentyeleven' )
 		),
 		'thailand-2' => array(
 			'url' => '%s/images/headers/thailand-2.jpg',
 			'thumbnail_url' => '%s/images/headers/thailand-2t.jpg',
 			/* translators: header image description */
-			'description' => __( 'Polinesia', 'twentyeleven' )
+			'description' => __( 'Thailand', 'twentyeleven' )
 		),
 		'thailand-3' => array(
 			'url' => '%s/images/headers/thailand-3.jpg',
 			'thumbnail_url' => '%s/images/headers/thailand-3t.jpg',
 			/* translators: header image description */
-			'description' => __( 'Polinesia', 'twentyeleven' )
+			'description' => __( 'Thailand', 'twentyeleven' )
 		),
 		'cookislands-1' => array(
 			'url' => '%s/images/headers/cookislands-1.jpg',
