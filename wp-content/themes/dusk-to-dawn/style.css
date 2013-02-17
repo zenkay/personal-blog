@@ -4,7 +4,7 @@ Theme URI: http://theme.wordpress.com/themes/dusk-to-dawn/
 Author: Automattic
 Author URI: http://automattic.com/
 Description: A dark theme that melds old-style organic ornaments with modern design and  typography. It features a custom header, custom background, and a widget area in the sidebar. It comes with support for several post formats including aside, gallery, image, quote, link, chat, and audio.
-Version: 1.0
+Version: 1.1
 License: GNU General Public License
 License URI: license.txt
 Tags: black, blue, purple, dark, two-columns, left-sidebar, right-sidebar, fixed-width, custom-background, custom-colors, custom-header, custom-menu, featured-images, full-width-template, microformats, post-formats, rtl-language-support, sticky-post, theme-options, translation-ready
@@ -373,6 +373,7 @@ sub {
 -------------------------------------------------------------- */
 
 input[type=text],
+input[type=email],
 input[type=password],
 textarea {
 	background: #fafafa;
@@ -384,6 +385,7 @@ textarea {
 	padding: 6px;
 }
 input[type=text]:focus,
+input[type=email]:focus,
 textarea:focus {
 	color: #4a4a49;
 }
@@ -803,12 +805,15 @@ img.size-auto,
 img.size-full,
 img.size-large,
 img.size-medium,
-.attachment img,
+.entry-attachment img,
 .widget-area img,
 .comment-body img,
 .entry-content p img {
 	max-width: 100%; /* When images are too wide for containing element, force them to fit. */
 	height: auto; /* Override height to match resized width for correct aspect ratio. */
+}
+#ie8 img.size-large {
+	width: auto;
 }
 img.alignleft,
 .wp-caption.alignleft {
@@ -1126,6 +1131,39 @@ ol .comment-body ol ul {
 .widget_author_grid ul {
 	margin: 0;
 }
+/* Flickr Widget (WP.com) */
+.widget_flickr #flickr_badge_uber_wrapper a:hover,
+.widget_flickr #flickr_badge_uber_wrapper a:link,
+.widget_flickr #flickr_badge_uber_wrapper a:active,
+.widget_flickr #flickr_badge_uber_wrapper a:visited {
+	color: #497ca7;
+}
+.widget_flickr #flickr_badge_uber_wrapper a:hover {
+	text-decoration: underline !important;
+}
+.widget_flickr #flickr_badge_wrapper {
+	background-color: transparent !important;
+	border: none !important;
+}
+.widget_flickr table {
+	margin: 0 !important;
+}
+.widget_flickr .flickr-size-thumbnail {
+	margin: 0 auto;
+}
+.widget_flickr .flickr-size-thumbnail br,
+.widget_flickr .flickr-size-small br {
+	display: none;
+}
+.widget_flickr .flickr-size-thumbnail img {
+	display: block;
+	margin-bottom: 10px;
+}
+.widget_flickr .flickr-size-small img {
+	display: block;
+	margin-bottom: 10px;
+	max-width: 100%;
+}
  /* Cloud Widgets */
 .wp_widget_tag_cloud div,
 .widget_tag_cloud div {
@@ -1152,7 +1190,7 @@ ol .comment-body ol ul {
 	margin-bottom: 0;
 	vertical-align: middle;
 }
-/* Image Widget */
+/* Image WIdget */
 .widget_image p {
 	margin: 0;
 }
@@ -1183,4 +1221,81 @@ ol .comment-body ol ul {
 	color: #777;
 	margin: 0 auto;
 	width: 810px;
+}
+
+
+/* =WP.com
+-------------------------------------------------------------- */
+
+#wpstats {
+	display: block;
+	margin: -50px auto 0;
+	position: relative;
+	z-index: 999;
+}
+
+
+/* =Jetpack: Infinite Scroll
+-------------------------------------------------------------- */
+.infinite-scroll #content .infinite-wrap {
+	border-top: none;
+	padding-top: 0;
+}
+.infinite-scroll .infinite-wrap .hentry:first-child {
+	border-top: 1px solid #ccc;
+}
+/* Make it match the theme */
+.infinite-scroll #infinite-footer .container {
+	color: #4a4a49
+}
+.infinite-scroll #infinite-footer .blog-info,
+.infinite-scroll #infinite-footer .blog-info a {
+	color: #497ca7;
+}
+.infinite-scroll #infinite-footer .blog-credits a {
+	color: #497ca7;
+}
+.infinite-scroll #infinite-footer .blog-info a:hover,
+.infinite-scroll #infinite-footer .blog-info a:focus,
+.infinite-scroll #infinite-footer .blog-credits a:hover,
+.infinite-scroll #infinite-footer .blog-credits a:focus {
+	color: #497ca7;
+}
+.infinite-scroll #infinite-footer .blog-credits {
+	color: #4a4a49
+}
+.infinite-scroll .infinite-loader {
+	margin: 0 auto 34px;
+	width: 24px;
+}
+.infinite-scroll #infinite-handle {
+	margin: 0 0 40px;
+	text-align: right;
+}
+.infinite-scroll.right-sidebar #infinite-handle {
+	text-align: left;
+}
+.infinite-scroll #infinite-handle span {
+	background-color: #0b0e18;
+	border-color: #0b0e18;
+	border-radius: 0;
+	color: #497ca7;
+}
+.infinite-scroll #infinite-handle span:before {
+	color: #497ca7;
+}
+.infinite-scroll #infinite-handle span:hover,
+.infinite-scroll #infinite-handle span:focus,
+.infinite-scroll #infinite-handle span:hover:before,
+.infinite-scroll #infinite-handle span:focus:before {
+	color: #497ca7;
+}
+/* Elements to hide */
+.infinite-scroll #nav-below,
+.infinite-scroll.neverending #colophon {
+	display: none;
+}
+/* Restore the footer when IS is finished */
+.infinity-end.neverending #colophon {
+	display: block;
 }

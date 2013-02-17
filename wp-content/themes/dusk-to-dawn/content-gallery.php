@@ -14,7 +14,7 @@
 			<?php endif; ?>
 		</div><!-- .entry-meta -->
 		<?php endif; ?>
-		<h1 class="entry-title"><a href="<?php the_permalink(); ?>" title="<?php printf( esc_attr__( 'Permalink to %s', 'dusktodawn' ), the_title_attribute( 'echo=0' ) ); ?>" rel="bookmark"><?php the_title(); ?></a></h1>
+		<h1 class="entry-title"><a href="<?php the_permalink(); ?>" title="<?php echo esc_attr( sprintf( __( 'Permalink to %s', 'dusktodawn' ), the_title_attribute( 'echo=0' ) ) ); ?>" rel="bookmark"><?php the_title(); ?></a></h1>
 	</header><!-- .entry-header -->
 
 	<?php if ( is_search() ) : // Only display Excerpts for search pages ?>
@@ -39,7 +39,7 @@
 			</figure><!-- .gallery-thumb -->
 
 			<p><em><?php printf( _n( 'This gallery contains <a %1$s>%2$s photo</a>.', 'This gallery contains <a %1$s>%2$s photos</a>.', $total_images, 'dusktodawn' ),
-					'href="' . get_permalink() . '" title="' . sprintf( esc_attr__( 'Permalink to %s', 'dusktodawn' ), the_title_attribute( 'echo=0' ) ) . '" rel="bookmark"',
+					'href="' . get_permalink() . '" title="' . esc_attr( sprintf( __( 'Permalink to %s', 'dusktodawn' ), the_title_attribute( 'echo=0' ) ) ) . '" rel="bookmark"',
 					number_format_i18n( $total_images )
 				); ?></em></p>
 			<?php endif; ?>

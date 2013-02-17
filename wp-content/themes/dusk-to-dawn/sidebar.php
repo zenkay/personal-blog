@@ -4,7 +4,6 @@
  */
 ?>
 <div id="secondary" class="widget-area" role="complementary">
-
 	<?php if ( has_nav_menu( 'sidebar-menu' ) ) : ?>
 		<nav id="access" role="navigation">
 			<?php wp_nav_menu( array( 'theme_location' => 'sidebar-menu' ) ); ?>

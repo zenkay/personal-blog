@@ -131,7 +131,8 @@ function theme_options_render_page() {
 	?>
 	<div class="wrap">
 		<?php screen_icon(); ?>
-		<h2><?php printf( __( '%s Theme Options', 'dusktodawn' ), get_current_theme() ); ?></h2>
+		<?php $theme_name = function_exists( 'wp_get_theme' ) ? wp_get_theme() : get_current_theme(); ?>
+		<h2><?php printf( __( '%s Theme Options', 'dusktodawn' ), $theme_name ); ?></h2>
 		<?php settings_errors(); ?>
 
 		<form method="post" action="options.php">
@@ -222,7 +223,19 @@ function dusktodawn_print_link_color_style() {
 		.widget_flickr #flickr_badge_uber_wrapper a:hover,
 		.widget_flickr #flickr_badge_uber_wrapper a:link,
 		.widget_flickr #flickr_badge_uber_wrapper a:active,
-		.widget_flickr #flickr_badge_uber_wrapper a:visited {
+		.widget_flickr #flickr_badge_uber_wrapper a:visited,
+		#infinite-footer .blog-info a,
+		#infinite-footer .blog-credits a,
+		#infinite-footer .blog-info a:hover,
+		#infinite-footer .blog-info a:focus,
+		#infinite-footer .blog-credits a:hover,
+		#infinite-footer .blog-credits a:focus,
+		#infinite-handle span,
+		#infinite-handle span:before,
+		#infinite-handle span:hover,
+		#infinite-handle span:focus,
+		#infinite-handle span:hover:before,
+		#infinite-handle span:focus:before {
 			color: <?php echo $link_color; ?>;
 		}
 		.entry-header,

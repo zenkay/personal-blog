@@ -6,7 +6,7 @@
 // Load scripts.
 function dusktodawn_scripts() {
 	if ( ! is_singular() || ( is_singular() && 'audio' == get_post_format() ) )
-		wp_enqueue_script( 'audio-player', get_template_directory_uri() . '/js/audio-player.js', array( 'jquery' ), '20110801' );
+		wp_enqueue_script( 'audio-player', get_template_directory_uri() . '/js/audio-player.js', array( 'swfobject' ), '20120525' );
 }
 add_action( 'wp_enqueue_scripts', 'dusktodawn_scripts' );
 
@@ -14,16 +14,21 @@ add_action( 'wp_enqueue_scripts', 'dusktodawn_scripts' );
 if ( ! isset( $content_width ) )
 	$content_width = 474;
 
+/**
+ * Load Jetpack compatibility file.
+ */
+require( get_template_directory() . '/inc/jetpack.compat.php' );
+
 if ( ! function_exists( 'dusktodawn_setup' ) ):
+
+/**
+ * Load up our functions for grabbing content from posts
+ */
+require( get_template_directory() . '/content-grabbers.php' );
 
 function dusktodawn_setup() {
 
 	load_theme_textdomain( 'dusktodawn', get_template_directory() . '/languages' );
-
-	$locale = get_locale();
-	$locale_file = get_template_directory() . "/languages/$locale.php";
-	if ( is_readable( $locale_file ) )
-		require_once( $locale_file );
 
 	// Add default posts and comments RSS feed links to head
 	add_theme_support( 'automatic-feed-links' );
@@ -42,6 +47,8 @@ function dusktodawn_setup() {
 
 	// Load theme options
 	require_once( dirname( __FILE__ ) . '/inc/theme-options.php' );
+
+	add_theme_support( 'print-style' );
 }
 endif; // dusktodawn_setup
 
@@ -103,17 +110,17 @@ function dusktodawn_admin_header_style() {
 			width: <?php echo HEADER_IMAGE_WIDTH; ?>px;
 			height: <?php echo HEADER_IMAGE_HEIGHT; ?>px;
 		}
-        #heading,
-        #headimg h1,
-        #headimg #desc {
-        	display: none;
-        }
+		#heading,
+		#headimg h1,
+		#headimg #desc {
+			display: none;
+		}
 		</style>
 <?php
 }
 
 // Add custom background support.
-add_custom_background();
+add_theme_support( 'custom-background' );
 
 function dusktodawn_custom_background() {
 	if ( '' != get_background_image() ) { ?>
@@ -301,7 +308,7 @@ function dusktodawn_author_info() {
 				<?php echo get_avatar( get_the_author_meta( 'user_email' ), apply_filters( 'dusktodawn_author_bio_avatar_size', 50 ) ); ?>
 			</div><!-- #author-avatar -->
 			<div id="author-description">
-				<h2><?php esc_html( printf( __( 'About %s', 'dusktodawn' ), get_the_author() ) ); ?></h2>
+				<h2><?php echo sprintf( __( 'About %s', 'dusktodawn' ), get_the_author() ); ?></h2>
 				<?php the_author_meta( 'description' ); ?>
 				<div id="author-link">
 					<a href="<?php echo esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ); ?>" rel="author">
@@ -315,50 +322,44 @@ function dusktodawn_author_info() {
 
 // Filter in a link to a content ID attribute for the next/previous image links on image attachment pages
 function dusktodawn_enhanced_image_navigation( $url ) {
-	global $post;
-	if ( wp_attachment_is_image( $post->ID ) )
+	global $post, $wp_rewrite;
+
+	$id = (int) $post->ID;
+	$object = get_post( $id );
+	if ( wp_attachment_is_image( $post->ID ) && ( $wp_rewrite->using_permalinks() && ( $object->post_parent > 0 ) && ( $object->post_parent != $id ) ) )
 		$url = $url . '#main';
+
 	return $url;
 }
 add_filter( 'attachment_link', 'dusktodawn_enhanced_image_navigation' );
 
 // Enqueue font styles.
 function dusktodawn_fonts() {
-	wp_enqueue_style( 'ubuntu', 'http://fonts.googleapis.com/css?family=Ubuntu:300,400,700' );
+	$protocol = is_ssl() ? 'https' : 'http';
+	wp_enqueue_style( 'ubuntu', "$protocol://fonts.googleapis.com/css?family=Ubuntu:300,400,700" );
 }
 add_action( 'wp_enqueue_scripts', 'dusktodawn_fonts' );
 
-/**
- * Return the URL for the first link found in this post.
- *
- * @param string the_content Post content, falls back to current post content if empty.
- * @return string|bool URL or false when no link is present.
- */
-function dusktodawn_url_grabber( $the_content = '' ) {
-	if ( empty( $the_content ) )
-		$the_content = get_the_content();
-	if ( ! preg_match( '/<a\s[^>]*?href=[\'"](.+?)[\'"]/is', $the_content, $matches ) )
-		return false;
+// Dequeue font styles.
+function dusktodawn_dequeue_fonts() {
+	/**
+	 * We don't want to enqueue the font scripts if the blog
+	 * has WP.com Custom Design and is using a 'Headings' font.
+	 */
+	if ( class_exists( 'TypekitData' ) ) {
+		if ( TypekitData::get( 'upgraded' ) ) {
+			$customfonts = TypekitData::get( 'families' );
+			if ( ! $customfonts )
+				return;
+			$headings = $customfonts['headings'];
 
-	return esc_url_raw( $matches[1] );
+			if ( $headings['id'] ) {
+				wp_dequeue_style( 'ubuntu' );
+			}
+		}
+	}
 }
-
-/**
- * Return the first audio file found for a post.
- *
- * @param int post_id ID for parent post
- * @return boolean|string Path to audio file
- */
-function dusktodawn_audio_grabber( $post_id ) {
-	global $wpdb;
-
-	$first_audio = $wpdb->get_var( $wpdb->prepare( "SELECT guid FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'attachment' AND INSTR(post_mime_type, 'audio') ORDER BY menu_order ASC LIMIT 0,1", (int) $post_id ) );
-
-	if ( ! empty( $first_audio ) )
-		return $first_audio;
-
-	return false;
-}
+add_action( 'wp_enqueue_scripts', 'dusktodawn_dequeue_fonts' );
 
 // Add in-head JS block for audio post format.
 function dusktodawn_add_audio_support() {
@@ -381,4 +382,3 @@ function dusktodawn_add_audio_support() {
 <?php }
 }
 add_action( 'wp_head', 'dusktodawn_add_audio_support' );
-// This theme was built with PHP, Semantic HTML, CSS, love, and a Toolbox.

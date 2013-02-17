@@ -1,55 +1,34 @@
-# Copyright (C) 2010 Dusk To Dawn
-# This file is distributed under the same license as the Dusk To Dawn package.
+# Copyright (C) 2012 Automattic
+# This file is distributed under the GNU General Public License.
 msgid ""
 msgstr ""
-"Project-Id-Version: Dusk To Dawn 1.0\n"
-"Report-Msgid-Bugs-To: http://wordpress.org/tag/dusk-to-dawn\n"
-"POT-Creation-Date: 2011-12-05 13:54:25+00:00\n"
+"Project-Id-Version: Dusk To Dawn 1.1\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tags/dusk-to-dawn\n"
+"POT-Creation-Date: 2012-11-05 18:44:58+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2010-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2012-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: content.php:11 content-gallery.php:11 content-audio.php:11
-#: content-link.php:11
-msgid "Featured"
+#: 404.php:11
+msgid "Well this is somewhat embarrassing, isn&rsquo;t it?"
 msgstr ""
 
-#: content.php:17 content-gallery.php:17 content-gallery.php:42
-#: content-audio.php:17 content-link.php:30
-msgid "Permalink to %s"
+#: 404.php:15
+msgid ""
+"It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps "
+"searching, or one of the links below, can help."
 msgstr ""
 
-#: content.php:23 content-gallery.php:27 content-audio.php:46
-#: content-link.php:37
-msgid "Continue reading <span class=\"meta-nav\">&rarr;</span>"
+#: 404.php:22
+msgid "Most Used Categories"
 msgstr ""
 
-#: content.php:24 content-page.php:15 image.php:75 content-gallery.php:48
-#: content-audio.php:47 content-link.php:38
-msgid "Pages:"
-msgstr ""
-
-#: content.php:31 content-gallery.php:56 content-audio.php:54
-#: content-link.php:45
-msgid "Leave a comment"
-msgstr ""
-
-#: content.php:31 content-gallery.php:56 content-audio.php:54
-#: content-link.php:45
-msgid "1 Comment"
-msgstr ""
-
-#: content.php:31 content-gallery.php:56 content-audio.php:54
-#: content-link.php:45
-msgid "% Comments"
-msgstr ""
-
-#: content.php:34 content-page.php:16 image.php:27 image.php:94
-#: content-gallery.php:59 content-audio.php:57 content-link.php:48
-msgid "Edit"
+#. translators: %1$s: smilie
+#: 404.php:30
+msgid "Try looking in the monthly archives. %1$s"
 msgstr ""
 
 #: archive.php:16
@@ -76,7 +55,7 @@ msgstr ""
 msgid "Author Archives"
 msgstr ""
 
-#: archive.php:28 sidebar.php:21
+#: archive.php:28 sidebar.php:22
 msgid "Archives"
 msgstr ""
 
@@ -117,35 +96,85 @@ msgstr ""
 msgid "Comments are closed."
 msgstr ""
 
-#: functions.php:37
+#: content-audio.php:11 content-gallery.php:11 content-link.php:11
+#: content.php:11
+msgid "Featured"
+msgstr ""
+
+#: content-audio.php:17 content-gallery.php:17 content-gallery.php:42
+#: content-link.php:28 content-link.php:30 content.php:17
+msgid "Permalink to %s"
+msgstr ""
+
+#: content-audio.php:46 content-gallery.php:27 content-link.php:37
+#: content.php:23
+msgid "Continue reading <span class=\"meta-nav\">&rarr;</span>"
+msgstr ""
+
+#: content-audio.php:47 content-gallery.php:48 content-link.php:38
+#: content-page.php:15 content.php:24 image.php:75
+msgid "Pages:"
+msgstr ""
+
+#: content-audio.php:54 content-gallery.php:56 content-link.php:45
+#: content.php:31
+msgid "Leave a comment"
+msgstr ""
+
+#: content-audio.php:54 content-gallery.php:56 content-link.php:45
+#: content.php:31
+msgid "1 Comment"
+msgstr ""
+
+#: content-audio.php:54 content-gallery.php:56 content-link.php:45
+#: content.php:31
+msgid "% Comments"
+msgstr ""
+
+#: content-audio.php:57 content-gallery.php:59 content-link.php:48
+#: content-page.php:16 content.php:34 image.php:27 image.php:94
+msgid "Edit"
+msgstr ""
+
+#: content-gallery.php:41
+msgid "This gallery contains <a %1$s>%2$s photo</a>."
+msgid_plural "This gallery contains <a %1$s>%2$s photos</a>."
+msgstr[0] ""
+msgstr[1] ""
+
+#: footer.php:11
+msgid "Theme: %1$s by %2$s."
+msgstr ""
+
+#: functions.php:42
 msgid "Sidebar Menu"
 msgstr ""
 
-#: functions.php:150
+#: functions.php:157
 msgid "Sidebar 1"
 msgstr ""
 
-#: functions.php:166
+#: functions.php:173
 msgid "Post navigation"
 msgstr ""
 
-#: functions.php:169
+#: functions.php:176
 msgid "<span class=\"meta-nav\">&larr;</span> Previous"
 msgstr ""
 
-#: functions.php:170
+#: functions.php:177
 msgid "Next <span class=\"meta-nav\">&rarr;</span>"
 msgstr ""
 
-#: functions.php:175
+#: functions.php:182
 msgid "<span class=\"meta-nav\">&larr;</span> Older posts"
 msgstr ""
 
-#: functions.php:179
+#: functions.php:186
 msgid "Newer posts <span class=\"meta-nav\">&rarr;</span>"
 msgstr ""
 
-#: functions.php:190
+#: functions.php:197
 msgid ""
 "<a href=\"%1$s\" title=\"%2$s\" rel=\"bookmark\"><time class=\"entry-date\" "
 "datetime=\"%3$s\" pubdate>%4$s</time></a><span class=\"byline\"> <span class="
@@ -153,61 +182,61 @@ msgid ""
 "\"%5$s\" title=\"%6$s\" rel=\"author\">%7$s</a></span></span>"
 msgstr ""
 
-#: functions.php:196
+#: functions.php:203
 msgid "View all posts by %s"
 msgstr ""
 
 #. translators: used between list items, there is a space after the comma
-#: functions.php:246 functions.php:278 functions.php:286
+#: functions.php:253 functions.php:285 functions.php:293
 msgid ", "
 msgstr ""
 
 #. translators: used between list items, there is a space after the comma
-#: functions.php:254
+#: functions.php:261
 msgid ""
 "This entry was tagged %2$s.<br />Bookmark the <a href=\"%3$s\" title="
 "\"Permalink to %4$s\" rel=\"bookmark\">permalink</a>.<br />"
 msgstr ""
 
-#: functions.php:256
+#: functions.php:263
 msgid ""
 "Bookmark the <a href=\"%3$s\" title=\"Permalink to %4$s\" rel=\"bookmark"
 "\">permalink</a>.<br />"
 msgstr ""
 
-#: functions.php:262
+#: functions.php:269
 msgid ""
-"This entry was posted in %1$s and tagged %2$s.<br />Bookmark the <a href=\"%3"
-"$s\" title=\"Permalink to %4$s\" rel=\"bookmark\">permalink</a>.<br />"
+"This entry was posted in %1$s and tagged %2$s.<br />Bookmark the <a href="
+"\"%3$s\" title=\"Permalink to %4$s\" rel=\"bookmark\">permalink</a>.<br />"
 msgstr ""
 
-#: functions.php:264
+#: functions.php:271
 msgid ""
 "This entry was posted in %1$s.<br />Bookmark the <a href=\"%3$s\" title="
 "\"Permalink to %4$s\" rel=\"bookmark\">permalink</a>.<br />"
 msgstr ""
 
-#: functions.php:281
+#: functions.php:288
 msgid "Posted in %1$s"
 msgstr ""
 
-#: functions.php:290
+#: functions.php:297
 msgid "Tagged %1$s"
 msgstr ""
 
-#: functions.php:304
+#: functions.php:311
 msgid "About %s"
 msgstr ""
 
-#: functions.php:308
+#: functions.php:315
 msgid "View all posts by %s <span class=\"meta-nav\">&rarr;</span>"
 msgstr ""
 
 #: image.php:17
 msgid ""
 "Published <span class=\"entry-date\"><abbr class=\"published\" title=\"%1$s"
-"\">%2$s</abbr></span> at <a href=\"%3$s\" title=\"Link to full-size image\">%"
-"4$s &times; %5$s</a> in <a href=\"%6$s\" title=\"Return to %7$s\" rel="
+"\">%2$s</abbr></span> at <a href=\"%3$s\" title=\"Link to full-size image\">"
+"%4$s &times; %5$s</a> in <a href=\"%6$s\" title=\"Return to %7$s\" rel="
 "\"gallery\">%7$s</a>"
 msgstr ""
 
@@ -241,28 +270,6 @@ msgstr ""
 
 #: image.php:92
 msgid "Both comments and trackbacks are currently closed."
-msgstr ""
-
-#: content-gallery.php:41
-msgid "This gallery contains <a %1$s>%2$s photo</a>."
-msgid_plural "This gallery contains <a %1$s>%2$s photos</a>."
-msgstr[0] ""
-msgstr[1] ""
-
-#: sidebar.php:28
-msgid "Meta"
-msgstr ""
-
-#: content-link.php:28
-msgid "Link to %s"
-msgstr ""
-
-#: index.php:14
-msgid "Search Results for: %s"
-msgstr ""
-
-#: footer.php:11
-msgid "Theme: %1$s by %2$s."
 msgstr ""
 
 #: inc/theme-options.php:71 inc/theme-options.php:72
@@ -345,23 +352,12 @@ msgstr ""
 msgid "Save Options"
 msgstr ""
 
-#: 404.php:11
-msgid "Well this is somewhat embarrassing, isn&rsquo;t it?"
+#: index.php:14
+msgid "Search Results for: %s"
 msgstr ""
 
-#: 404.php:15
-msgid ""
-"It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps "
-"searching, or one of the links below, can help."
-msgstr ""
-
-#: 404.php:22
-msgid "Most Used Categories"
-msgstr ""
-
-#. translators: %1$s: smilie
-#: 404.php:30
-msgid "Try looking in the monthly archives. %1$s"
+#: sidebar.php:29
+msgid "Meta"
 msgstr ""
 
 #. Theme Name of the plugin/theme
@@ -392,8 +388,12 @@ msgstr ""
 msgid ""
 "black, blue, purple, dark, two-columns, left-sidebar, right-sidebar, fixed-"
 "width, custom-background, custom-colors, custom-header, custom-menu, "
-"featured-images, full-width-template, microformats, post-formats, rtl-"
-"language-support, sticky-post, theme-options, translation-ready, blog, "
-"design, journal, nature, abstract, artistic, curved, dreamy, elegant, "
-"flowery, grungy, nostalgic, textured"
+"featured-images, full-width-template, infinite-scroll, microformats, post-"
+"formats, rtl-language-support, sticky-post, theme-options, translation-"
+"ready, blog, design, journal, nature, abstract, artistic, curved, dreamy, "
+"elegant, flowery, grungy, nostalgic, textured"
+msgstr ""
+
+#. Template Name of the plugin/theme
+msgid "Full-width, no sidebar"
 msgstr ""
