@@ -485,7 +485,7 @@ $("#x").bind(clickEventType, function() {
 
                 var post_html = '<li class="blog-content arrow"><a onClick="send(' + post.id + ')" id=' + post.id + ' href="#single">';
                 //post_html += '<div class="float_right">' + post.date + '</div>';
-                post_html += post.get_thumb;
+                //post_html += post.get_thumb;
                 post_html += '<h2>' + post.title + '</h2>';
                 post_html += '<p>' + post.excerpt + '</p></a></li>';
 
@@ -523,7 +523,7 @@ $("#x").bind(clickEventType, function() {
 	<div id="home" class="current">
 		<div class="toolbar">
 			<h1><script type="text/javascript">document.write(BLOG_TITLE);</script></h1>
-			 <a class="button slideup" id="infoButton" href="#about">About</a>
+			 <!-- <a class="button slideup" id="infoButton" href="#about">About</a> -->
         </div>
             <div class="scroll">
 			<ul class="edgecontent allpost" id="allpost"></ul>
@@ -612,7 +612,7 @@ $("#x").bind(clickEventType, function() {
 <li><a href="#categories" class="flip"><strong>Sections</strong><div class="list"></div></a></li>
 <li><a onTouchStart="send('pages')" href="#pages" class="flip"><strong>Pages</strong><div class="page"></div></a></li>
 <li><a href="#search" class=""><strong>Search</strong><div class="search2"></div></a></li>
-<li><a href="#about" id="li_tab" class="flip"><strong>More</strong><div class="more"></div></a></li>
+<!-- <li><a href="#about" id="li_tab" class="flip"><strong>More</strong><div class="more"></div></a></li> -->
     </ul>
 </nav>
 </div> <!-- End #page -->

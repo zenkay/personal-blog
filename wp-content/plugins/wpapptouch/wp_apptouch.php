@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: WP AppTouch
+Plugin Name: WP ZenAppTouch  
 Plugin URI: http://wpapptouch.com/
-Author: Gino Cote
+Author: Gino Cote modded by Zenkay
 Author URI: http://wpapptouch.com/
 Description: WP-appTouch - Web application for Wordpress who look like native applications.
-Version: 0.8.1
+Version: 0.0.1
 */
 
 //include('mps_datas.php');
@@ -71,7 +71,7 @@ add_action('admin_menu','wpapptouchThemeMenu');
  * This function adds new adminsitration menus.
  */
 function wpapptouchThemeMenu() {
-	add_plugins_page('Settings for WP-Apptouch Theme Plugin', 'WP-Apptouch Theme Config', 'manage_options', 'wp_apptouch', 'displaywpapptouchOption');
+	add_plugins_page('Settings for WP-Apptouch Theme Plugin', 'WP-Apptouch', 'manage_options', 'wp_apptouch', 'displaywpapptouchOption');
 }
 
 /**
