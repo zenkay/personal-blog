@@ -1308,7 +1308,7 @@ a.nodecoration:link {
     text-decoration: none;
 }
 
-#single #jqt ul li a {
-  display: auto;
+.blog-content>a {
+  display: inline !important;
 }
 
