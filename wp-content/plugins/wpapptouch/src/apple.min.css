@@ -663,7 +663,7 @@ body {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    display: block;
+    /*display: block;*/
     padding: 10px;
     margin: -10px;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -1308,7 +1308,7 @@ a.nodecoration:link {
     text-decoration: none;
 }
 
-.blog-content>a {
+/*.blog-content>a {
   display: inline !important;
-}
+}*/
 
