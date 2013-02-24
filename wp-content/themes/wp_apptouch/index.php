@@ -524,7 +524,6 @@ $("#x").bind(clickEventType, function() {
 		<div class="toolbar">
 			<h1><script type="text/javascript">document.write(BLOG_TITLE);</script></h1>
 			 <!-- <a class="button slideup" id="infoButton" href="#about">About</a> -->
-       <a class="button" href="http://andreamostosi.name" taget="_blank">About</a>
         </div>
             <div class="scroll">
 			<ul class="edgecontent allpost" id="allpost"></ul>
