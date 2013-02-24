@@ -410,7 +410,7 @@ $("#singleappend").empty();
                     if (post.title !== undefined) {
                         
 						var post_html = '<li class="blog-content arrow"><a onClick="send(' + post.id + ')" id=' + post.id + ' href="#single">';	
-                        post_html += post.get_thumb;
+                        // post_html += post.get_thumb;
                			post_html += '<h2>' + post.title + '</h2>';
                 		post_html += '<p>' + post.excerpt + '</p></a></li>';
 						
@@ -524,6 +524,7 @@ $("#x").bind(clickEventType, function() {
 		<div class="toolbar">
 			<h1><script type="text/javascript">document.write(BLOG_TITLE);</script></h1>
 			 <!-- <a class="button slideup" id="infoButton" href="#about">About</a> -->
+       <a class="button slideup" href="http://andreamostosi.name">About</a>
         </div>
             <div class="scroll">
 			<ul class="edgecontent allpost" id="allpost"></ul>

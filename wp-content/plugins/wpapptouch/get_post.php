@@ -13,7 +13,7 @@ $s = trim($s);
 
 $posts = array();
 
-$numberposts = 100;
+$numberposts = 10;
 $offset = (intval($_GET['page']) - 1) * $numberposts;
 
 $num_posts = wp_count_posts('post');
@@ -45,7 +45,7 @@ if ($page <= $num_pages) {
 			//echo $my_id;  
     	}
 	}else{
-	$myposts = new WP_Query('orderby=date&posts_per_page=10');
+	$myposts = new WP_Query('orderby=date&posts_per_page=100');
 	//echo 'is empty'; 
     }
 }
