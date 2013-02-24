@@ -13,7 +13,7 @@ $s = trim($s);
 
 $posts = array();
 
-$numberposts = 10;
+$numberposts = 100;
 $offset = (intval($_GET['page']) - 1) * $numberposts;
 
 $num_posts = wp_count_posts('post');
