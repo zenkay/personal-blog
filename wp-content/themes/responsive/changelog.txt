@@ -8,7 +8,40 @@ Changelog Legend:
 [x] = Deleted
 [!] = Bugs
 
-(02/04/2013) - Minor Bug Release - Version 1.8.9.2
+(03/13/2013) - Major Improvemnts - Version 1.9.0
+
+[+] Layout templates for posts
+[+] Default layout templates for Pages, Posts and blog page
+[+] Added theme templates for code that is used in multiple files
+[+] Added class for the title on the archiv page
+[+] Add css for support for responsive html5 video
+[+] Basic WPML and Polylang styling
+[+] Hover effect on the parent item when dropdown is hovered on
+[*] Basic support for WooCommerce 2.0
+[*] Updated breadcrumbs code
+[*] Change the way setting the custom home page. Now conforms with WordPress default reading setting
+[*] Improved theme options default settings
+[*] Improve translations
+[*] Language updates for:
+    - responsive.pot
+    - Slovak
+    - Japanese
+    - Slovenian
+    - German
+    - German Formal
+    - French
+    - Russian
+    - Catalan
+    - Dutch
+    - Danish
+    - Portuguese, Brazil
+    - Serbian
+[!] Hide mobile menu on landing page template
+[!] RTL menu fixs
+
+----
+
+(02/04/2013) - Minor Bug Release - Version 1.8.9.2/3
 
 [!] TinyNav [object]
 [^] MS filter is back in.
@@ -26,15 +59,15 @@ Changelog Legend:
 
 [x] IE filters for buttons. This also removes the conflict with
     video plugins. (props Ulrich Pogson)
-	
+
 [*] FitVids [object] removal. (props Ulrich Pogson)
     @see: https://github.com/davatron5000/FitVids.js/pull/90
-	
+
 [+] Functions to check whether or not All in One SEO and WordPress 
     SEO are activated. In: /includes/functions.php and header.php 
-	for WP SEO. If AIOSEOP, we will remove the Responsive's wp_title
-	filter. And use wp_title() only for WP SEO. Pretty nice stuff.
-	
+    for WP SEO. If AIOSEOP, we will remove the Responsive's wp_title
+    filter. And use wp_title() only for WP SEO. Pretty nice stuff.
+
 [*] Theme Options info buttons. Changed "Donate Now" to more visible
     blue color and removed Responsive classes.
 
