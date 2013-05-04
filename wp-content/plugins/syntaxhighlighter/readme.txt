@@ -55,6 +55,13 @@ Make sure your theme's `footer.php` file has `<?php wp_footer(); ?>` somewhere i
 
 == ChangeLog ==
 
+= Version 3.1.6 =
+
+* Kill off v2 copy-to-clipboard SWF file due to XSS security issue with the file. If you want to be able to copy/paste, use the better v3.
+* Switch from using a `<meta>` tag to a `<style>` tag as the JavaScript anchor in the `<head>`. This should fix the validation error under HTML5.
+* Remove an old forced font-size function -- it wasn't actually used.
+* Remove references.
+
 = Version 3.1.5 =
 
 * The slashing changes made in WordPress 3.6 (alpha) have been reverted -- we're back to the old way again. This release restores the code back to Syntaxhighlighter v3.1.3. See [ticket #21767](http://core.trac.wordpress.org/ticket/21767).
@@ -210,3 +217,8 @@ Localizations:
 = Version 1.0.0 =
 
 * Initial release!
+
+== Upgrade Notice ==
+
+= 3.1.6 =
+Important security update.
