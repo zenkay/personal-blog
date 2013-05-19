@@ -65,8 +65,6 @@ class Simpler_GitHub_Widget extends WP_Widget {
         // echo '<a href="http://github.com/' . $username . '/" >';
         // echo $username . '</a> @ GitHub</p>';
 
-        echo '<iframe src="http://ghbtns.com/github-btn.html?user=zenkay&type=follow" allowtransparency="true" frameborder="0" scrolling="0" width="132" height="20"></iframe>';
-
         // the list of repos
         echo '<ul id="gh-repos">';
         echo '<li id="gh-loading">' . __('Status updating...','simpler-github-widget') . '</li>';
@@ -82,6 +80,7 @@ class Simpler_GitHub_Widget extends WP_Widget {
   </script>
 <?php
 
+        echo '<iframe src="http://ghbtns.com/github-btn.html?user=zenkay&type=follow" allowtransparency="true" frameborder="0" scrolling="0" width="132" height="20"></iframe>';
         echo $after_widget;
     }
 

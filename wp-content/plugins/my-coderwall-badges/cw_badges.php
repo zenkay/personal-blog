@@ -89,11 +89,11 @@ function widget_coderwall ($args){
 	extract($args);
 
 	echo $before_widget . $before_title;
-	_e('My Coderwall Badges', 'my-coderwall-badges');
+	_e('Coderwall Badges', 'my-coderwall-badges');
 	echo $after_title;
 	echo $cwb->get_badges();
-	if ($cwb->get_show_endorse()=='on'){
-		echo $cwb->get_endorsements();
-	}
+	// if ($cwb->get_show_endorse()=='on'){
+	// 	echo $cwb->get_endorsements();
+	// }
 	echo $after_widget;
 }
