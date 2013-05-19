@@ -24,3 +24,7 @@ a {
 .syntaxhighlighter {
   overflow: scroll !important;
 }
+
+.twiget-widget ul li {
+  border: 0 !important;
+}
