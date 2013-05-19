@@ -80,8 +80,7 @@ class Simpler_GitHub_Widget extends WP_Widget {
   </script>
 <?php
 
-        echo '<iframe src="http://ghbtns.com/github-btn.html?user=zenkay&type=follow"
-  allowtransparency="true" frameborder="0" scrolling="0" width="132" height="20"></iframe>';
+        echo '<iframe src="http://ghbtns.com/github-btn.html?user=zenkay&type=follow" allowtransparency="true" frameborder="0" scrolling="0" width="132" height="20"></iframe>';
 
         echo $after_widget;
     }
