@@ -3,7 +3,7 @@ var github = (function(){
     var i = 0, fragment = '';
     var t = document.getElementById('gh-repos');
     for(i = 0; i < repos.length; i++) {
-      fragment += '<li><a href="'+repos[i].html_url+'">'+repos[i].name+'</a></li>';
+      fragment += '<li><a href="'+repos[i].html_url+'">'+username+'/'+repos[i].name+'</a></li>';
     }
     t.innerHTML = fragment;
   }
@@ -32,7 +32,7 @@ var github = (function(){
       if (this.options.count) {
         repos.splice(this.options.count);
       }
-      render(repos, options.user);
+      render(repos, this.options.user);
     },
     showRepos: function(options){
       var req = "https://api.github.com/users/"+options.user+"/repos?callback=github.parseResult";
