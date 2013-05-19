@@ -59,9 +59,6 @@ class Simpler_GitHub_Widget extends WP_Widget {
         // Octocat image
         // echo '<img width="128px" alt="GitHub Octocat" src="' . plugins_url('octocat.png', __FILE__) . '"';
         // echo ' style="display: block; margin: 0px auto;" />';
-
-        echo '<iframe src="http://ghbtns.com/github-btn.html?user=zenkay&type=follow"
-  allowtransparency="true" frameborder="0" scrolling="0" width="132" height="20"></iframe>';
   
         // username @ GitHub
         // echo '<p style="text-align: center; ">';
@@ -82,6 +79,10 @@ class Simpler_GitHub_Widget extends WP_Widget {
         });
   </script>
 <?php
+
+        echo '<iframe src="http://ghbtns.com/github-btn.html?user=zenkay&type=follow"
+  allowtransparency="true" frameborder="0" scrolling="0" width="132" height="20"></iframe>';
+
         echo $after_widget;
     }
 

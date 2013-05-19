@@ -28,3 +28,7 @@ a {
 .twiget-widget ul li {
   border: 0 !important;
 }
+
+.widget_coderwall {
+  width: 240px;
+}
