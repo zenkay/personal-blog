@@ -67,7 +67,7 @@ class Simpler_GitHub_Widget extends WP_Widget {
 
         // the list of repos
         echo '<ul id="gh-repos">';
-        echo '<li id="gh-loading"><img width="128px" alt="GitHub Octocat" src="' . plugins_url('ajax-loader.gif', __FILE__) . '" /> ' . __('Status updating...','simpler-github-widget') . '</li>';
+        echo '<li id="gh-loading"><img src="' . plugins_url('ajax-loader.gif', __FILE__) . '" /> ' . __('Status updating...','simpler-github-widget') . '</li>';
         echo '</ul>';
         echo '<script src="' . plugins_url('github.js', __FILE__) . '" type="text/javascript"> </script>';
 ?>
@@ -80,7 +80,7 @@ class Simpler_GitHub_Widget extends WP_Widget {
   </script>
 <?php
 
-        echo '<p style="margin-top:10px;"><iframe src="http://ghbtns.com/github-btn.html?user=zenkay&type=follow&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="132" height="20"></iframe></p>';
+        echo '<p style="margin-top:10px;"><iframe src="http://ghbtns.com/github-btn.html?user=zenkay&type=follow&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="150" height="20"></iframe></p>';
         echo $after_widget;
     }
 
