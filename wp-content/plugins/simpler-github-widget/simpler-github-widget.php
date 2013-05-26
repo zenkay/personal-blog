@@ -4,7 +4,7 @@ Plugin Name: Simpler GitHub Widget
 Plugin URI: https://wordpress.org/extend/plugins/simpler-github-widget/
 Description: Display your GitHub projects
 Author: Francesco Ceccon, modded by Andrea Mostosi
-Version: 0.0.1
+Version: 0.0.2
 Author URI: http://andreamostosi.name
  */
 
@@ -67,7 +67,7 @@ class Simpler_GitHub_Widget extends WP_Widget {
 
         // the list of repos
         echo '<ul id="gh-repos">';
-        echo '<li id="gh-loading">' . __('Status updating...','simpler-github-widget') . '</li>';
+        echo '<li id="gh-loading"><img width="128px" alt="GitHub Octocat" src="' . plugins_url('ajax-loader.gif', __FILE__) . '" /> ' . __('Status updating...','simpler-github-widget') . '</li>';
         echo '</ul>';
         echo '<script src="' . plugins_url('github.js', __FILE__) . '" type="text/javascript"> </script>';
 ?>
@@ -80,7 +80,7 @@ class Simpler_GitHub_Widget extends WP_Widget {
   </script>
 <?php
 
-        echo '<iframe src="http://ghbtns.com/github-btn.html?user=zenkay&type=follow" allowtransparency="true" frameborder="0" scrolling="0" width="132" height="20"></iframe>';
+        echo '<p style="margin-top:10px;"><iframe src="http://ghbtns.com/github-btn.html?user=zenkay&type=follow&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="132" height="20"></iframe></p>';
         echo $after_widget;
     }
 
