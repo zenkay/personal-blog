@@ -2,9 +2,9 @@
 Contributors: DavidoffNeal
 Donate link: http://www.davidsneal.co.uk/contributions
 Tags: share buttons, facebook, twitter, google+, share, share links, stumble upon, linkedin, pinterest
-Requires at least: 3.0.1
-Tested up to: 3.5.1
-Stable tag: 2.9
+Requires at least: 3.5.1
+Tested up to: 3.5.2
+Stable tag: 3.1
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,8 +56,17 @@ A step by step guide on how to configure this plugin can be found <a href="http:
 
 == Changelog ==
 
+= 3.1 =
+* Titles and twitter text issues resolved for those experiencing problems with certain characters
+
+= 3.0 =
+* CSS scripts now loaded within the HEAD tag!
+* Improved loadtime!
+* Note that the URL functionality has been temporarily removed, pending it's improvement.
+* Fixes a clash with a function name from another plugin
+
 = 2.9 =
-* Fizes a clash of a function name with other plugins.
+* Fixes a clash of a function name with other plugins.
 * Fixes blank URL for Twitter when Bit.ly limit is exceeded.
 
 = 2.8 =

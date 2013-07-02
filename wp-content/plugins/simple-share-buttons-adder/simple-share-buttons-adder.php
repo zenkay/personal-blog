@@ -3,7 +3,7 @@
 Plugin Name: Simple Share Buttons Adder
 Plugin URI: http://www.simplesharebuttons.com
 Description: A simple plugin that enables you to add share buttons to all of your posts and/or pages.
-Version: 2.9
+Version: 3.1
 Author: David S. Neal
 Author URI: http://www.davidsneal.co.uk/
 License: GPLv2
@@ -35,7 +35,7 @@ GNU General Public License for more details.
 	function ssba_activate() {
 	
 		// insert default options for ssba
-		add_option('ssba_version', 				'2.9');
+		add_option('ssba_version', 				'3.1');
 		add_option('ssba_image_set', 			'somacro');
 		add_option('ssba_size', 				'35');
 		add_option('ssba_pages',				'');
@@ -317,8 +317,8 @@ GNU General Public License for more details.
 		// query the db for current ssba settings
 		$arrSettings = get_ssba_settings();
 
-		// check if not yet updated to 2.9
-		if ($arrSettings['ssba_version'] != '2.9') {
+		// check if not yet updated to 3.1
+		if ($arrSettings['ssba_version'] != '3.1') {
 		
 			// include then run the upgrade script
 			include_once (plugin_dir_path(__FILE__) . '/inc/ssba_upgrade.php');
@@ -420,6 +420,142 @@ GNU General Public License for more details.
 		ssba_admin_panel($arrSettings, $htmlSettingsSaved);
 	}
 	
+	// add CSS to the head
+	add_action( 'wp_head', 'get_ssba_style' );
+	
+	// generate style
+	function get_ssba_style() {
+	
+		// query the db for current ssba settings
+		$arrSettings = get_ssba_settings();
+	
+		// css style
+		$htmlSSBAStyle .= '<style type="text/css">';
+		
+		// check if custom styles haven't been set
+		if ($arrSettings['ssba_custom_styles'] == '') {
+		
+			// use set options
+			$htmlSSBAStyle .= '	#ssba {
+										' . ($arrSettings['ssba_div_padding'] 			!= ''	? 'padding: ' 	. $arrSettings['ssba_div_padding'] . 'px;' : NULL) . '
+										' . ($arrSettings['ssba_border_width'] 			!= ''	? 'border: ' . $arrSettings['ssba_border_width'] . 'px solid ' 	. $arrSettings['ssba_div_border'] . ';' : NULL) . '
+										' . ($arrSettings['ssba_div_background'] 		!= ''	? 'background-color: ' 	. $arrSettings['ssba_div_background'] . ';' : NULL) . '
+										' . ($arrSettings['ssba_div_rounded_corners'] 	== 'Y'	? '-moz-border-radius: 10px; -webkit-border-radius: 10px; -khtml-border-radius: 10px;  border-radius: 10px; -o-border-radius: 10px;' : NULL) . '
+									}
+									#ssba img		
+									{ 	
+										width: ' . $arrSettings['ssba_size'] . 'px !important;
+										padding: ' . $arrSettings['ssba_padding'] . 'px;
+										border:  0;
+										box-shadow: none !important;
+										display: inline;
+										vertical-align: middle;
+									}
+									#ssba, #ssba a		
+									{
+										' . ($arrSettings['ssba_div_background'] == ''	? 'background: none;' : NULL) . '
+										' . ($arrSettings['ssba_font_family'] 	!= ''	? 'font-family: ' . $arrSettings['ssba_font_family'] . ';' : NULL) . '
+										' . ($arrSettings['ssba_font_size']		!= ''	? 'font-size: 	' . $arrSettings['ssba_font_size'] . 'px;' : NULL) . '
+										' . ($arrSettings['ssba_font_color'] 	!= ''	? 'color: 		' . $arrSettings['ssba_font_color'] . '!important;' : NULL) . '
+										' . ($arrSettings['ssba_font_weight'] 	!= ''	? 'font-weight: ' . $arrSettings['ssba_font_weight'] . ';' : NULL) . '
+									}';
+		}
+		
+		// else use set options
+		else {
+
+			// use custom styles
+			$htmlSSBAStyle .= $arrSettings['ssba_custom_styles'];
+			
+		}
+		
+		// if counters option is set to Y
+		if ($arrSettings['ssba_show_share_count'] == 'Y') {
+		
+			// if no custom share count css is set
+			if ($arrSettings['ssba_share_count_css'] == '') {
+			
+				// styles that apply to all counter css sets
+				$htmlSSBAStyle .= '.ssba_sharecount:after, .ssba_sharecount:before {
+										right: 100%;
+										border: solid transparent;
+										content: " ";
+										height: 0;
+										width: 0;
+										position: absolute;
+										pointer-events: none;
+									}
+									.ssba_sharecount:after {
+										border-color: rgba(224, 221, 221, 0);
+										border-right-color: #f5f5f5;
+										border-width: 5px;
+										top: 50%;
+										margin-top: -5px;
+									}
+									.ssba_sharecount:before {
+										border-color: rgba(85, 94, 88, 0);
+										border-right-color: #e0dddd;
+										border-width: 6px;
+										top: 50%;
+										margin-top: -6px;
+									}
+									.ssba_sharecount {
+										font: 11px Arial, Helvetica, sans-serif;
+										
+										padding: 5px;
+										-khtml-border-radius: 6px;
+										-o-border-radius: 6px;
+										-webkit-border-radius: 6px;
+										-moz-border-radius: 6px;
+										border-radius: 6px;
+										position: relative;
+										border: 1px solid #e0dddd;';
+		
+				// if default counter style has been chosen
+				if ($arrSettings['ssba_share_count_style'] == 'default') {
+			
+					// style share count
+					$htmlSSBAStyle .= 	'color: #555e58;
+											background: #f5f5f5;
+										}
+										.ssba_sharecount:after {
+											border-right-color: #f5f5f5;
+										}';
+											
+				} elseif ($arrSettings['ssba_share_count_style'] == 'white') {
+				
+					// show white style share counts
+					$htmlSSBAStyle .= 	'color: #555e58;
+											background: #ffffff;
+										}
+										.ssba_sharecount:after {
+											border-right-color: #ffffff;
+										}';
+					
+				} elseif ($arrSettings['ssba_share_count_style'] == 'blue') {
+				
+					// show blue style share counts
+					$htmlSSBAStyle .= 	'color: #ffffff;
+											background: #42a7e2;
+										}
+										.ssba_sharecount:after {
+											border-right-color: #42a7e2;
+										}';
+				}
+			} else {
+			
+				// custom style
+				$htmlSSBAStyle .= $arrSettings['ssba_share_count_css'];
+			}
+		}
+		
+		// close style tag
+		$htmlSSBAStyle .= '</style>';
+		
+		// return
+		echo $htmlSSBAStyle;
+	}
+	
 	// --------- SHARE BUTTONS ------------ //
 	
 	// return ssba settings
@@ -471,129 +607,6 @@ GNU General Public License for more details.
 
 		// placement on pages/posts/categories/archives/homepage
 		if (is_page() && $arrSettings['ssba_pages'] == 'Y' || is_single() && $arrSettings['ssba_posts'] == 'Y' || is_category() && $arrSettings['ssba_cats_archs'] == 'Y' || is_archive() && $arrSettings['ssba_cats_archs'] == 'Y' || is_home() && $arrSettings['ssba_homepage'] == 'Y' || $booShortCode == TRUE) {
-		
-			// css style
-			$htmlShareButtons .= '<style type="text/css">';
-			
-			// check if custom styles haven't been set
-			if ($arrSettings['ssba_custom_styles'] == '') {
-			
-				// use set options
-				$htmlShareButtons .= '	#ssba {
-											' . ($arrSettings['ssba_div_padding'] 			!= ''	? 'padding: ' 	. $arrSettings['ssba_div_padding'] . 'px;' : NULL) . '
-											' . ($arrSettings['ssba_border_width'] 			!= ''	? 'border: ' . $arrSettings['ssba_border_width'] . 'px solid ' 	. $arrSettings['ssba_div_border'] . ';' : NULL) . '
-											' . ($arrSettings['ssba_div_background'] 		!= ''	? 'background-color: ' 	. $arrSettings['ssba_div_background'] . ';' : NULL) . '
-											' . ($arrSettings['ssba_div_rounded_corners'] 	== 'Y'	? '-moz-border-radius: 10px; -webkit-border-radius: 10px; -khtml-border-radius: 10px;  border-radius: 10px; -o-border-radius: 10px;' : NULL) . '
-										}
-										#ssba img		
-										{ 	
-											width: ' . $arrSettings['ssba_size'] . 'px !important;
-											padding: ' . $arrSettings['ssba_padding'] . 'px;
-											border:  0;
-											box-shadow: none !important;
-											display: inline;
-											vertical-align: middle;
-										}
-										#ssba, #ssba a		
-										{
-											' . ($arrSettings['ssba_div_background'] == ''	? 'background: none;' : NULL) . ';
-											' . ($arrSettings['ssba_font_family'] 	!= ''	? 'font-family: ' . $arrSettings['ssba_font_family'] . ';' : NULL) . '
-											' . ($arrSettings['ssba_font_size']		!= ''	? 'font-size: 	' . $arrSettings['ssba_font_size'] . 'px;' : NULL) . '
-											' . ($arrSettings['ssba_font_color'] 	!= ''	? 'color: 		' . $arrSettings['ssba_font_color'] . '!important;' : NULL) . '
-											' . ($arrSettings['ssba_font_weight'] 	!= ''	? 'font-weight: ' . $arrSettings['ssba_font_weight'] . ';' : NULL) . '
-										}';
-			}
-			
-			// else use set options
-			else {
-
-				// use custom styles
-				$htmlShareButtons .= $arrSettings['ssba_custom_styles'];
-				
-			}
-			
-			// if counters option is set to Y
-			if ($arrSettings['ssba_show_share_count'] == 'Y') {
-			
-				// if no custom share count css is set
-				if ($arrSettings['ssba_share_count_css'] == '') {
-				
-					// styles that apply to all counter css sets
-					$htmlShareButtons .= '.ssba_sharecount:after, .ssba_sharecount:before {
-											right: 100%;
-											border: solid transparent;
-											content: " ";
-											height: 0;
-											width: 0;
-											position: absolute;
-											pointer-events: none;
-										}
-										.ssba_sharecount:after {
-											border-color: rgba(224, 221, 221, 0);
-											border-right-color: #f5f5f5;
-											border-width: 5px;
-											top: 50%;
-											margin-top: -5px;
-										}
-										.ssba_sharecount:before {
-											border-color: rgba(85, 94, 88, 0);
-											border-right-color: #e0dddd;
-											border-width: 6px;
-											top: 50%;
-											margin-top: -6px;
-										}
-										.ssba_sharecount {
-											font: 11px Arial, Helvetica, sans-serif;
-											
-											padding: 5px;
-											-khtml-border-radius: 6px;
-											-o-border-radius: 6px;
-											-webkit-border-radius: 6px;
-											-moz-border-radius: 6px;
-											border-radius: 6px;
-											position: relative;
-											border: 1px solid #e0dddd;';
-			
-					// if default counter style has been chosen
-					if ($arrSettings['ssba_share_count_style'] == 'default') {
-				
-						// style share count
-						$htmlShareButtons .= 	'color: #555e58;
-												background: #f5f5f5;
-											}
-											.ssba_sharecount:after {
-												border-right-color: #f5f5f5;
-											}';
-												
-					} elseif ($arrSettings['ssba_share_count_style'] == 'white') {
-					
-						// show white style share counts
-						$htmlShareButtons .= 	'color: #555e58;
-												background: #ffffff;
-											}
-											.ssba_sharecount:after {
-												border-right-color: #ffffff;
-											}';
-						
-					} elseif ($arrSettings['ssba_share_count_style'] == 'blue') {
-					
-						// show blue style share counts
-						$htmlShareButtons .= 	'color: #ffffff;
-												background: #42a7e2;
-											}
-											.ssba_sharecount:after {
-												border-right-color: #42a7e2;
-											}';
-					}
-				} else {
-				
-					// custom style
-					$htmlShareButtons .= $arrSettings['ssba_share_count_css'];
-				}
-			}
-			
-			// close style tag
-			$htmlShareButtons .= '</style>';
 			
 			// ssba div
 			$htmlShareButtons.= '<!-- I got these buttons from simplesharebuttons.com --><div id="ssba">';
@@ -633,11 +646,11 @@ GNU General Public License for more details.
 				if ($atts['url'] != '') {
 					
 					// set page URL and title as set by user
-					$urlCurrentPage = (isset($atts['url']) ? $atts['url'] : get_current_url());
+					$urlCurrentPage = (isset($atts['url']) ? $atts['url'] : ssba_current_url());
 					$strPageTitle = (isset($atts['title']) ? $atts['title'] : NULL);
 				} else {
 					// get page name and url from functions
-					$urlCurrentPage = get_current_url();
+					$urlCurrentPage = ssba_current_url();
 					$strPageTitle = $_SERVER["SERVER_NAME"];
 				}
 				
@@ -724,7 +737,7 @@ GNU General Public License for more details.
 	}
 	
 	// get URL function
-	function get_current_url() {
+	function ssba_current_url() {
 	
 		// add http
 		$urlCurrentPage = 'http';
@@ -862,12 +875,12 @@ function getFacebookShareCount($urlCurrentPage) {
 // get twitter button
 function ssba_twitter($arrSettings, $urlCurrentPage, $strPageTitle, $booShowShareCount) {
 
-	// remove any | symbols from the page title to allow page to be shared successfully
-	$strPageTitle = str_replace('|', '', $strPageTitle);
-	$strPageTitle = str_replace('%', ' percent', $strPageTitle);
+	// format the URL into friendly code
+	$strPageTitle = urlencode($strPageTitle);
+	$strTwitterText = ($arrSettings['ssba_twitter_text'] != '' ? urlencode($arrSettings['ssba_twitter_text']) : NULL);
 
 	// twitter share link
-	$htmlShareButtons .= '<a id="ssba_twitter_share" href="http://twitter.com/share?url=' . ssba_shorten($urlCurrentPage) . '&text=' . ($arrSettings['ssba_twitter_text'] != '' ? $arrSettings['ssba_twitter_text'] : NULL) . ' ' . $strPageTitle . '" ' . ($arrSettings['ssba_share_new_window'] == 'Y' ? 'target="_blank"' : NULL) . '>';
+	$htmlShareButtons .= '<a id="ssba_twitter_share" href="http://twitter.com/share?url=' . $urlCurrentPage . '&text=' . $strTwitterText . ' ' . $strPageTitle . '" ' . ($arrSettings['ssba_share_new_window'] == 'Y' ? 'target="_blank"' : NULL) . '>';
 	
 	// if image set is not custom
 	if ($arrSettings['ssba_image_set'] != 'custom') {
