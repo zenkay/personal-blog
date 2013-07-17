@@ -1,14 +1,13 @@
-=== Google Plus Authorship ===
-Contributors: mlazarov
-Donate Link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=D96ZZLGAV8X8J
+=== WP Google Authorship ===
+Contributors: mervinpraison
+Donate Link: http://mervin.info
 Tags: google plus, google plus author, authorship, google authorship, google, google plus integration, google plus search
 Requires at least: 3.0
 Tested up to: 3.3
 Stable tag: trunk
 
-Add Google Plus Profile Picture to Google Search Results. Very Easy to implement!
-
-Google authorship for multiple authors
+Google Plus Profile Picture appear in Google Search. Very Easy to implement. Just 4 step Process. 
+Including Google authorship for multiple authors
 
 == Description ==
 
@@ -16,12 +15,14 @@ Google Plus Profile Picture appear in Google Search. Integrate Google Plus Profi
 
 Including Google authorship for multiple authors and for wordpress multisite
 
-Just 3 easy steps to process:
-1. Plugin Installation
-2. Enter Google Profile URL in Profile Page
-3. Post a link back from Google Plus Profile to Your Current Website
+= Google Plus Author =
 
+* Very Easy to implement.
+* Just 4 step Process.
 
+= Google Authorship =
+
+Documentation of <a href="http://mervin.info/google-plus-author">Google Authorship</a> By <a href="http://mervin.info">Mervin</a> Praison
 
 == Installation ==
 
@@ -29,7 +30,7 @@ Just 3 easy steps to process:
 
 1. Download the zip file
 2. Extract the contents
-3. Upload the folder `google-plus-authorship` to your WP plugin folder `/wp-content/plugins/` directory
+3. Upload the folder `google-plus-author` to your WP plugin folder `/wp-content/plugins/` directory
 4. Go to Plugins > Plugins, and activate the plugin
 
 
@@ -39,6 +40,17 @@ Just 3 easy steps to process:
 
 = Step 3 =
 
+* Use this shortcode '[googleplusauthor]' on your page content.
+
+Note: If you have Author Page, add this Shortcode their also.
+
+Or
+
+Code: <?php if ( function_exists( 'google_plus_author' ) ) { google_plus_author(); } ?>
+
+
+= Step 4 =
+
 * Get a link back from your Google Plus Profile
 
 1. Sign in your Google profile. 
@@ -46,7 +58,15 @@ Just 3 easy steps to process:
 3. Click the Contributor To section on the right, and then click Add custom link. Get a link from their. ( For the first time, add a link from description area, other profiles, contributor to, and from recommended link.
 4. Click Save.
 
+== ChangeLog ==
+= Version 1.0 =
+
+* First release.
+
 == Frequently Asked Questions ==
+
+= What is its Shortcode? =
+[googleplusauthor]
 
 
 == Screenshots ==
@@ -54,13 +74,21 @@ Just 3 easy steps to process:
 2. Profile Page Setup
 3. Rich Snippet Testing Tool
 
-== Changelog ==
-= 2.3 =
-* Code cleanup
-= 2.2 =
-* Fixed author blog url
-= 2.1 =
-* Fixed readme.txt texts 
+== Upgrade Notice ==
+
 = 1.0 =
+The Google Plus Author Profile Integration in Google Search
+
+
+== Version history ==
+
+= Version 1.0 =
+
+* Initial release version.
+
+== Changelog ==
+= 1.0 =
+
+* Google Plus Author Profile Integration, Shortcode Created.
 * Google Authorship for Multiple Authors
 * Google Authorship for wordpress multisite.
