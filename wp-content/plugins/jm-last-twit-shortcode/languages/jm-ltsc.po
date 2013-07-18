@@ -1,0 +1,194 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Text in function
+#: jm-ltsc.php
+msgid " hours ago"
+msgstr ""
+
+#. Text in function
+#: jm-ltsc.php
+msgid " minutes ago"
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "*This is the time in the course of which your tweet will be stored. This allows us to limit server requests."
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "Before"
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "Do not forget to go to"
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "Donate to this plugin"
+msgstr ""
+
+#. Text in function
+#: jm-ltsc.php
+msgid "Favorite"
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "How to"
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "JM Last Twit Shortcode Options"
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "Options"
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "Provide your Twitter username (used by default and without @)"
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "Provide your application consumer key"
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "Provide your application consumer secret"
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "Provide your oAuth Token"
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "Provide your oAuth Token Secret"
+msgstr ""
+
+#. Text in function
+#: jm-ltsc.php
+msgid "Rate limits are exceed!"
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "Rate the plugin on WordPress.org"
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "Really easy, just put <strong>[jmlt]</strong> in your posts."
+msgstr ""
+
+#. Text in function
+#: jm-ltsc.php
+msgid "Reply"
+msgstr ""
+
+#. Text in function
+#: jm-ltsc.php
+msgid "Retweet"
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "Set expired time for transient (30 min at least)"
+msgstr ""
+
+#. Text in function
+#: jm-ltsc.php
+msgid "Something is wrong or missing. "
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "This plugin allows you to get your last Tweet with the last Twitter API (1.1). Pretty useful because <strong>Twitter API 1.0 is to cease functioning in june 2013</strong>."
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "To add your own style, just use these CSS classes in your main stylesheet"
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "To change Twitter Acount in a post, just put <strong>[jmlt username=\"twitter\"]</strong> and you will get tweets by @twitter"
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "To use the shortcode in templates, just use <em>echo apply_filters(\"the_content\",\"[jmlt]\")</em>"
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "To use the shortcode in text widgets, just use shortcode like you do in posts."
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "Tweet it"
+msgstr ""
+
+#. Text in function
+#: jm-ltsc.php
+msgid "Twitter is overwhelmed or something bad happened with its API."
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "Use quicktags buttons in HTML editor if you are not sur of how to use shortcode or if you just want to spare time."
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "Useful links"
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "You can even change timeline, e.g <strong>[jmlt tl=\"mentions_timeline\"]</strong> will display last mention of your Twitter account. Default is user_timeline. Other options are retweets_of_me and home_timeline."
+msgstr ""
+
+#. Text in function
+#: jm-ltsc.php
+msgid "Your credentials might be unset or incorrect or username is wrong. In any case this error is not due to Twitter API."
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "follow me on Twitter"
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "https://twitter.com/intent/tweet?source=webclient&amp;hastags=WordPress,Plugin&amp;text=JM%20Last%20Twit%20%20Shortcode%20a%20great%20WordPress%20plugin%20to%20get%20your%20last%20tweet%20Try%20it!&amp;url=http://wordpress.org/extend/plugins/jm-last-twit-shortcode/&amp;related=TweetPressFr&amp;via=TweetPressFr"
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "to create your application <strong>before anything</strong> cause you might forget get it after. In any case you will need token to proceed."
+msgstr ""
+
+#. Text in echo
+#: jm-ltsc.php
+msgid "Do not try to display mentions or retweets from other accounts from yours. This logically impossible !"
+msgstr ""
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "Plugin displays tweets in an unordered list you can style in your own stylesheet with CSS classes <code>tweet-name {}</code>, <code>.tweet-screen-name {}</code>, <code>.tweet-twittar {}</code>, <code>.tweet-timestamp{}</code>, <code>.time-date{}</code>, <code>.tweet-timediff{}</code>, <code>.intent-meta{}</code>, <code>.tweet-reply{}</code>, <code>.tweet-retweet{}</code>, <code>.tweet-favorite{}</code>. To apply styles to the text of you tweets just us CSS class <code>.tweet-content{}</code>"
+msgstr ""
