@@ -485,3 +485,29 @@ msgstr "Taile minimum (width: 280px - height: 150px)"
 #: jm-twitter-cards.php
 msgid "Current featured image size is : "
 msgstr "La taille de la featured image actuelle est : "
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid ""
+"In case you do not use SEO plugins such as WP SEO or All in One SEO and want "
+"to use values from custom fields you have already created instead"
+msgstr ""
+"Au cas où vous préférez utiliser des champs personnalisés que vous avez déjà "
+"créés plutôt que des plugins de SEO comme WP SEO ou All in One SEO"
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "Enter key for card title"
+msgstr "Entrez la clé pour le titre des cards"
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "Enter key for card description"
+msgstr "Entrez la clé pour la description des cards"
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "This allows you to grab datas from custom fields you have created."
+msgstr ""
+"Ceci vous permet de récupérer les données depuis les champs personnalisés "
+"que vous avez créés."

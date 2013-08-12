@@ -2,7 +2,7 @@
 Contributors: jmlapam
 Tags: twitter, cards, semantic markup, metabox, meta
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=tweetpressfr%40gmail%2ecom&item_name=JM%20Twitter%20Cards&no_shipping=0&no_note=1&tax=0&currency_code=EUR&bn=PP%2dDonationsBF&charset=UTF%2d8
-Requires at least: 3.0
+Requires at least: 3.1.0
 Tested up to: 3.6
 License: GPLv2 or later
 Stable tag: trunk
@@ -14,9 +14,6 @@ A plugin meant to simplify Twitter cards integration on WordPress. You can custo
 
 Once activated the plugin adds Twitter cards on your posts according to your settings. Enjoy !
 Compatible with : WP SEO by Yoast (do not check cards option in this plugin if activated) and All in One SEO
-
-**New feature in version 3.1.8 : Product cards** see FAQ
-**New feature in 3.2.1** : you can define thumbnail size for featured image, just use the simple drop down menu (be careful with this feature, a lot of files are generated, **see FAQ** for the solution)
 
 The plugin allows you to customize your cards per each post. But do not activate cards in SEO by Yoast plugin. Otherwise markup will be added twice.
 If you choose full customization metabox is now on the right side in your edit. It's shorter simply because now twitter account is retrieved from author's profile.
@@ -31,9 +28,6 @@ En Français
 Une fois activé le plugin s'occupe d'ajouter une card Twitter sur vos posts selon vos réglages. Profitez-en bien !
 
 Compatible avec WP SEO by Yoast(ne pas ajouter l'option cards dans ce plugin si activé) et All in One SEO
-
-**Nouveauté dans la version 3.1.8 : les cards de type Produit** : consultez la FAQ
-**Nouveauté dans la version 3.2.1**: vous pouvez définir la taille de la featured image, utilisez le menu déroulant (attention avec cette nouvelle fonctionnalité, elle peut générer beaucoup de fichiers image, **voir la FAQ** pour la solution)
 
 Le plugin vous permet de personnaliser les cards pour chaque post. Attention malgré tout à ne pas activer l'option card de Yoast ou sinon le markup sera ajouté 2 fois.
 En mode full custom la metabox est maintenant située sur le côté tout en haut, elle est réduite car le compte Twitter de l'auteur est récupéré directement depuis son profil.
@@ -76,7 +70,11 @@ If it still doesn't work please open a thread on support or at this URL: <a href
 Just activate meta box, select **card type product** and save draft. 4 new fields will appear and you'll be able to set your product card.
 
 = The plugin generates a lot of images (different sizes) = 
-I can be a problem when you work with HD and/or a lot of images. So you can use plugins that just delete unused image, e.g <a href="http://wordpress.org/plugins/dynamic-image-resizer/">dynamic-image-resizer</a>
+I can be a problem when you work with HD and/or a lot of images. So you can use plugins that just delete unused image, e.g <a href="http://wordpress.org/plugins/dnui-delete-not-used-image-wordpress/">DNUI</a>
+
+= How do I use the custom fields option? = 
+Basically you provide your custom field keys in plugin option page and then it will grab datas.
+
 ––––
 En Français 
 –––––––––––––––––––––––––––––––––––
@@ -97,7 +95,11 @@ Si cela ne marche toujours pas SVP ouvrez un topic sur le support du plugin ou �
 Activez la meta box et sélectionnez **le type product** pour la card. Sauvez le brouillon et 4 champs apparaîtront pour mettre en place la card product.
 
 = Le plugin génère beaucoup trop de fichiers images = 
-Cela peut poser problème si vous travaillez avec de la HD et/ou beaucoup d'images. Vous pouvez donc utiliser un plugin qui va effacer les fichiers images non utilisés comme par exmple <a href="http://wordpress.org/plugins/dynamic-image-resizer/">dynamic-image-resizer</a>
+Cela peut poser problème si vous travaillez avec de la HD et/ou beaucoup d'images. Vous pouvez donc utiliser un plugin qui va effacer les fichiers images non utilisés comme par exmple <a href="http://wordpress.org/plugins/dnui-delete-not-used-image-wordpress/">DNUI</a>
+
+= Comment utiliser l'option custom fields? = 
+Il suffit de renseigner les clés de vos custom fields en page d'option et le plugin s'occupera de récupérer les datas correspondantes.
+
 
 == Screenshots ==
 1. admin
@@ -105,6 +107,49 @@ Cela peut poser problème si vous travaillez avec de la HD et/ou beaucoup d'imag
 3. metabox
 
 == Changelog ==
+
+=  3.3.0 =
+* 09 Aug 2013
+* Simpler UI is better. I just merged some fieldsets in option page to make it clearer. Don't panic I did not delete anything.
+* Add a documentation (only in English for the moment)
+* Crop can now be deactivated on images. Do not forget to regenerate your thumbnails if you set this option to false.
+* Add an uninstall.php file (to clean database if plugin is desinstalled) 
+
+=  3.2.9 =
+* 07 Aug 2013
+* bugfix: cf issue reported support regarding twitter image. 
+* Twitter card Image should not be empty anymore in case you use external URL for image but no featured image.
+
+=  3.2.8 =
+* 30 Jul 2013
+* bugfix with image size.
+* add crop to thumbnails to prevent error due to images with sumarry large image cards
+
+=  3.2.7 =
+* 24 Jul 2013
+* bug fix for users who report issues with title and desc >> "array" error
+* Thanks a lot to BuckBeaver who's tested this update in real live condition to ensure it's working again.
+
+=  3.2.6 =
+* 23 Jul 2013
+* IMPORTANT bugfix
+* new custom fields grabbing used to break some configuration
+* will work own my own function to prevent description from displaying line-breaks
+
+
+=  3.2.5 =
+* 22 Jul 2013
+* remove strip_tags() and strip_shortcodes() in jm_tc_remove_space() I already use in get_excerpt_by_id()
+* warning should be gone now
+
+=  3.2.4 =
+* 22 Jul 2013
+* fix bug array to string conversion if no option is set
+
+=  3.2.3 =
+* 21 Jul 2013
+* Add support for Advanced Custom Field (ACF). You can now use custom fields for title and description in case you do not use SEO plugins.
+* Be careful, if WP SEO or All in One SEO is activated, title and desc from your custom fields will override.
 
 =  3.2.2 =
 * 08 Jul 2013

@@ -12,13 +12,8 @@ msgstr ""
 
 #. Text in function
 #: jm-ltsc.php
-msgid " hours ago"
-msgstr " heures "
-
-#. Text in function
-#: jm-ltsc.php
-msgid " minutes ago"
-msgstr " minutes "
+msgid " ago"
+msgstr " "
 
 #. Text in echo
 #: jm-ltsc.php

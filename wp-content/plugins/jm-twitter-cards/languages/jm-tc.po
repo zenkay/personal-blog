@@ -406,3 +406,25 @@ msgstr ""
 #: jm-twitter-cards.php
 msgid "Current featured image size is : "
 msgstr ""
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "In case you do not use SEO plugins such as WP SEO or All in One SEO and want to use values from custom fields you have already created instead"
+msgstr ""
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "Enter key for card title"
+msgstr ""
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "Enter key for card description"
+msgstr ""
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "This allows you to grab datas from custom fields you have created."
+msgstr ""
+
+

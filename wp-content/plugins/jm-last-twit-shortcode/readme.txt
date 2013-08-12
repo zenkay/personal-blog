@@ -13,7 +13,7 @@ A plugin meant to add your last tweet with the lattest API way :
 == Description ==
 
 Once activated the plugin displays your latest tweet according to your settings with authenticated connexion and thanks to a shortcode. 
-See **FAQ** here and/or option page of plugin on your installation
+See **FAQ** here and/or option page of plugin on your installation.
 
 <a href="http://twitter.com/tweetpressfr">Follow me on Twitter</a>
 
@@ -106,13 +106,21 @@ Cela effacera les transients
 
 == Changelog ==
 
+= 3.3.1 =
+* 09 Aug 2013
+* Add some PHP version checking to be sure users are on PHP 5.3 at least.
+* Bugfix, permission error ion option pages
+
+= 3.3.0 =
+* 09 Aug 2013
+* Use now composer to load library and all dependencies 
+* Add new parameters (and of course new quicktags ^^) : [jmlt exclude_replies="true"] will exclude replies from your timeline, [jmlt include_rts="false"] will exclude RTs from your timeline, thanks Marie For the idea ;)
+
 = 3.2.9 =
 * 04 July 2013
 * Improve CSS and add a real example I use on one of my site : http://apis.tweetpress.fr/twitter-feed
 * Make styling easier by changing span and adding markup
-* Next update will include some js to improve Ux (refresh)
 * Have a nice day ^^
-
 
 = 3.2.8 =
 * 29 june 2013

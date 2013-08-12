@@ -4,7 +4,7 @@ Plugin Name: Easy Table
 Plugin URI: http://takien.com/
 Description: Create table in post, page, or widget in easy way.
 Author: Takien
-Version: 1.1.1
+Version: 1.1.4
 Author URI: http://takien.com/
 */
 
@@ -19,9 +19,6 @@ Author URI: http://takien.com/
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-
-    For a copy of the GNU General Public License, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 if(!defined('ABSPATH')) die();
@@ -58,7 +55,8 @@ var $settings = Array(
 	'nl'            => '~~',
 	'csvfile'       => false,
 	'terminator'    => '\n', /*row terminator, since 1.0*/
-	'limit'         => 0 /*max row to be included to table, 0 = unlimited, since 1.0*/
+	'limit'         => 0, /*max row to be included to table, 0 = unlimited, since 1.0*/
+	'fixlinebreak'  => false
 );
 
 
@@ -88,7 +86,7 @@ function __construct(){
 private function easy_table_base($return){
 	$easy_table_base = Array(
 				'name' 			=> 'Easy Table',
-				'version' 		=> '1.1.1',
+				'version' 		=> '1.1.4',
 				'plugin-domain'	=> 'easy-table'
 	);
 	return $easy_table_base[$return];
@@ -118,6 +116,7 @@ function easy_table_short_code($atts, $content="") {
 		'style'	        => '', /*table inline style, since 1.0*/
 		'colalign'      => '', /*column align, ex: [table colalign="left|right|center"], @since 1.0*/
 		'colwidth'      => '', /*column width, ex: [table colwidth="100|200|300"], @since 1.0*/
+		'fixlinebreak'  => $this->option('fixlinebreak') /* fix linebreak on cell if terminator is not \n or \r @since 1.1.4 */
 	 ), $atts);
 	/**
 	* because clean_pre is deprecated since WordPress 3.4, then replace it manually
@@ -187,7 +186,7 @@ private function csv_to_table($data,$args){
 		/*
 		convert csv to array.
 		*/
-		$data 	= $this->csv_to_array(trim($data), $delimiter, $enclosure, $escape,$terminator);
+		$data 	= $this->csv_to_array(trim($data), $delimiter, $enclosure, $escape, $terminator, $limit);
 	}
 	
 	if(empty($data)) return false;
@@ -212,8 +211,15 @@ private function csv_to_table($data,$args){
 	* @since 0.4
 	*/
 	$tfpos = ($tf == 'last') ? count($data) : ($th?2:1);
+	
+	/**
+	* add auto width
+	* @since 1.1.3
+	*/	
 
-	$width = (stripos($width,'%') === false) ? (int)$width.'px' : (int)$width.'%';
+	if ( 'auto' !== $width ) {
+ 		$width = (stripos($width,'%') === false) ? (int)$width.'px' : (int)$width.'%';
+ 	}
 	
 	/*colalign & colwidth
 	@since 1.0
@@ -226,7 +232,9 @@ private function csv_to_table($data,$args){
 	}
 	
 	$output = '<table '.($id ? 'id="'.$id.'"':'');
-	$output .= ' width="'.$width.'" ';
+	
+	//$output .= ' width="'.$width.'" '; width attr not used, use style instead (see below) - since 1.1.3
+	
 	$output .= ' style="'.((stripos($style,'width') === false) ? ('width:'.$width.';') : $style).'" ';
 	$output .= ' class="easy-table easy-table-'.$theme.' '.($tablesorter ? 'tablesorter __sortlist__ ':'').$class.'" '.
 	(($border !=='0') ? 'border="'.$border.'"' : '').
@@ -315,9 +323,13 @@ ai head, text to shown in the table head row, default is No.
 			$cell  = $trim ? trim(str_replace('&nbsp;','',$cell)) : $cell;
 			
 			/*nl2br? only if terminator is not \n or \r*/
-			if(( '\n' !== $terminator )  OR ( '\r' !== $terminator )) {
-				$cell = nl2br($cell);
-			}	
+			/* optionally, if $fixlinebreak is set. @since 1.1.4 */
+			
+			if ( $fixlinebreak ) {
+				if(( '\n' !== $terminator )  OR ( '\r' !== $terminator )) {
+					$cell = nl2br($cell);
+				}
+			}
 			/*colalign
 			 @since 1.0
 			 */
@@ -832,6 +844,13 @@ settings_fields('easy_table_option_field');
 			'type'			=> 'text',
 			'value'			=> $this->option('escape'),
 			'description'	=>__('CSV escape (default is backslash)','easy-table'))
+		,Array(
+			'name'			=> 'easy_table_plugin_option[fixlinebreak]',
+			'label'			=> __('Fix linebreak','easy-table'),
+			'type'			=> 'checkbox',
+			'value'			=> 1,
+			'description'	=> __('If terminator is not default (linebreak), you may encounter some issue with linebreak inside cell, try to check or uncheck this to resolve','easy-table'),
+			'attr'			=> $this->option('fixlinebreak') ? 'checked="checked"' : '')
 		,Array(
 			'name'			=> 'easy_table_plugin_option[csvfile]',
 			'label'			=> __('Allow read CSV from file?','easy-table'),

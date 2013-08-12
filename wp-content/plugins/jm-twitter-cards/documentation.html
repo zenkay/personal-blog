@@ -1,0 +1,298 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<title>JM Twitter API Status Monitor - Documentation</title>
+
+<style type="text/css">
+html {
+background: #eee;
+	font-size: 100%;
+}
+body {
+width: 772px;
+padding:1em 2em;
+margin:auto;
+	font-family: Georgia, Times, "Times New Roman", serif;
+	font-size:100%;
+	line-height: 150%;
+color: #444;
+	font-size: 1;
+background: #fff;
+	box-shadow: 0 0 3px rgba(0,0,0,0.3);
+}
+blockquote{border:none; font-family: Georgia, serif;  font-style: italic; margin: 0.25em 0; padding: 0.25em 40px; line-height: 1.45; position: relative; color:#888; background:transparent;}
+blockquote:before{display: block; content: "\201C"; font-size: 80px; position: absolute; left: -5px; top: -20px; color:#888;}
+
+p { max-width: 650px; }
+img { border:1px solid #ccc; }
+.right { text-align:right;}
+.pa1 { padding:1em; }
+a { color: #00ACED; }
+h1 { margin-top:1.7em; margin-bottom:.7em;}
+h2 {
+margin-top: 1.5em;
+padding-top: 1em;
+border-top: 1px solid #eee;
+font-size: 2em;
+font-weight:normal;
+}
+.author {
+width: 40%;
+margin: 0 0 .9em .9em;
+background: #eee;
+border: 1px solid #ddd;
+padding: 20px;
+font-size: 0.8em;
+overflow: hidden;
+}
+.author img {
+float: left;
+	margin-top: 5px;
+	margin-right: 20px;
+}
+
+.mess-customer {
+ float:left;
+}
+
+.bold {
+border: 1px solid darkred;
+display:inline-block;
+color: #444;
+padding: 12px;
+background: #FFEBE8;
+}
+
+pre {
+background-color:#FFFFE0;
+padding:1em;
+border-left:5px solid #ccc;
+}
+
+.btn {
+	text-decoration: none;
+	text-shadow: 0 1px 0 #fff;
+	font: bold 11px Helvetica, Arial, sans-serif;
+	color: #444;
+	line-height: 17px;
+	height: 18px;
+	display: inline-block;
+	float: left;
+	margin: 5px;
+	padding: 5px 6px 4px 6px;
+	background: #F3F3F3;
+	border: solid 1px #D9D9D9;
+	border-radius: 2px;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+ -webkit-transition: border-color .20s;
+ -moz-transition: border-color .20s;
+ -o-transition: border-color .20s;
+ transition: border-color .20s;
+	height: 29px !important;
+	cursor: pointer;
+}
+.btn:hover {
+	background: #F4F4F4;
+	border-color: #C0C0C0;
+	color: #333;
+}
+.btn:active {
+	border-color: #4D90FE;
+	color: #4D90FE;
+	-moz-box-shadow:inset 0 0 10px #D4D4D4;
+	-webkit-box-shadow:inset 0 0 10px #D4D4D4;
+	box-shadow:inset 0 0 10px #D4D4D4;
+}
+
+.footer {
+padding: 1em;
+border-top:1px solid #ddd;
+}
+
+</style>
+</head>
+<body>
+<h1>JM Twitter Cards - Documentation</span></h1>
+
+<p class="author">
+Created: 9/8/2013<br />
+<img src="http://0.gravatar.com/avatar/2b7ad0c6e3eda4b16a34425c86ad3c96?s=100&amp;d=&amp;r=G" alt="Julien Maury" width="50" height="50" />
+by Julien Maury.<br />
+French blogger and developer <br />
+for <a href="http://tweetpress.fr/" title="tips for WordPress and Twitter APIs">TweetPress.fr</a></p>
+<p><a class="btn" href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=tweetpressfr%40gmail%2ecom&item_name=JM%20Twitter%20Cards&no_shipping=0&no_note=1&tax=0&currency_code=EUR&bn=PP%2dDonationsBF&charset=UTF%2d8">Donate to this plugin</a></p>
+<p><a class="btn" href="http://twitter.com/intent/user?screen_name=TweetPressFr">Follow me</a></p>
+
+<div id="menu">
+<h2>Table of content</h2>
+<ul>
+	<li><a href="#3w">What are Twitter Cards?</a></li>
+	<li><a href="#validation">Validation</a></li>
+	<li> <a href="types">Different type of cards</a>
+		<ul>
+			<li><a href="#summarycards">Summary cards</a></li>
+			<li><a href="#summarylargecards">Summary Large Image cards</a></li>
+			<li><a href="#photocards">Photo cards</a></li>
+			<li><a href="#productcards">Product cards</a></li>
+		</ul>
+	</li>
+	<li><a href="#setting">Plugin settings</a>
+		<ul>
+			<li><a href="#general">General</a></li>
+			<li><a href="#seo">SEO</a></li>
+			<li><a href="#images">Images</a></li>
+			<li><a href="#pagehome">Home settings</a></li>
+			<li><a href="#product">Product cards settings</a></li>
+			<li><a href="#metabox">Meta Box settings</a></li>
+		</ul>
+	</li>
+	<li><a href="#use">Common Issues</a>
+		<ul>
+			<li><a href="#faq-crawl">Twitter Card Validator does not work !</a></li>
+			<li><a href="#faq-image">I don't see images in tweets !</a></li>
+			<li><a href="#faq-cf">How do I use the custom fields option?</a></li>
+			<li><a href="#faq-mb-option">I do not see all options in meta box</a></li>
+		</ul>
+	</li>
+	<li><a href="#sources">Sources and Credits</a></li>
+</ul>
+</div>
+
+<h2 id="3w">What are Twitter cards?</h2>
+
+<img src="https://www.diigo.com/item/p/pssaddpzbqoderasszbbasqoac/fc40553932dddb9f653f014fdf21ef15" alt="" />
+
+<blockquote>
+Twitter cards make it possible for you to attach media experiences to Tweets that link to your content. Simply add a few lines of HTML to your webpages, and users who Tweet links to your content will have a "card" added to the Tweet that's visible to all of their followers.
+</blockquote>
+
+<h1 id="validation">Validation</h1>
+	<p><strong>Do not forget to validate your website on dev.twitter :</strong></p>
+	<ul class="jm-tools">
+		<li><a class="jm-preview" title="Twitter Cards Preview Tool" target="_blank" href="https://dev.twitter.com/docs/cards/validation/validator" rel="nofollow" target="_blank">Preview tool</a></li>
+		<li><a class="jm-valid-card" title="Twitter Cards Application Form" target="_blank" href="https://dev.twitter.com/docs/cards/validation/validator" rel="nofollow" target="_blank">Validation form</a></li>
+	</ul>
+
+<h1 id="types">Different types of cards</h1>
+<h2 id="summarycards">Summary cards</h2>
+<p><img src="https://www.diigo.com/item/p/pssaddpzbqodespsszbbasqorr/b34d843472dc6bff3751cdb0cb0a59f9" alt="" /></p>
+
+<h2 id="summarlargecards">Summary Large Image cards</h2>
+<p><img src="https://www.diigo.com/item/p/pssaddpzbqoderrdozbbasqodc/76848fbf459ade3a442a50ed67aa65dd" alt="" /></p>
+<p>
+Almost the same card as Summary Card but with a large image. It is nice, isn't it?
+</p>
+<p> 
+ This card requires a minimum width of 280, and a minimum height of 150, the same requirement as Photo cards, that's why it's the smallest size used by the plugin.
+</p>
+<p> 
+The image must not be more than 1mb in size that's why the custom Meta Box includes a checking system that assess your image size and display the result on each post edit.
+If you do not use cutom meta box be sure to upload image smaller than 1mb in size. If your image is heavier, your card will not break because meta image is not required for summary and summary large image cards but no image will be displayed in your tweets.
+</p> 
+
+<h2 id="photocards">Photo cards</h2>
+<p><img src="https://www.diigo.com/item/p/pssaddpzbqoderpqozbbasqocd/647e515db9ce512d7c1992e4a6bded92" alt="" /></p>
+
+<blockquote class="jm-doc">
+<p>The Photo Card puts the image front and center in the Tweet:</p>
+<p>To define a photo card experience, set your card type to "photo" and provide a twitter:image. Twitter will resize images, maintaining original aspect ratio to fit the following sizes:</p>
+<ul class="jm-doc-photocard">
+	<li> <strong>Web</strong>: maximum height of 375px, maximum width of 435px</li>
+	<li> <strong>Mobile (non-retina displays)</strong>: maximum height of 375px, maximum width of 280px</li>
+	<li> <strong>Mobile (retina displays)</strong>: maximum height of 750px, maximum width of 560px</li>
+	<li> Twitter will not create a photo card unless the twitter:image is of a minimum size of 280px wide by 150px tall. Images will not be cropped unless they have an exceptional aspect ratio</li>
+</ul>                                    
+</blockquote>
+
+<h2 id="productcards">Product cards</h2>
+<p><img src="https://www.diigo.com/item/p/pssaddpzbqoderesazbbasqobd/7fce88e45d93659ad4f2d398ecb36f32" alt="" /></p>
+<p>The Product Card is a great way to represent retail items on Twitter, and to drive sales. This Card type is designed to showcase your products via an image, a description, and allow you to highlight two other key details about your product.
+</p>
+<p>
+These fields are strings and can be used to show the price, list availability, list sizes, etc. This will require adding some new markup tags to your pages, which we will cover below.
+</p>
+<p>
+Note: The product card requires an image of size 160 x 160 or greater. It prefers a square image but we can crop/resize oddly shaped images to fit as long as both dimensions are greater than or equal to 160 pixels.
+</p>
+<p>
+To activate this mode you have to activate the <a href="#metabox">custom meta box</a>.
+</p>
+<h2 id="use">Common issues</h2>
+<h3 id="faq-crawl">Twitter card validator does not work with my site !</h3>
+<p>Don't panic ! It's probably you did not set your robots.txt file according to Twitter's recommandation</p>
+<p>This file is used to set specific rules for web crawlers.</p>
+<p>Twitter's bot needs to have access to your website to fetch your content, so just insert this in the file :</p>
+<pre>
+User-agent: Twitterbot
+Disallow:
+</pre>
+
+<h3 id="faq-image">I don't see images in tweets !</h3>
+<p>Check that image does not exceed 1mb in size and/or is compatible with Twitter requirements.</p>
+
+
+<h3 id="faq-cf">How do I use the custom fields option?</h3>
+<p>Basically you provide your custom field keys in plugin option page and then it will grab datas.</p>
+
+
+<h3 id="faq-mb-option">I do not see all options in meta box</h3>
+<p>Just select card type and save draft. You will see additional fields if they exist.</p>
+
+	
+<h1 id="settings">Plugin options</h1>
+<p>In 3.3.0 Plugin UI has been renewed. I wanted to be even more simple. Instead of 10 menu items there's only 7 tabs and some options have been moved to mroe appropriate sections. </p>
+<h2 id="general">General</h2>
+<p>This is the first section. You can set which type of card will be the default type used in your website. You must define twitter card creator (username) and twitter card site (username). If they are the same just enter username twice.  </p>
+<p>You can also set how many words the plugin has to grab to set a description by default. This allows to avoid empty twitter meta description which often breaks twitter cards.</p>
+<p><img src="https://www.diigo.com/item/p/pssaddpzbqodpbrepzbbasrcbr/2eda41cafce4d87a53f4f1a7f8902f8f" alt="" /></p>
+<p>Last setting is for multi-author blogs. It allows your authors to get an additional field in their profile. They can provide their Twitter Account. This is meant to improve authorship. If they publish a post, their twitter usernames will be set as twitter meta creator.</p>
+
+<h2 id="seo">SEO</h2>
+<p>
+WordPress is great but we often need to add some SEO plugins such as <a href="http://yoast.com/wordpress/seo/">WP SEO by Yoast</a> or <a href="http://wordpress.org/plugins/all-in-one-seo-pack/">All In One SEO</a>. 
+These plugins are very very popular and you can find them in a lot of WP installations. JM Twitter Cards checks if one of the two plugins is activated and grabs meta title and description you have set.
+This allows you not to waste your time writting things twice for each post.
+
+If you forget to fulfill SEO fields do not panic, there are fallback (post title and the first words of your post as description). Do not forget to choose how many words the plugin has to grab for twitter meta description(max 200).
+</p>
+<p>
+And if you do not use one of this two plugin you can use your own custom fields instead. Just provide meta keys (advanced users).
+</p>
+<p><img src="https://www.diigo.com/item/p/pssaddpzbqodooorbzbbasqrqc/203c9cbe20a10cb39c15ab0066c12ce6" alt="" /></p>
+
+<h2 id="images">Images</h2>
+<p>Use the dropdown menu to choose which size you want to set by default (you can override this with the metabox fields). You can now choose (3.3.0) to force crop or not. Do not forget to enter a fallback image in case no option is set. You can also set twitter image with and height to get a better control of cards display (only for photo and product cards).</p>
+<p><img src="https://www.diigo.com/item/p/pssaddpzbqodobbcbzbbasqpsd/fedc6717a3e20e110d2c1d999a98f1af" alt="" /></p>
+
+<h2 id="pagehome">Home settings</h2>
+<p>If home page is posts page (which is often the case), this setting allows you to define a Twitter Card title and description. This prevent from getting the datas from the first post in the loop.</p>
+<p><img src="https://www.diigo.com/item/p/pssaddpzbqodobderzbbasqpsq/1e2cac80b1677ef4e239ce5e949e1df8" alt="" /></p>
+
+<h2 id="product">Product settings</h2>
+<p>As indicated in the following screenshot, this setting is not mandatory simply because indeed you have to use the custom meta box to define a card for each product.</p>
+<p><img src="https://www.diigo.com/item/p/pssaddpzbqodocopozbbasqqoe/8262f96745c09d91db8513e0fe7db8d5" alt="" /></p>
+
+<h2 id="metabox">Meta Box</h2>
+<p>This is one of the best features of the plugin. It allows to customize your cards for each post and you get extra features...</p>
+<p>Once it's activated :</p>
+<p><img src="https://www.diigo.com/item/p/pssaddpzbqodocppbzbbasqqpb/3c2c8ecff605c8d80bef6ca9abc58176" alt="" /></p>
+<p>You'll get a custom meta box in your post edit :</p>
+<p><img src="https://www.diigo.com/item/p/pssaddpzbqodocroqzbbasqqqc/9944a7a1ca1b1318466a3f1ac635c7bc" alt="" /></p>
+<p>If you select photo, or summar large image or product cards and then <strong>save draft</strong> you'll see additional fields you can set such as :</p>
+<p><img src="https://www.diigo.com/item/p/pssaddpzbqodpespqzbbasrecp/015500f8542b8cfa0104fc02af046ca8" alt="" /></p>
+
+</div>
+
+<div class="footer">
+<h1 id="sources">Sources</h1>
+<ul>
+	<li><a href="https://dev.twitter.com/docs/cards">Twitter cards documentation</a></li>
+	<li><a href="https://dev.twitter.com/docs/cards/markup-reference">Meta tag references</a></li>
+</ul>
+<p class="right pa1">Julien Maury, 9/8/2013</p>
+<p class="right pa1"><a href="#menu">Go To Table of Contents</a></p>
+</div>
+</body>
+</html>
