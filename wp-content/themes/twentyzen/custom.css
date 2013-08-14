@@ -21,14 +21,14 @@ a {
   hyphens: auto;
 }
 
-.syntaxhighlighter {
-  overflow: scroll !important;
-}
+.syntaxhighlighter {overflow: scroll !important;}
+
+.widget_coderwall {width: 240px;}
 
 .twiget-widget ul li {
   border: 0 !important;
+  border-bottom: 1px solid #aaa !important;
 }
-
-.widget_coderwall {
-  width: 240px;
-}
+.twiget-feed {width: 190px;}
+.twiget-meta {display: none;}
+.twiget-tweet {margin-bottom: 0 !important;}
