@@ -163,7 +163,7 @@ function twentyeleven_setup() {
 			'url' => '%s/images/headers/'.$image.'.jpg',
 			'thumbnail_url' => '%s/images/headers/'.$image.'t.jpg',
 			'description' => __( strtoupper(explode("-", $image)[0]), 'twentyzen' )
-		)
+		);
 	}
 	register_default_headers($headers);
 
