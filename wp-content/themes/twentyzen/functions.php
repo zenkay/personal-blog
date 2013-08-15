@@ -156,122 +156,17 @@ function twentyeleven_setup() {
 	add_image_size( 'small-feature', 500, 300 );
 
 	// Default custom headers packaged with the theme. %s is a placeholder for the theme template directory URI.
-	register_default_headers( array(
-		'polinesia-1' => array(
-			'url' => '%s/images/headers/polinesia-1.jpg',
-			'thumbnail_url' => '%s/images/headers/polinesia-1t.jpg',
-			/* translators: header image description */
-			'description' => __( 'Polinesia', 'twentyeleven' )
-		),
-		'polinesia-2' => array(
-			'url' => '%s/images/headers/polinesia-2.jpg',
-			'thumbnail_url' => '%s/images/headers/polinesia-2t.jpg',
-			/* translators: header image description */
-			'description' => __( 'Polinesia', 'twentyeleven' )
-		),
-		'polinesia-3' => array(
-			'url' => '%s/images/headers/polinesia-3.jpg',
-			'thumbnail_url' => '%s/images/headers/polinesia-3t.jpg',
-			/* translators: header image description */
-			'description' => __( 'Polinesia', 'twentyeleven' )
-		),
-		'maldives-1' => array(
-			'url' => '%s/images/headers/maldives-1.jpg',
-			'thumbnail_url' => '%s/images/headers/maldives-1t.jpg',
-			/* translators: header image description */
-			'description' => __( 'Maldives', 'twentyeleven' )
-		),
-		'maldives-2' => array(
-			'url' => '%s/images/headers/maldives-2.jpg',
-			'thumbnail_url' => '%s/images/headers/maldives-2t.jpg',
-			/* translators: header image description */
-			'description' => __( 'Maldives', 'twentyeleven' )
-		),
-		'maldives-3' => array(
-			'url' => '%s/images/headers/maldives-3.jpg',
-			'thumbnail_url' => '%s/images/headers/maldives-3t.jpg',
-			/* translators: header image description */
-			'description' => __( 'Maldives', 'twentyeleven' )
-		),
-		'maldives-4' => array(
-			'url' => '%s/images/headers/maldives-4.jpg',
-			'thumbnail_url' => '%s/images/headers/maldives-4t.jpg',
-			/* translators: header image description */
-			'description' => __( 'Maldives', 'twentyeleven' )
-		),
-		'maldives-5' => array(
-			'url' => '%s/images/headers/maldives-5.jpg',
-			'thumbnail_url' => '%s/images/headers/maldives-5t.jpg',
-			/* translators: header image description */
-			'description' => __( 'Maldives', 'twentyeleven' )
-		),
-		'maldives-6' => array(
-			'url' => '%s/images/headers/maldives-6.jpg',
-			'thumbnail_url' => '%s/images/headers/maldives-6t.jpg',
-			/* translators: header image description */
-			'description' => __( 'Maldives', 'twentyeleven' )
-		),
-		'seychelles-1' => array(
-			'url' => '%s/images/headers/seychelles-1.jpg',
-			'thumbnail_url' => '%s/images/headers/seychelles-1t.jpg',
-			/* translators: header image description */
-			'description' => __( 'Seychelles', 'twentyeleven' )
-		),
-		'seychelles-2' => array(
-			'url' => '%s/images/headers/seychelles-2.jpg',
-			'thumbnail_url' => '%s/images/headers/seychelles-2t.jpg',
-			/* translators: header image description */
-			'description' => __( 'Seychelles', 'twentyeleven' )
-		),
-		'seychelles-3' => array(
-			'url' => '%s/images/headers/seychelles-3.jpg',
-			'thumbnail_url' => '%s/images/headers/seychelles-3t.jpg',
-			/* translators: header image description */
-			'description' => __( 'Seychelles', 'twentyeleven' )
-		),
-		'seychelles-4' => array(
-			'url' => '%s/images/headers/seychelles-4.jpg',
-			'thumbnail_url' => '%s/images/headers/seychelles-4t.jpg',
-			/* translators: header image description */
-			'description' => __( 'Seychelles', 'twentyeleven' )
-		),		
-		'antilles-1' => array(
-			'url' => '%s/images/headers/antilles-1.jpg',
-			'thumbnail_url' => '%s/images/headers/antilles-1t.jpg',
-			/* translators: header image description */
-			'description' => __( 'Antilles', 'twentyeleven' )
-		),
-		'antilles-2' => array(
-			'url' => '%s/images/headers/antilles-2.jpg',
-			'thumbnail_url' => '%s/images/headers/antilles-2t.jpg',
-			/* translators: header image description */
-			'description' => __( 'Antilles', 'twentyeleven' )
-		),
-		'thailand-1' => array(
-			'url' => '%s/images/headers/thailand-1.jpg',
-			'thumbnail_url' => '%s/images/headers/thailand-1t.jpg',
-			/* translators: header image description */
-			'description' => __( 'Thailand', 'twentyeleven' )
-		),
-		'thailand-2' => array(
-			'url' => '%s/images/headers/thailand-2.jpg',
-			'thumbnail_url' => '%s/images/headers/thailand-2t.jpg',
-			/* translators: header image description */
-			'description' => __( 'Thailand', 'twentyeleven' )
-		),
-		'thailand-3' => array(
-			'url' => '%s/images/headers/thailand-3.jpg',
-			'thumbnail_url' => '%s/images/headers/thailand-3t.jpg',
-			/* translators: header image description */
-			'description' => __( 'Thailand', 'twentyeleven' )
-		),
-		'cookislands-1' => array(
-			'url' => '%s/images/headers/cookislands-1.jpg',
-			'thumbnail_url' => '%s/images/headers/cookislands-1t.jpg',
-			/* translators: header image description */
-			'description' => __( 'Cook Islands', 'twentyeleven' )
+	$images = array("polinesia-1", "polinesia-2", "polinesia-3", "maldives-1", "maldives-2", "maldives-3", "maldives-4", "maldives-5", "maldives-6", "seychelles-1", "seychelles-2", "seychelles-3", "seychelles-4", "antilles-1", "antilles-2", "thailand-1", "thailand-2", "thailand-3", "cookislands-1");
+	$headers = array();
+	foreach($images as $image) {
+		$headers[$image] = array(
+			'url' => '%s/images/headers/'.$image.'.jpg',
+			'thumbnail_url' => '%s/images/headers/'.$image.'t.jpg',
+			'description' => __( strtoupper(explode("-", $image)[0]), 'twentyzen' )
 		)
-	) );
+	}
+	register_default_headers($headers);
+
 }
 endif; // twentyeleven_setup
 

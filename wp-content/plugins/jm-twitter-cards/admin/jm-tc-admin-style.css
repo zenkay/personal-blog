@@ -1,7 +1,7 @@
 /*
- Styles for JM Twitter Cards
- Author: Julien Maury
- Author URI: http://tweetpress.fr
+Styles for JM Twitter Cards
+Author: Julien Maury
+Author URI: http://tweetpress.fr
 */
 
 /* content */
@@ -9,7 +9,7 @@
 .jm-tc h2, .jm-tc h3, legend,.legend-like {font-size: 2em;margin-bottom: 1em;color: #444;font-weight: normal;}
 .jm-tc h2 {font-size: 2.5em;}
 
-/* listes */
+/* lists */
 .jm-tc ul {padding-left: 1em;}
 .jm-tc li {padding-left: .5em;list-style: none;}
 .jm-tc li:before {padding-right:.5em;content: "\2023"; font-size:15px;}
@@ -17,14 +17,15 @@
 /* form */
 fieldset,.fieldset-like {  font-size:13px; border:1px solid #ddd; background-color:#ECECEC; padding:2em; margin:1.5em 1em;}
 .inbl { display: inline-block; vertical-align: top;}
-.jm-tc input,.jm-tc textarea { padding:.6em;}
+.jm-tc input,.jm-tc textarea { padding:.6em; resize:vertical;}
 .jm-tc label { font-weight:bold; }
 .button-primary{ float:right; }
- .button-secondary { font-size:15px;  }
+.button-secondary { font-size:15px;  }
+.jm-tc select { background: #ccc; padding: 5px; font-size: 16px; line-height: 1; border: 0; border-radius: 0; height: 34px; }
 
+/* about */
 .postbox { display: block; float:left;margin:10px; }
 .dev { padding:1em; }
-
 .medium { width:425px;  }
 .large { width:900px; clear:left; }
 .hndle { padding:.5em; }

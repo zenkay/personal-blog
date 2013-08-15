@@ -108,6 +108,14 @@ Il suffit de renseigner les clés de vos custom fields en page d'option et le pl
 
 == Changelog ==
 
+=  3.3.1 =
+* 13 Aug 2013
+* Introduce new functionnality : opt out for meta box. If you do use meta box for some posts but do not want to use it everywhere you can disable it on each post. Datas wil be set according to the option page.
+* Special thanks to @jihaisse for the idea.
+* If you do not need to disable anything just ignore this option.
+* Add a post meta function to reduce the amount of unused post metas.
+* Fix FR translation and rebuild .po files 
+
 =  3.3.0 =
 * 09 Aug 2013
 * Simpler UI is better. I just merged some fieldsets in option page to make it clearer. Don't panic I did not delete anything.
