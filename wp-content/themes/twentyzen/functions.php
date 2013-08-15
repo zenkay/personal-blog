@@ -156,7 +156,7 @@ function twentyeleven_setup() {
 	add_image_size( 'small-feature', 500, 300 );
 
 	// Default custom headers packaged with the theme. %s is a placeholder for the theme template directory URI.
-	$images = array("polinesia-1", "polinesia-2", "polinesia-3", "maldives-1", "maldives-2", "maldives-3", "maldives-4", "maldives-5", "maldives-6", "seychelles-1", "seychelles-2", "seychelles-3", "seychelles-4", "antilles-1", "antilles-2", "thailand-1", "thailand-2", "thailand-3", "cookislands-1");
+	$images = array("polinesia-1", "polinesia-2", "polinesia-3", "polinesia-4", "polinesia-5", "maldives-1", "maldives-2", "maldives-3", "maldives-4", "maldives-5", "maldives-6", "maldives-7", "seychelles-1", "seychelles-2", "seychelles-3", "seychelles-4", "seychelles-5", "antilles-1", "antilles-2", "thailand-1", "thailand-2", "thailand-3", "cookislands-1", "philippines-1", "santorini-1", "santorini-2");
 	$headers = array();
 	foreach($images as $image) {
 		$headers[$image] = array(
