@@ -162,7 +162,7 @@ function twentyeleven_setup() {
 		$headers[$image] = array(
 			'url' => '%s/images/headers/'.$image.'.jpg',
 			'thumbnail_url' => '%s/images/headers/'.$image.'t.jpg',
-			'description' => __( ucwords(reset(explode("-", $image))), 'twentyzen' )
+			'description' => __( ucfirst(reset(explode("-", $image))), 'twentyzen' )
 		);
 	}
 	register_default_headers($headers);
