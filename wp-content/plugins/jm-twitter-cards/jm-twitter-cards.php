@@ -5,7 +5,7 @@ Plugin URI: http://tweetpress.fr
 Description: Meant to help users to implement and customize Twitter Cards easily
 Author: Julien Maury
 Author URI: http://tweetpress.fr
-Version: 3.3.1
+Version: 3.3.2
 License: GPL2++
 */
 
@@ -50,6 +50,21 @@ function jm_tc_remove_at($at) {
 	$noat = str_replace('@','',$at);
 	return $noat;
 }
+
+// Remove any line-breaks
+function jm_tc_remove_lb($lb) { 
+	$output = str_replace(array("\r\n", "\r"), "\n", $lb);
+	$lines = explode("\n", $output);
+	$nolb = array();
+
+	foreach ($lines as $key => $line) {
+		if(!empty($line))
+			$nolb[] = trim($line);
+	}
+
+	return implode($nolb);
+}
+
 
 // Add stuffs in init such as img size
 add_action('init','jm_tc_initialize');
@@ -433,7 +448,7 @@ if(!function_exists( 'add_twitter_card_info' )) {
 			// these next 4 parameters should not be editable in post admin 
 			echo '<meta name="twitter:site" content="@'. $opts['twitterSite'] .'">'."\n";												  
 			echo '<meta name="twitter:title" content="' . $cardTitle  . '">'."\n";  // filter used by plugin to customize title  
-			echo '<meta name="twitter:description" content="' . $cardDescription . '">'."\n"; 
+			echo '<meta name="twitter:description" content="' . jm_tc_remove_lb( $cardDescription ). '">'."\n"; 
 
 			if( has_post_thumbnail() ) {
 				if(  $cardImage != '' && $twitterCardCancel != 'yes') { // cardImage is set

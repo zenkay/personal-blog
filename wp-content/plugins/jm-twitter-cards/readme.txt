@@ -108,6 +108,10 @@ Il suffit de renseigner les clés de vos custom fields en page d'option et le pl
 
 == Changelog ==
 
+=  3.3.2 =
+* 15 Aug 2013
+* remove line-breaks from meta description
+
 =  3.3.1 =
 * 13 Aug 2013
 * Introduce new functionnality : opt out for meta box. If you do use meta box for some posts but do not want to use it everywhere you can disable it on each post. Datas wil be set according to the option page.
