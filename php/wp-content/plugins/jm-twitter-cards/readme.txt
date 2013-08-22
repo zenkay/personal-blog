@@ -108,6 +108,11 @@ Il suffit de renseigner les clés de vos custom fields en page d'option et le pl
 
 == Changelog ==
 
+=  3.3.3 =
+* 22 Aug 2013
+* minor change : add tips in documentation to remove cards on particular cases. 
+* add link to troubleshooting documentation
+
 =  3.3.2 =
 * 15 Aug 2013
 * remove line-breaks from meta description

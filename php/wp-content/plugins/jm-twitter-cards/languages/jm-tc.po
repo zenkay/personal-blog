@@ -446,3 +446,13 @@ msgstr ""
 #: jm-twitter-cards.php
 msgid "yes please, deactivate it"
 msgstr ""
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "Any issue?"
+msgstr ""
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "See troubleshooting"
+msgstr ""

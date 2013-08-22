@@ -5,7 +5,7 @@ Plugin URI: http://tweetpress.fr
 Description: Meant to help users to implement and customize Twitter Cards easily
 Author: Julien Maury
 Author URI: http://tweetpress.fr
-Version: 3.3.2
+Version: 3.3.3
 License: GPL2++
 */
 
@@ -489,9 +489,9 @@ if(!function_exists( 'add_twitter_card_info' )) {
 			echo '<!-- /JM Twitter Cards -->'."\n\n"; 
 		}      
 
+	  }
 	}
 	add_action( 'wp_head', 'add_twitter_card_info', 99);// it's actually better to load twitter card meta at the very end (SEO desc is more important)
-}
 
 /*
 * ADMIN OPTION PAGE
@@ -588,6 +588,8 @@ function jm_tc_options_page() {
 	<h3><span><?php _e('Documentation', 'jm-tc'); ?></span></h3>
 	<p><strong><?php _e('Before anything read the documentation (en)', 'jm-tc'); ?></strong> </p>
 	<a class="button button-secondary" target="_blank" href="<?php echo plugins_url('documentation.html',__FILE__);?>"><?php _e('See  Documentation','jm-tc');?></a>
+	<h3><?php _e('Any issue?', 'jm-tc'); ?></h3>
+	<a class="button button-secondary" target="_blank" href="https://dev.twitter.com/docs/cards/troubleshooting"><?php _e('See troubleshooting','jm-tc');?></a>
 	</div>
 	
 	<form id="jm-tc-form" method="post" action="options.php">

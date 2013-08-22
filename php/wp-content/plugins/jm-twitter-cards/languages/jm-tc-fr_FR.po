@@ -496,3 +496,13 @@ msgstr "oui"
 #: jm-twitter-cards.php
 msgid "yes please, deactivate it"
 msgstr "oui, désactiver la metabox"
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "Any issue?"
+msgstr "Un problème avec les cards?"
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "See troubleshooting"
+msgstr "Voir le guide Twitter"

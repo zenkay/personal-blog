@@ -4,7 +4,7 @@ Donate link: http://takien.com/donate
 Tags: table,csv,csv-to-table,post,excel,csv file,widget,tablesorter
 Requires at least: 3.0
 Tested up to: 3.6
-Stable tag: 1.1.4
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,6 +23,11 @@ Easy Table using standard CSV format to generate table data, it's easiest way to
 * Sortable table column (using tablesorter jQuery plugin)
 * Fancy table design (using Twitter CSS bootstrap)
 * WYSIWYG safe, I mean you can switch HTML/View tab in WordPress editor without breaking the table data.
+
+= Known bugs and limitation =
+* Enclosure will not work on first cell of a row
+* Chinese characters (and others?) usually stripped down on first cell of a row
+* Unable to create nested table
 
 = Example usage =
 
@@ -179,6 +184,24 @@ row3col1,row3col2,row3col3|
 row4col1,row4col2,row4col3|
 [/table]`
 
+* Table with comma in cell using enclosure
+`[table]
+head1,head2,head3
+row1col1,row1col2,"this, should, in, one cell, because, enclosured, with, doublequote"
+row2col1,row2col2,row2col3
+row3col1,row3col2,row3col3
+row4col1,row4col2,row4col3
+[/table]`
+
+* Table with comma in cell using escape (since 1.3)
+`[table]
+head1,head2,head3
+row1col1,row1col2,this\, should\, in\, one cell\, because\, commas \,escaped \,with \,backslash
+row2col1,row2col2,row2col3
+row3col1,row3col2,row3col3
+row4col1,row4col2,row4col3
+[/table]`
+
 * Table with no heading
 `[table th="0"]some data here[/table]`
 
@@ -224,6 +247,15 @@ There are many ways to install this plugin, e.g:
 No
 
 == Changelog ==
+
+= 1.3.1 =
+* Fixed: Bug on version 1.3, fatal error on PHP prior to 5.3.0
+
+= 1.3 =
+* Fixed: `escape` is now working, you can use escape to skip `delimiter`s (also `terminator`s if they're not \r or \n) using escape (default escape character is backslash)
+
+= 1.2 =
+* Added: `align` parameter is now back. (Previously removed on version 1.1)
 
 = 1.1.4 =
 * Added new parameter 'fixlinebreak' to optionally convert newline to &lt;br /&gt; if terminator is not \r or \n

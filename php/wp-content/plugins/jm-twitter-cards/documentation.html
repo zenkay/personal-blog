@@ -154,6 +154,7 @@ for <a href="http://tweetpress.fr/" title="tips for WordPress and Twitter APIs">
 			<li><a href="#faq-image">I don't see images in tweets !</a></li>
 			<li><a href="#faq-cf">How do I use the custom fields option?</a></li>
 			<li><a href="#faq-mb-option">I do not see all options in meta box</a></li>
+			<li><a href="#faq-deactivate">I want to disable Twitter Card Markup in particular cases</a></li>
 		</ul>
 	</li>
 	<li><a href="#sources">Sources and Credits</a></li>
@@ -220,6 +221,9 @@ Note: The product card requires an image of size 160 x 160 or greater. It prefer
 To activate this mode you have to activate the <a href="#metabox">custom meta box</a>.
 </p>
 <h2 id="use">Common issues</h2>
+
+<p>If you have any issue, the first thing you have to do is to go to <a class="button button-secondary" target="_blank" href="https://dev.twitter.com/docs/cards/troubleshooting">Twitter Cards troubleshooting</a>.<p>
+
 <h3 id="faq-crawl">Twitter card validator does not work with my site !</h3>
 <p>Don't panic ! It's probably you did not set your robots.txt file according to Twitter's recommandation</p>
 <p>This file is used to set specific rules for web crawlers.</p>
@@ -239,6 +243,27 @@ Disallow:
 
 <h3 id="faq-mb-option">I do not see all options in meta box</h3>
 <p>Just select card type and save draft. You will see additional fields if they exist.</p>
+
+<h3 id="faq-deactivate">I want to disable Twitter Card Markup in particular cases</h3>	
+<p>You can use the following snippet in your functions.php or in a functionality plugin.</p>
+
+<p>Here I disable Twitter Cards for both page with ID 19 and page slug 'contact' :</p>
+
+<pre>
+add_action('wp_head','disable_twitter_card_info');
+function disable_twitter_card_info() {
+	if(is_page(array(19,'contact'))) remove_action('wp_head', 'add_twitter_card_info',99);
+}
+</pre>
+
+<p>Here I disable Twitter Cards for post with format 'status':</p>
+
+<pre>
+add_action('wp_head','disable_twitter_card_info');
+function disable_twitter_card_info() {
+	if(has_post_format( 'status' )) remove_action('wp_head', 'add_twitter_card_info',99);
+}
+</pre>
 
 	
 <h1 id="settings">Plugin options</h1>
