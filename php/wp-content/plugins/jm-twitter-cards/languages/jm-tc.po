@@ -456,3 +456,18 @@ msgstr ""
 #: jm-twitter-cards.php
 msgid "See troubleshooting"
 msgstr ""
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "If you already have this kind of option in your theme, please provide the meta key. If not do not modify anything in the field below."
+msgstr ""
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "Modify user meta key associated with Twitter Account in profiles :"
+msgstr ""
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "Be careful, this meta key MUST be associated with a meta value which is a USERNAME not a link such as http://twitter.com/user. This could break the cards ! If you do not know what it is, you should not modify this field)."
+msgstr ""

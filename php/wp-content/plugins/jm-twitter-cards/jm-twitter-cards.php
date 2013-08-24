@@ -5,7 +5,7 @@ Plugin URI: http://tweetpress.fr
 Description: Meant to help users to implement and customize Twitter Cards easily
 Author: Julien Maury
 Author URI: http://tweetpress.fr
-Version: 3.3.3
+Version: 3.3.4
 License: GPL2++
 */
 
@@ -14,6 +14,7 @@ License: GPL2++
 * 			  - http://codex.wordpress.org/Function_Reference/wp_enqueue_style
 *			  - https://github.com/rilwis/meta-box [GREAT]
 *			  - http://codex.wordpress.org/Function_Reference/wp_get_attachment_image_src
+*			  - http://codex.wordpress.org/Function_Reference/get_user_meta
 */
 
 
@@ -406,13 +407,16 @@ if(!function_exists( 'add_twitter_card_info' )) {
 			$cardLabel2        = get_post_meta($post->ID,'cardLabel2',true);
 			$cardImgSize       = get_post_meta($post->ID,'cardImgSize',true);
 			$twitterCardCancel = get_post_meta($post->ID,'twitterCardCancel',true);
+			
+			//from option page
 			$cardTitleKey      = $opts['twitterCardTitle'];
 			$cardDescKey       = $opts['twitterCardDesc'];
+			$cardUsernameKey   = $opts['twitterUsernameKey'];
 			
 			/* custom fields */
 			$tctitle           = get_post_meta($post->ID,$cardTitleKey,true);
 			$tcdesc            = get_post_meta($post->ID,$cardDescKey,true);
-
+			$username 		   = get_user_meta(get_current_user_id(), $cardUsernameKey, true);
 			
 			// support for custom meta description WordPress SEO by Yoast or All in One SEO
 			if (class_exists('WPSEO_Frontend') ) { // little trick to check if plugin is here and active :)
@@ -440,8 +444,10 @@ if(!function_exists( 'add_twitter_card_info' )) {
 			} else {
 				echo '<meta name="twitter:card" content="'. $opts['twitterCardType'] .'">'."\n"; 
 			}
-			if(!empty($creator)) { // this part has to be optional, this is more for guest bltwitterging but it's no reason to bother everybody.
+			if( $opts['twitterProfile'] == 'yes' && !empty($creator) ) { // this part has to be optional, this is more for guest bltwitterging but it's no reason to bother everybody.
 				echo '<meta name="twitter:creator" content="@'. $creator .'">'."\n";												
+			} elseif( $opts['twitterProfile'] == 'no' && !empty($username) && !is_array($username)) { // http://codex.wordpress.org/Function_Reference/get_user_meta#Return_Values
+				echo '<meta name="twitter:creator" content="@'. $username .'">'."\n";
 			} else {
 				echo '<meta name="twitter:creator" content="@'. $opts['twitterCreator'] .'">'."\n";
 			}
@@ -628,6 +634,17 @@ function jm_tc_options_page() {
 	<br />(<em><?php _e('In 1.1.8 creator has been removed from metabox. Now it will grab this directly from profiles. This should be more comfortable for guest blogging. Just activate it here :','jm-tc'); ?>
 	</em>)
 	</p>
+	
+	<?php if ( $opts['twitterProfile'] == 'no' ) : ?>
+	<strong style="color:red;">
+	<?php _e('If you already have this kind of option in your theme, please provide the meta key. If not do not modify anything in the field below.','jm-tc'); ?>
+	</strong>
+	<p>
+	<label for="twitterUsernameKey"><?php _e('Modify user meta key associated with Twitter Account in profiles :', 'jm-tc'); ?></label>
+	<input id="twitterUsernameKey" type="text" name="jm_tc[twitterUsernameKey]" class="regular-text" value="<?php echo $opts['twitterUsernameKey']; ?>" />
+	<br />(<em><?php _e('Be careful, this meta key MUST be associated with a meta value which is a USERNAME not a link such as http://twitter.com/user. This could break the cards ! If you do not know what it is, you should not modify this field).','jm-tc'); ?>
+	</p>
+	<?php endif; ?>
 	<?php submit_button(null, 'primary', '_submit'); ?>
 	</fieldset>
 	
@@ -880,6 +897,8 @@ function jm_tc_sanitize_options($options) {
 	$new['twitterCardDesc']      = esc_attr(strip_tags($options['twitterCardDesc']));
 	if ( isset($options['twitterCardCrop']) )
 	$new['twitterCardCrop']      = $options['twitterCardCrop'];
+	if ( isset($options['twitterUsernameKey']) )
+	$new['twitterUsernameKey']   = esc_attr(strip_tags($options['twitterUsernameKey'] ) );
 	return $new;
 }
 
@@ -907,7 +926,8 @@ function jm_tc_get_default_options() {
 	'twitterCardImgSize'		=> 'small',
 	'twitterCardTitle'			=> '',
 	'twitterCardDesc'			=> '',
-	'twitterCardCrop'			=> 'yes'
+	'twitterCardCrop'			=> 'yes',
+	'twitterUsernameKey'		=> 'jm_tc_twitter'
 	);
 }
 

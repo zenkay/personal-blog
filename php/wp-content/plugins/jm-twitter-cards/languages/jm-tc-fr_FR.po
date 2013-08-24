@@ -506,3 +506,30 @@ msgstr "Un problème avec les cards?"
 #: jm-twitter-cards.php
 msgid "See troubleshooting"
 msgstr "Voir le guide Twitter"
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid ""
+"If you already have this kind of option in your theme, please provide the "
+"meta key. If not do not modify anything in the field below."
+msgstr ""
+"Si vous avez déjà une option du même genre dans votre thème, SVP indiquez la "
+"clé. Sinon ne changez rien dans le champ ci-dessous."
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "Modify user meta key associated with Twitter Account in profiles :"
+msgstr ""
+"Modifiez la meta key user associée aux comptes Twitter dans les profils :"
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid ""
+"Be careful, this meta key MUST be associated with a meta value which is a "
+"USERNAME not a link such as http://twitter.com/user. This could break the "
+"cards ! If you do not know what it is, you should not modify this field)."
+msgstr ""
+"Attention, cette meta key DOIT être associée à un meta value qui correspond "
+"à un NOM D'UTILISATEUR et non à un lien du type http://twitter.com/user. "
+"Cela pourrait rendre les cards inactives ! Si vous ne comprenez pas de quoi "
+"il est question, vous ne devriez pas modifier ce champ)."

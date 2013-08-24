@@ -108,14 +108,24 @@ Il suffit de renseigner les clés de vos custom fields en page d'option et le pl
 
 == Changelog ==
 
+=  3.3.4 =
+* 23 Aug 2013
+* New feature : if your theme already have a Twitter option in profile you can now use it (just provide the key).
+* However be careful, the value associated with the key MUST BE A USERNAME not a url 
+* See documentation.html#general (screenshot + how to)
+* New option regards only users who selected "no" as Twitter's profile option
+* Hope this will help ^^
+* Add new link provided by Twitter for troubleshooting in documentation: https://dev.twitter.com/docs/cards/troubleshooting
+* Add basic security (empty index.html in repertories) for those who do not use htaccess rules to forbid directory listing
+
 =  3.3.3 =
 * 22 Aug 2013
-* minor change : add tips in documentation to remove cards on particular cases. 
-* add link to troubleshooting documentation
+* Minor change : add tips in documentation to remove cards on particular cases. 
+* Add link to troubleshooting documentation
 
 =  3.3.2 =
 * 15 Aug 2013
-* remove line-breaks from meta description
+* Remove line-breaks from meta description
 
 =  3.3.1 =
 * 13 Aug 2013
