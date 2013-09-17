@@ -124,7 +124,7 @@ class UpdraftPlus_BackupModule_dropbox {
 			try {
 				$dropbox->chunkedUpload($updraft_dir.'/'.$file, '', $ufile, true, $offset, $upload_id, array($ourself, 'chunked_callback'));
 			} catch (Exception $e) {
-				$updraftplus->log("Exception: ".$e->getMessage());
+				$updraftplus->log("Dropbox chunked upload exception: ".$e->getMessage());
 				if (preg_match("/Submitted input out of alignment: got \[(\d+)\] expected \[(\d+)\]/i", $e->getMessage(), $matches)) {
 					// Try the indicated offset
 					$we_tried = $matches[1];
@@ -134,12 +134,12 @@ class UpdraftPlus_BackupModule_dropbox {
 						$dropbox->chunkedUpload($updraft_dir.'/'.$file, '', $ufile, true, $dropbox_wanted, $upload_id, array($ourself, 'chunked_callback'));
 					} catch (Exception $e) {
 						$updraftplus->log('Dropbox error: '.$e->getMessage().' (line: '.$e->getLine().', file: '.$e->getFile().')');
-						$updraftplus->log('Dropbox ',sprintf(__('error: failed to upload file to %s (see log file for more)','updraftplus'), $ufile), 'error');
+						$updraftplus->log('Dropbox '.sprintf(__('error: failed to upload file to %s (see log file for more)','updraftplus'), $ufile), 'error');
 						$file_success = 0;
 					}
 				} else {
 					$updraftplus->log('Dropbox error: '.$e->getMessage());
-					$updraftplus->log('Dropbox ',sprintf(__('error: failed to upload file to %s (see log file for more)','updraftplus'), $ufile), 'error');
+					$updraftplus->log('Dropbox '.sprintf(__('error: failed to upload file to %s (see log file for more)','updraftplus'), $ufile), 'error');
 					$file_success = 0;
 				}
 			}
@@ -159,7 +159,7 @@ class UpdraftPlus_BackupModule_dropbox {
 
 	}
 
-	function defaults() {
+	public static function defaults() {
 		return array('Z3Q3ZmkwbnplNHA0Zzlx', 'bTY0bm9iNmY4eWhjODRt');
 	}
 
@@ -325,7 +325,7 @@ class UpdraftPlus_BackupModule_dropbox {
 		}
 	}
 
-	function show_authed_admin_warning() {
+	public static function show_authed_admin_warning() {
 		global $updraftplus_admin;
 
 		$dropbox = self::bootstrap();
@@ -370,7 +370,7 @@ class UpdraftPlus_BackupModule_dropbox {
 	}
 
 	// This basically reproduces the relevant bits of bootstrap.php from the SDK
-	function bootstrap() {
+	public static function bootstrap() {
 
 		require_once(UPDRAFTPLUS_DIR.'/includes/Dropbox/API.php'	);
 		require_once(UPDRAFTPLUS_DIR.'/includes/Dropbox/Exception.php');

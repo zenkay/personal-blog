@@ -4,7 +4,7 @@ Plugin Name: UpdraftPlus - Backup/Restore
 Plugin URI: http://updraftplus.com
 Description: Backup and restore: take backups locally, or backup to Amazon S3, Dropbox, Google Drive, Rackspace, (S)FTP, WebDAV & email, on automatic schedules.
 Author: UpdraftPlus.Com, DavidAnderson
-Version: 1.7.1
+Version: 1.7.3
 Donate link: http://david.dw-perspective.org.uk/donate
 License: GPLv3 or later
 Text Domain: updraftplus
@@ -13,10 +13,15 @@ Author URI: http://updraftplus.com
 
 /*
 TODO - some of these are out of date/done, needs pruning
+// Remember minimum resume intervals in between runs
 // Backup notes
 // Raise a warning for probably-too-large email attachments
 // mysqldump, if available, for faster database dumps. Need then to test compatibility with max_packet_size detection in restoration
 // Check flow of activation on multisite
+// Find a faster encryption method
+// Provide option to make autobackup default to off
+// On restore, raise a warning for ginormous zips
+// Detect double-compressed files when they are uploaded (need a way to detect gz compression in general)
 // Log migrations/restores, and have an option for auto-emailing the log
 // Log a warning if the resumption is loonnggg after it was expected to be (usually on unvisited dev sites)
 # Email backup method should be able to force split limit down to something manageable - or at least, should make the option display. (Put it in email class. Tweak the storage dropdown to not hide stuff also in expert class if expert is shown).
@@ -430,7 +435,8 @@ class UpdraftPlus {
 
 		$safe_mode = $this->detect_safe_mode();
 
-		$logline = "UpdraftPlus: ".$this->version." WP: ".$wp_version." PHP: ".phpversion()." (".php_uname().") MySQL: $mysql_version Server: ".$_SERVER["SERVER_SOFTWARE"]." safe_mode: $safe_mode max_execution_time: ".@ini_get("max_execution_time")." memory_limit: ".ini_get('memory_limit')." ZipArchive::addFile : ";
+		$memory_usage = round(@memory_get_usage(false)/1048576, 1);
+		$logline = "UpdraftPlus: ".$this->version." WP: ".$wp_version." PHP: ".phpversion()." (".php_uname().") MySQL: $mysql_version Server: ".$_SERVER["SERVER_SOFTWARE"]." safe_mode: $safe_mode max_execution_time: ".@ini_get("max_execution_time")." memory_limit: ".ini_get('memory_limit')." (used: ${memory_usage}M) ZipArchive::addFile : ";
 
 		// method_exists causes some faulty PHP installations to segfault, leading to support requests
 		if (version_compare(phpversion(), '5.2.0', '>=') && extension_loaded('zip')) {
@@ -518,8 +524,8 @@ class UpdraftPlus {
 	# We require -@ and -u -r to work - which is the usual Linux binzip
 	function find_working_bin_zip($logit = true) {
 		if ($this->detect_safe_mode()) return false;
-		// The hosting provider may have explicitly disabled the popen function
-		if (!function_exists('popen')) return false;
+		// The hosting provider may have explicitly disabled the popen or proc_open functions
+		if (!function_exists('popen') || !function_exists('proc_open')) return false;
 		$updraft_dir = $this->backups_dir_location();
 		foreach (explode(',', UPDRAFTPLUS_ZIP_EXECUTABLE) as $potzip) {
 			if ($logit) $this->log("Testing: $potzip");
@@ -554,22 +560,46 @@ class UpdraftPlus {
 					if (true == $all_ok) {
 						file_put_contents($updraft_dir.'/binziptest/subdir1/subdir2/test2.html', '<html></body><a href="http://updraftplus.com">UpdraftPlus is a really great backup and restoration plugin for WordPress.</body></html>');
 						
-						$exec = "cd ".escapeshellarg($updraft_dir).";  echo ".escapeshellarg('binziptest/subdir1/subdir2/test2.html')." | $potzip -@ binziptest/test.zip";
+						$exec = $potzip." -v -@ binziptest/test.zip";
 
 						$all_ok=true;
-						$handle = popen($exec, "r");
-						if ($handle) {
-							while (!feof($handle)) {
-								$w = fgets($handle);
-								if ($w && $logit) $this->log("Output: ".trim($w));
-							}
-							$ret = pclose($handle);
-							if ($ret !=0) {
-								if ($logit) $this->log("Binary zip: error (code: $ret)");
+
+						$descriptorspec = array(
+							0 => array('pipe', 'r'),
+							1 => array('pipe', 'w'),
+							2 => array('pipe', 'w')
+						);
+						$handle = proc_open($exec, $descriptorspec, $pipes, $updraft_dir);
+						if (is_resource($handle)) {
+							if (!fwrite($pipes[0], "binziptest/subdir1/subdir2/test2.html\n")) {
+								@fclose($pipes[0]);
+								@fclose($pipes[1]);
+								@fclose($pipes[2]);
 								$all_ok = false;
+							} else {
+								fclose($pipes[0]);
+								while (!feof($pipes[1])) {
+									$w = fgets($pipes[1]);
+									if ($w && $logit) $this->log("Output: ".trim($w));
+								}
+								fclose($pipes[1]);
+								
+								while (!feof($pipes[2])) {
+									$last_error = fgets($pipes[2]);
+									if (!empty($last_error) && $logit) $this->log("Error output: ".trim($w));
+								}
+								fclose($pipes[2]);
+
+								$ret = proc_close($handle);
+								if ($ret !=0) {
+									if ($logit) $this->log("Binary zip: error (code: $ret)");
+									$all_ok = false;
+								}
+
 							}
+
 						} else {
-							if ($logit) $this->log("Error: popen failed");
+							if ($logit) $this->log("Error: proc_open failed");
 							$all_ok = false;
 						}
 
@@ -625,6 +655,7 @@ class UpdraftPlus {
 		$resume_interval = $this->jobdata_get('resume_interval');
 		if ($time_this_run + 30 > $resume_interval) {
 			$new_interval = ceil($time_this_run + 30);
+			set_transient('updraft_initial_resume_interval', (int)$new_interval, 8*86400);
 			$this->log("The time we have been running (".round($time_this_run,1).") is approaching the resumption interval ($resume_interval) - increasing resumption interval to $new_interval");
 			$this->jobdata_set('resume_interval', $new_interval);
 		}
@@ -757,8 +788,7 @@ class UpdraftPlus {
 
 		// Schedule again, to run in 5 minutes again, in case we again fail
 		// The actual interval can be increased (for future resumptions) by other code, if it detects apparent overlapping
-		$resume_interval = $this->jobdata_get('resume_interval');
-		if (!is_numeric($resume_interval) || $resume_interval<300) $resume_interval = 300;
+		$resume_interval = max(intval($this->jobdata_get('resume_interval')), 300);
 
 		// We just do this once, as we don't want to be in permanent conflict with the overlap detector
 		if ($resumption_no == 8) {
@@ -1004,7 +1034,7 @@ class UpdraftPlus {
 		if (false === $one_shot) {
 			# If the files and database schedules are the same, and if this the file one, then we rope in database too.
 			# On the other hand, if the schedules were the same and this was the database run, then there is nothing to do.
-			if (UpdraftPlus_Options::get_updraft_option('updraft_interval') == UpdraftPlus_Options::get_updraft_option('updraft_interval_database') || UpdraftPlus_Options::get_updraft_option('updraft_interval_database', 'xyz') == 'xyz' ) {
+			if ('manual' != UpdraftPlus_Options::get_updraft_option('updraft_interval') && (UpdraftPlus_Options::get_updraft_option('updraft_interval') == UpdraftPlus_Options::get_updraft_option('updraft_interval_database') || UpdraftPlus_Options::get_updraft_option('updraft_interval_database', 'xyz') == 'xyz' )) {
 				$backup_database = ($backup_files == true) ? true : false;
 			}
 			$this->log("Processed schedules. Tasks now: Backup files: $backup_files Backup DB: $backup_database");
@@ -1018,9 +1048,10 @@ class UpdraftPlus {
 			return;
 		}
 
-		$resume_interval = 300;
-// 		$max_execution_time = ini_get('max_execution_time');
-// 		if ($max_execution_time >0 && $max_execution_time<300 && $resume_interval< $max_execution_time + 30) $resume_interval = $max_execution_time + 30;
+		// Allow the resume interval to be more than 300 if last time we know we went beyond that - but never more than 600
+		$resume_interval = (int)min(max(300, get_transient('updraft_initial_resume_interval')), 600);
+		# We delete it because we only want to know about behaviour found during the very last backup run (so, if you move servers then old data is not retained)
+		delete_transient('updraft_initial_resume_interval');
 
 		$job_file_entities = array();
 		if ($backup_files) {
@@ -1043,7 +1074,7 @@ class UpdraftPlus {
 			'backup_time', $this->backup_time,
 			'backup_time_ms', $this->backup_time_ms,
 			'service', $service,
-			'split_every', max(absint(UpdraftPlus_Options::get_updraft_option('updraft_split_every', 800)), UPDRAFTPLUS_SPLIT_MIN),
+			'split_every', max(intval(UpdraftPlus_Options::get_updraft_option('updraft_split_every', 800)), UPDRAFTPLUS_SPLIT_MIN),
 			'maxzipbatch', 26214400, #25Mb
 			'job_file_entities', $job_file_entities,
 			'one_shot', $one_shot

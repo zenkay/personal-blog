@@ -4,7 +4,7 @@ Plugin Name: Easy Table
 Plugin URI: http://takien.com/
 Description: Create table in post, page, or widget in easy way.
 Author: Takien
-Version: 1.3.1
+Version: 1.4
 Author URI: http://takien.com/
 */
 
@@ -87,7 +87,7 @@ function __construct(){
 private function easy_table_base($return){
 	$easy_table_base = Array(
 				'name' 			=> 'Easy Table',
-				'version' 		=> '1.3.1',
+				'version' 		=> '1.4',
 				'plugin-domain'	=> 'easy-table'
 	);
 	return $easy_table_base[$return];
@@ -1166,6 +1166,7 @@ $api = plugins_api('plugin_information', array('slug' => 'easy-table' ));
 <li>CSS <?php _e('by','easy-table');?> <a target="_blank" href="http://twitter.github.com/bootstrap">Twitter Bootstrap</a></li>
 <li>jQuery metadata <?php _e('by','easy-table');?> <a target="_blank" href="https://github.com/jquery/jquery-metadata/">John Resig</a></li>
 <li>CuscoSky table styles <?php _e('by','easy-table');?> <a target="_blank" href="http://www.buayacorp.com">Braulio Soncco</a></li>
+<li>Tablesorter updated version <?php _e('by','easy-table');?> <a target="_blank" href="https://github.com/Mottie/tablesorter">Rob Garrison</a></li>
 
 </ul>
 		<?php endif; ?>

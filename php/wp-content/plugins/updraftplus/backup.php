@@ -508,21 +508,20 @@ class UpdraftPlus_Backup {
 						if (count($dirlist)>0) {
 							$created = $this->create_zip($dirlist, $youwhat, $backup_file_basename, $index);
 							# Now, store the results
-							if (is_string($created) || is_array($created)) {
-								if (is_string($created)) $created=array($created);
-								foreach ($created as $findex => $fname) {
-									$backup_array[$youwhat][$index] = $fname;
-									$itext = ($index == 0) ? '' : $index;
-									$index++;
-									$backup_array[$youwhat.$itext.'-size'] = filesize($updraft_dir.'/'.$fname);
-								}
-							} else {
-								$updraftplus->log("$youwhat: create_zip returned an error");
-							}
+							if (!is_string($created) && !is_array($created)) $updraftplus->log("$youwhat: create_zip returned an error");
 						} else {
 							$updraftplus->log("No backup of $youwhat: there was nothing found to back up");
 						}
+					}
 
+					if ( $created != $whichdir && (is_string($created) || is_array($created))) {
+						if (is_string($created)) $created=array($created);
+						foreach ($created as $findex => $fname) {
+							$backup_array[$youwhat][$index] = $fname;
+							$itext = ($index == 0) ? '' : $index;
+							$index++;
+							$backup_array[$youwhat.$itext.'-size'] = filesize($updraft_dir.'/'.$fname);
+						}
 					}
 
 					$job_file_entities[$youwhat]['index'] = $this->index;
@@ -616,7 +615,7 @@ class UpdraftPlus_Backup {
 		if (!$updraftplus->opened_log_time) $updraftplus->logfile_open($updraftplus->nonce);
 
 		// Get the blog name and rip out all non-alphanumeric chars other than _
-		$blog_name = preg_replace('/[^A-Za-z0-9_]/','', str_replace(' ','_', substr(get_bloginfo(), 0, 96)));
+		$blog_name = preg_replace('/[^A-Za-z0-9_]/','', str_replace(' ','_', substr(get_bloginfo(), 0, 32)));
 		if (!$blog_name) $blog_name = 'non_alpha_name';
 		$blog_name = apply_filters('updraftplus_blog_name', $blog_name);
 
@@ -808,7 +807,6 @@ class UpdraftPlus_Backup {
 			}
 
 			$this->stow("#\n\n");
-
 		}
 		
 		// In UpdraftPlus, segment is always 'none'
@@ -823,7 +821,7 @@ class UpdraftPlus_Backup {
 						$integer_fields[strtolower($struct->Field)] = "1";
 				}
 			}
-			
+
 			// Experimentation here shows that on large tables (we tested with 180,000 rows) on MyISAM, 1000 makes the table dump out 3x faster than the previous value of 100. After that, the benefit diminishes (increasing to 4000 only saved another 12%)
 			if($segment == 'none') {
 				$row_start = 0;
@@ -1024,7 +1022,7 @@ class UpdraftPlus_Backup {
 				$updraftplus->log(sprintf(__("Failed to open directory (check the file permissions): %s",'updraftplus'), $fullpath), 'error');
 				return false;
 			}
-			while ($e = readdir($dir_handle)) {
+			while (false !== ($e = readdir($dir_handle))) {
 				if ($e != '.' && $e != '..') {
 					if (is_link($fullpath.'/'.$e)) {
 						$deref = realpath($fullpath.'/'.$e);
@@ -1080,6 +1078,9 @@ class UpdraftPlus_Backup {
 
 		global $updraftplus;
 		$updraft_dir = $updraftplus->backups_dir_location();
+
+		# This is only used by one corner-case in BinZip
+		$this->make_zipfile_source = $source;
 
 		$original_index = $this->index;
 
@@ -1226,18 +1227,18 @@ class UpdraftPlus_Backup {
 			// Remove prefixes
 			$backupable_entities = $updraftplus->get_backupable_file_entities(true);
 			if (isset($backupable_entities[$this->whichone])) {
-					if ('plugins' == $whichone || 'themes' == $whichone || 'uploads' == $whichone) {
-						$remove_path = dirname($backupable_entities[$whichone]);
+					if ('plugins' == $this->whichone || 'themes' == $this->whichone || 'uploads' == $this->whichone) {
+						$remove_path = dirname($backupable_entities[$this->whichone]);
 						# To normalise instead of removing (which binzip doesn't support, so we don't do it), you'd remove the dirname() in the above line, and uncomment the below one.
-						#$add_path = $whichone;
+						#$add_path = $this->whichone;
 					} else {
-						$remove_path = $backupable_entities[$whichone];
+						$remove_path = $backupable_entities[$this->whichone];
 					}
 			}
 			if ($add_path) {
 					$zipcode = $zip->create($this->source, PCLZIP_OPT_REMOVE_PATH, $remove_path, PCLZIP_OPT_ADD_PATH, $add_path);
 			} else {
-					$zipcode = $zip->create($this->source, PCLZIP_OPT_REMOVE_PATH, $remove_path);
+				$zipcode = $zip->create($this->source, PCLZIP_OPT_REMOVE_PATH, $remove_path);
 			}
 			if ($zipcode == 0 ) {
 					$updraftplus->log("PclZip Error: ".$zip->errorInfo(true), 'warning');

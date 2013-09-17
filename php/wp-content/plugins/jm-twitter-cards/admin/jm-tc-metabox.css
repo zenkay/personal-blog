@@ -1,0 +1,40 @@
+/*
+Styles for JM Twitter Cards m
+Author: Julien Maury
+Author URI: http://tweetpress.fr
+*/
+
+.tc-metabox .docu {
+	text-align:right;
+	padding: 15px 22px;
+	line-height:4px;
+	-webkit-border-radius: 0px;
+	-moz-border-radius: 0px;
+	border-radius: 0px;
+	color: #ffffff;
+	font-size: 12px;
+	text-decoration: none;
+	vertical-align: middle;
+	border:none;
+	width:136px;
+	text-align:center;
+	border:1px solid #ccc;
+	color: #000000;
+	 
+}
+
+.tc-metabox .feature {
+	margin: 1em 0;
+	display:block;
+	padding:1em;
+	border:1px solid #ddd;
+	background-color:#fff;
+}
+
+.tc-metabox .description {
+	text-align:right;
+}
+
+.tc-metabox h1 {
+	font-size:1.2em;
+}

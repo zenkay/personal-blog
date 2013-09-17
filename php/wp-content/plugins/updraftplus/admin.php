@@ -257,7 +257,7 @@ class UpdraftPlus_Admin {
 			$dismissed = get_transient('updraftplus_dismissedautobackup');
 			if (true == $dismissed) return;
 
-			if ( 'upgrade-plugin' == $action ) {
+			if ( 'upgrade-plugin' == $_GET['action'] ) {
 				$title = __('Update Plugin');
 				$parent_file = 'plugins.php';
 				$submenu_file = 'plugins.php';
@@ -1245,9 +1245,9 @@ CREATE TABLE $wpdb->signups (
 		} elseif (isset($_POST['action']) && $_POST['action'] == 'updraft_wipesettings') {
 			$settings = array('updraft_interval', 'updraft_interval_database', 'updraft_retain', 'updraft_retain_db', 'updraft_encryptionphrase', 'updraft_service', 'updraft_dropbox_appkey', 'updraft_dropbox_secret', 'updraft_googledrive_clientid', 'updraft_googledrive_secret', 'updraft_googledrive_remotepath', 'updraft_ftp_login', 'updraft_ftp_pass', 'updraft_ftp_remote_path', 'updraft_server_address', 'updraft_dir', 'updraft_email', 'updraft_delete_local', 'updraft_debug_mode', 'updraft_include_plugins', 'updraft_include_themes', 'updraft_include_uploads', 'updraft_include_others', 'updraft_include_wpcore', 'updraft_include_wpcore_exclude', 'updraft_include_more', 
 			'updraft_include_blogs', 'updraft_include_mu-plugins', 'updraft_include_others_exclude', 'updraft_lastmessage', 'updraft_googledrive_clientid', 'updraft_googledrive_token', 'updraft_dropboxtk_request_token', 'updraft_dropboxtk_access_token', 'updraft_dropbox_folder', 'updraft_last_backup', 'updraft_starttime_files', 'updraft_starttime_db', 'updraft_startday_db', 'updraft_startday_files', 'updraft_sftp_settings', 'updraft_s3generic_login', 'updraft_s3generic_pass', 'updraft_s3generic_remote_path', 'updraft_s3generic_endpoint', 'updraft_webdav_settings', 'updraft_disable_ping', 'updraft_cloudfiles_user', 'updraft_cloudfiles_apikey', 'updraft_cloudfiles_path', 'updraft_cloudfiles_authurl', 'updraft_ssl_useservercerts', 'updraft_ssl_disableverify', 'updraft_s3_login', 'updraft_s3_pass', 'updraft_s3_remote_path', 'updraft_dreamobjects_login', 'updraft_dreamobjects_pass', 'updraft_dreamobjects_remote_path');
-			foreach ($settings as $s) {
-				UpdraftPlus_Options::delete_updraft_option($s);
-			}
+
+			foreach ($settings as $s) UpdraftPlus_Options::delete_updraft_option($s);
+
 			$this->show_admin_warning(__("Your settings have been wiped.",'updraftplus'));
 		}
 
@@ -2334,7 +2334,7 @@ ENDHERE;
 				// Record which set this file is found in
 				if (!is_array($values)) $values=array($values);
 				foreach ($values as $val) {
-					if (preg_match('/^backup_([\-0-9]{15})_.*_([0-9a-f]{12})-[\-a-z]([0-9]+(of[0-9]+)?)?+\.(zip|gz|gz\.crypt)$/i', $val, $matches)) {
+					if (preg_match('/^backup_([\-0-9]{15})_.*_([0-9a-f]{12})-[\-a-z]+([0-9]+(of[0-9]+)?)?+\.(zip|gz|gz\.crypt)$/i', $val, $matches)) {
 						$nonce = $matches[2];
 						if (isset($bdata['service']) && $bdata['service'] == 'none' && !is_file($updraft_dir.'/'.$val)) {
 							# File no longer present

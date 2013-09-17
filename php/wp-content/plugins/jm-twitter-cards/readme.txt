@@ -16,7 +16,9 @@ Once activated the plugin adds Twitter cards on your posts according to your set
 Compatible with : WP SEO by Yoast (do not check cards option in this plugin if activated) and All in One SEO
 
 The plugin allows you to customize your cards per each post. But do not activate cards in SEO by Yoast plugin. Otherwise markup will be added twice.
-If you choose full customization metabox is now on the right side in your edit. It's shorter simply because now twitter account is retrieved from author's profile.
+If you choose full customization you will see a metabox in your post edit.
+
+**The plugin has now its own <a href="http://support.tweetpress.fr/forums/forum/jm-twitter-cards">support you can find here</a>**
 
 <a href="http://twitter.com/intent/user?screen_name=tweetpressfr">Follow me on Twitter</a>
 
@@ -30,7 +32,9 @@ Une fois activé le plugin s'occupe d'ajouter une card Twitter sur vos posts sel
 Compatible avec WP SEO by Yoast(ne pas ajouter l'option cards dans ce plugin si activé) et All in One SEO
 
 Le plugin vous permet de personnaliser les cards pour chaque post. Attention malgré tout à ne pas activer l'option card de Yoast ou sinon le markup sera ajouté 2 fois.
-En mode full custom la metabox est maintenant située sur le côté tout en haut, elle est réduite car le compte Twitter de l'auteur est récupéré directement depuis son profil.
+En mode full custom une metabox apparaît dans vos edit de post.
+
+**Le plugin a maintenant <a href="http://support.tweetpress.fr/forums/forum/jm-twitter-cards">son propre support</a>** (la langue est l'Anglais mais vous pouvez poster en Français)
 
 <a href="http://twitter.com/intent/user?screen_name=tweetpressfr">Me suivre sur Twitter</a>
 
@@ -75,6 +79,16 @@ I can be a problem when you work with HD and/or a lot of images. So you can use 
 = How do I use the custom fields option? = 
 Basically you provide your custom field keys in plugin option page and then it will grab datas.
 
+= How do I use gallery cards ? = 
+Just use the WordPress media manager to set a WordPress Gallery and the plugin will grab the first 4 images to set the gallery card.
+You have to use the shortcode [gallery] to enjoy this feature ( that's what the WordPress media manager does, it inserts the shortcode [gallery]).
+
+Please avoid using images heavier than 1 MB.
+
+
+See live example: http://support.tweetpress.fr/demo-twitter-cards-gallery/
+(sometimes you have to wait a minute for images to appear in validator)
+
 ––––
 En Français 
 –––––––––––––––––––––––––––––––––––
@@ -100,6 +114,14 @@ Cela peut poser problème si vous travaillez avec de la HD et/ou beaucoup d'imag
 = Comment utiliser l'option custom fields? = 
 Il suffit de renseigner les clés de vos custom fields en page d'option et le plugin s'occupera de récupérer les datas correspondantes.
 
+= Comment mettre en place des cards galerie ? = 
+Utiliser le gestionnaire de médias WordPress pour créer une galerie WordPress et le plugin prendra les 4 premières pour constituer la card galerie.
+Vous devez utiliser le shortcode [gallery] pour obtenir une card galerie (c'est ce que fait le gestionnaire de médias, il insère le shortcode [gallery]).
+
+SVP évitez d'utliser des images plus grande qu'1 MB
+
+Voir une démo : http://support.tweetpress.fr/demo-twitter-cards-gallery/
+(parfois vous devez patientez un peu pour que les images apparaissent au validateur.)
 
 == Screenshots ==
 1. admin
@@ -107,6 +129,24 @@ Il suffit de renseigner les clés de vos custom fields en page d'option et le pl
 3. metabox
 
 == Changelog ==
+
+=  3.3.6 =
+* 06 Sep 2013
+* BIG UPDATE !
+* Move option page from settings to its own page in admin
+* Add support for Gallery cards
+* Add support for plugin http://support.tweetpress.fr
+* Add some fancy CSS to the option page (inspired by the design made by @wabbaly, special thanks to him ^^) 
+* Metabox has been improved too
+* Remove unecessary options such as falback for product cards in option page 
+* Add links to documentation in every section of settings and in metabox
+* Update documentation.html
+
+
+=  3.3.5 =
+* 30 Aug 2013
+* Re-add Twitter meta domain that handles the "view on" on Twitter Cards.
+* fix minor bug in option page (<em> not closed)
 
 =  3.3.4 =
 * 23 Aug 2013
@@ -287,7 +327,7 @@ Il suffit de renseigner les clés de vos custom fields en page d'option et le pl
 = 2.2.2 =
 * 17 mar 2013
 * Add support for open graph
-* Replace meta attr name with property which is mroe compliant with W3C 
+* Replace meta attr name with property which is more compliant with W3C 
 
 = 2.2.1 =
 * 13 fev 2013

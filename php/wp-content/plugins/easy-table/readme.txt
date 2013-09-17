@@ -4,7 +4,7 @@ Donate link: http://takien.com/donate
 Tags: table,csv,csv-to-table,post,excel,csv file,widget,tablesorter
 Requires at least: 3.0
 Tested up to: 3.6
-Stable tag: 1.3.1
+Stable tag: 1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -247,6 +247,9 @@ There are many ways to install this plugin, e.g:
 No
 
 == Changelog ==
+
+= 1.4 =
+* Updated: TableSorter JavaScript library now updated to 2.10.8 from 2.0.5b ( hope it will solve many sorting problems )
 
 = 1.3.1 =
 * Fixed: Bug on version 1.3, fatal error on PHP prior to 5.3.0
