@@ -1,9 +1,9 @@
 === UpdraftPlus - WordPress Backup and Restoration ===
-Contributors: DavidAnderson
-Tags: backup, backups, restore, database, rackspace, amazon, s3, amazon s3, s3 compatible, dropbox, google drive, rackspace cloud files, rackspace, cloud files, dreamhost, dreamobjects, ftp, webdav, google cloud storage, cloudian, cloudn, connectria, constant cloud, eucalyptus, nifty, nimbula, back up, multisite, restoration, sftp, ftps, migrate, duplicate, copy, updraft, schedule, database backup
-Requires at least: 3.1
+Contributors: Backup with UpdraftPlus, DavidAnderson
+Tags: backup, backups, restore, database, rackspace, amazon, s3, amazon s3, s3 compatible, dropbox, google drive, rackspace cloud files, rackspace, cloud files, dreamhost, dreamobjects, ftp, webdav, google cloud storage, cloudian, cloudn, connectria, constant cloud, eucalyptus, nifty, nimbula, back up, multisite, restoration, sftp, ftps, scp, migrate, duplicate, copy, updraft, schedule, database backup, wordpress backup, full backup
+Requires at least: 3.2
 Tested up to: 3.6.1
-Stable tag: 1.7.3
+Stable tag: 1.7.20
 Author URI: http://updraftplus.com
 Donate link: http://david.dw-perspective.org.uk/donate
 License: GPLv3 or later
@@ -12,15 +12,18 @@ Easy and complete backups + restoration. Manual or automated backups (Amazon S3,
 
 == Description ==
 
-<a href="http://updraftplus.com">UpdraftPlus</a> simplifies backups (and restoration). Backup into the cloud (Amazon S3 (or compatible), Dropbox, Google Drive, Rackspace Cloud, DreamObjects, FTP, SFTP, WebDAV and email) and restore with a single click. Backups of files and database can have separate schedules.
+<a href="http://updraftplus.com">UpdraftPlus</a> simplifies backups (and restoration). Backup into the cloud (Amazon S3 (or compatible), Dropbox, Google Drive, Rackspace Cloud, DreamObjects, FTP, SFTP, SCP, WebDAV and email) and restore with a single click. Backups of files and database can have separate schedules.
 
-* Thousands of users: widely tested and reliable (over 215,000 downloads). Ranks in the top 0.5% on rankwp.com (70th out of 25,000 plugins).
-* Top-quality: ranks 52nd out of 25,000 WordPress plugins for quality on rankwp.com (top 0.25% - last checked 20th August 2013).
-* Supports WordPress backups to Amazon S3 (or compatible), Dropbox, Rackspace Cloud Files, Google Drive, Google Cloud Storage, DreamHost DreamObjects, FTP and email. Also (via an add-on) FTP over SSL, SFTP and WebDAV. (Note: Microsoft forbid SkyDrive to be used by backup software). Some examples of S3-compatible providers: Cloudian, Connectria, Constant, Eucalyptus, Nifty, Nimbula, Cloudn.
+<strong>Top-quality:</strong> UpdraftPlus is the highest-ranking backup plugin on rankwp.com (ranks 16th out of 25,000 WordPress plugins for quality on rankwp.com - last checked 28th September 2013).
+
+<strong>Tens of thousands of users:</strong> widely tested and reliable (over 300,000 downloads). Ranks in the top 50 most popular of all WordPress plugins on rankwp.com. Millions of backups completed!
+
+
+* Supports WordPress backups to Amazon S3 (or compatible), Dropbox, Rackspace Cloud Files, Google Drive, Google Cloud Storage, DreamHost DreamObjects, FTP and email. Also (via an add-on) FTP over SSL, SFTP, SCP and WebDAV. (Note: Microsoft forbid SkyDrive to be used by backup software). Some examples of S3-compatible providers: Cloudian, Connectria, Constant, Eucalyptus, Nifty, Nimbula, Cloudn.
 * Quick restore (both file and database backups)
 * Backup automatically on a repeating schedule
 * Site duplicator/migrator: can copy sites, and (with add-on) move them to new locations
-* Files and databases can have separate schedules
+* Files and database backups can have separate schedules
 * Failed uploads are automatically resumed/retried
 * Large sites can be split into multiple archives
 * Select which files to backup (plugins, themes, content, other)
@@ -125,6 +128,33 @@ Yes; especially before you submit any support requests.
 Thanks for asking - yes, I have. Check out my profile page - http://profiles.wordpress.org/DavidAnderson/ .
 
 == Changelog ==
+
+= 1.7.20 - 2013/09/20 =
+* TWEAK: Add semaphore locking to prevent WP's cron system kicking off multiple jobs on overloaded systems
+* TWEAK: Catch and display some previously uncaught AJAX notices when restoring, and display information on the restore process earlier
+
+= 1.7.18 - 2013/09/17 =
+* FEATURE: <a href="http://updraftplus.com/shop/morestorage/">New "more storage" add-on</a>, enabling backing up to multiple storage destinations
+* FEATURE: New progress meter on dashboard page when a backup is running
+* FEATURE: SCP support (in the <a href="http://updraftplus.com/shop/sftp/">SFTP/FTPS/SCP add-on</a>)
+* FEATURE: If (and only if) your settings page is open, then UpdraftPlus will automatically perform tricks to help backups run even if your WordPress install has its scheduler disabled (of course, enabling your scheduler would better).
+* FIX: Fix bug whereby clicking on 'rescan' lost track of backups sent to remote storage
+* FIX: Fix obscure bug that could cause WPMU installs to not back up all tables
+* FIX: Fix unwanted warning message if the uploads folder was empty
+* FIX: Show timestamps of available backup sets in local time zone
+* FIX: Email subjects and contents use local time zone
+* FIX: Fix mangled pathnames for PclZip one-shot attempts
+* FIX: Fix bug that caused files to be dropped if one was in a sub-directory of the entity and named (entire name) "0"
+* FIX: Show correct title on page when upgrading
+* FIX: Fix one-character typo that could cause Dropbox uploads to not continue if Dropbox threw a transient error from their end
+* FIX: Permanent solution to conflict with W3TC's object cache (and removal of advisory notice)
+* FIX: Correctly show estimated size of 'others' backup within the expert section
+* FIX: Fix small typo in inline decrypter that led to viewer reading an incomplete message
+* TWEAK: Warn the user if they seem to be a on a dev website that is not visited + so can't backup (http://updraftplus.com/faqs/why-am-i-getting-warnings-about-my-site-not-having-enough-visitors/)
+* TWEAK: More detection of possible overlaps (use temporary files as evidence)
+* TWEAK: Extra check that the directory is writable before unpacking zip in restore (so user gets friendly error message instead of trickier one)
+* TWEAK: Provide option to remember the "automatic backup" setting
+* TWEAK: <a href="http://updraftplus.com/shop/webdav/">The WebDAV add-on</a> now has support for WebDAV servers that don't support Content-Range (e.g. ownCloud)
 
 = 1.7.3 - 2013/08/26 =
 * FIX: Some Dropbox connect errors were being lost

@@ -122,7 +122,7 @@ class UpdraftPlus_BinZip extends UpdraftPlus_PclZip {
 					clearstatcache();
 					# Log when 20% bigger or at least every 50Mb
 					if ($new_size > $last_size*1.2 || $new_size > $last_size + 52428800) {
-						$updraftplus->log($this->path.sprintf(": size is now: %.2f Mb", round($new_size/1048576,1)));
+						$updraftplus->log(basename($this->path).sprintf(": size is now: %.2f Mb", round($new_size/1048576,1)));
 						$last_size = $new_size;
 					}
 				}
@@ -139,7 +139,7 @@ class UpdraftPlus_BinZip extends UpdraftPlus_PclZip {
 			$ret = proc_close($process);
 
 			if ($ret != 0 && $ret != 12) {
-				$updraftplus->log("Binary zip: error (code: $ret)");
+				$updraftplus->log("Binary zip: error (code: $ret - look it up in the Diagnostics section at http://www.info-zip.org/mans/zip.html for interpretation... and also check that your hosting account quota is not full)");
 				if (!empty($w) && !$this->debug) $updraftplus->log("Last output from zip: ".trim($w), 'debug');
 				return false;
 			}

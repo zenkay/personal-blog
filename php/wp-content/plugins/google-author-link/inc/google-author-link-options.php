@@ -23,6 +23,8 @@ function galink_options_show() {
     <div class="wrap">
         <img src="<?PHP echo plugins_url(); ?>/google-author-link/images/help-for-wordpress-small.png" alt="Help For WordPress Logo" style="float:left;" />
         <h2>Google Author Link</h2>
+        
+        <a href="http://helpforwp.com/donate/?utm_source=PluginSettings&utm_medium=WP&utm_campaign=GoogleAuthorLink" target="_blank"><img src="<?PHP echo plugins_url(); ?>/google-author-link/images/paypal-donate.png" align="right" style="padding:10px;"/></a>
   <h3>Plugin configuration</h3>
         <p>This plugin allows you to easily manage your Google Authorship and Google Publisher Profile.</p>
 		<h3>Google Authorship</h3>
@@ -58,6 +60,56 @@ function galink_options_show() {
                 <td>If you have a Google Publisher Profile for this site, enter it here.</td>
             </tr>
         </table>
+        <h3>Remove authorship from these categories</h3>
+        <p>Why remove Authorship code from certain content in your site - read the instructions <a href="http://helpforwp.com/why-remove-google-authorship-code?utm_source=AuthorLink&utm_medium=SettingPage&utm_campaign=GoogleAuthorLink" target="_blank">here</a></p>
+        <p>
+			<?php
+				$selected = get_option('galink_exclude_post_categories', ''); 
+				$args = array( 'hide_empty' => 0, 'depth' => 0, 'hierarchical' => 1, 'name' => 'galink_exclude_post_categories[]', 'id' => 'galink_exclude_post_categories_id', 'echo' => 0,  );
+				$categories_list = wp_dropdown_categories( $args );
+				$categories_list_multiple = str_replace('<select', '<select multiple="multiple" style="width:250px; height:200px;" ', $categories_list);
+
+				//check selected
+				if( $selected && is_array($selected) && count($selected) > 0 ){
+					$categories_options_array = explode('</option>', $categories_list_multiple);
+					foreach( $categories_options_array as $key => $option ){
+						foreach( $selected as $selected_cat ){
+							if( strpos($option, 'value="'.$selected_cat.'"') !== false ){
+								$categories_options_array[$key] = str_replace('value="'.$selected_cat.'"', 'value="'.$selected_cat.'" selected="selected"', $option);
+							}
+						}
+					}
+					$categories_list_multiple = implode('</option>', $categories_options_array);
+				}
+				
+				echo $categories_list_multiple;
+			?>
+		</p>
+        <p>Hold down Control or Command(Mac) for multiple selection</p>
+        <h3>Remove authorship from these custom post types</h3>
+        <p>
+        	<?php
+				$selected = get_option('galink_exclude_custom_post_type', ''); 
+				$args = array('public'   => true, '_builtin' => false);
+				$output = 'names'; // names or objects, note names is the default
+				$operator = 'and'; // 'and' or 'or'
+				$post_types = get_post_types( $args, $output, $operator ); 
+			?>
+            <select multiple="multiple" style="width:250px; height:50px;" name="galink_exclude_custom_post_type[]" id="galink_exclude_custom_post_type_id">
+            <?php 
+				if( count($post_types) > 0 ){ 
+					foreach( $post_types as $post_type_name ){
+						if ( $selected && is_array($selected) && count($selected) > 0 && in_array($post_type_name, $selected) ){
+							echo '<option value="'.$post_type_name.'" selected="selected">'.$post_type_name.'</option>';
+						}else{
+							echo '<option value="'.$post_type_name.'">'.$post_type_name.'</option>';
+						}
+					}
+				} 
+			?>
+            </select>
+        </p>
+        <p>Hold down Control or Command(Mac) for multiple selection</p>
         <p style="margin-top: 20px"><button class="button-primary" type="submit" id="wpls_admin_submit">Save Settings</button></p>
         </form>
         
@@ -66,10 +118,8 @@ function galink_options_show() {
         
 		<h3>Documenation and tutorials</h3>
 		<p>We have a <a target="_blank" href="http://helpforwp.com/tag/google-author-link/">number of blog posts</a> with some extra information on this plugin, as well visit the <a target="_blank" href="http://helpforwp.com/plugins/google-author-link/">plugin's home page here</a>.</p>
-
         <h3>Google Author Link Plugin Support</h3>
         <p>We provide support for all of our plugins, if you're having a problem or have a quick question, <a href="http://helpforwp.com/forum/" target="_blank">create a support request here</a></p>
     </div>
 <?php
-} 
-?>
+}

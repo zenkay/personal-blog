@@ -103,9 +103,9 @@
 
 		
 		<div class="tile">
-			<a class="image-tile" href="http://helpforwp.com/plugins/help-for-wordpress-video-training/?utm_source=GoogleAuthorLink&utm_medium=Plugin&utm_campaign=GoogleAuthorLink" target="_blank"><img src="<?PHP echo plugins_url(); ?>/google-author-link/images/help-for-wp-thmb.jpg" alt="Help for WP Plugin" /></a>
-			<p>This plugin adds video training material right inside the WordPress dashboard, great for developers to install in sites to help end users learn WordPress</p>
-			<a href="http://helpforwp.com/plugins/help-for-wordpress-video-training/?utm_source=GoogleAuthorLink&utm_medium=Plugin&utm_campaign=GoogleAuthorLink" target="_blank" class="blue-button">More Info</a>
+			<a class="image-tile" href="http://helpforwp.com/downloads/featured-images-for-categories/?utm_source=GoogleAuthorLink&utm_medium=Plugin&utm_campaign=GoogleAuthorLink" target="_blank"><img src="<?PHP echo plugins_url(); ?>/google-author-link/images/featured-images-categories.jpg" alt="Featured Images for Categories" /></a>
+			<p>Add Featured Images to Categories, Tags and even custom post types, the display these images on your WordPress site via a shortcode or easy to use widget</p>
+			<a href="http://helpforwp.com/downloads/featured-images-for-categories/?utm_source=GoogleAuthorLink&utm_medium=Plugin&utm_campaign=GoogleAuthorLink" target="_blank" class="blue-button">More Info</a>
 		</div>
 	</div>
 </div>

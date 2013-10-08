@@ -4,7 +4,7 @@
 Plugin Name: Google Author Link
 Plugin URI: http://HelpForWP.com
 Description: Manage your Google Authorship with this simple plugin. Works for single author and multi-author WordPress sites.
-Version: 1.2
+Version: 1.3
 Author: HelpForWP
 Author URI: http://HelpForWP.com
 
@@ -97,10 +97,23 @@ class GoogleAuthorLink {
 	function galink_register_settings() {
 		register_setting( 'galink-settings', 'galink_options' );
 		register_setting( 'galink-settings', 'galink_google_publisher_profile' );
+		register_setting( 'galink-settings', 'galink_exclude_post_categories' );
+		register_setting( 'galink-settings', 'galink_exclude_custom_post_type' );		
 	}
 	
 	function galink_head_output(){
-	
+		//check if is exclude category
+		$exclude_category = get_option('galink_exclude_post_categories', ''); 
+		if( $exclude_category && is_array($exclude_category) && count($exclude_category) > 0 && in_category( $exclude_category ) ){
+			return;
+		}
+		
+		//check if is exclude post type
+		$exclude_post_type = get_option('galink_exclude_custom_post_type', '');
+		if( $exclude_post_type && is_array($exclude_post_type) && count($exclude_post_type) > 0 && is_singular( $exclude_post_type ) ){
+			return;
+		}
+		
 		//check if home page
 		if (is_home() || is_front_page()){
 			$galink_home_user = get_option('galink_options', 0);

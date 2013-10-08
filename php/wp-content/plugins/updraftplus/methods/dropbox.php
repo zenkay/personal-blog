@@ -32,7 +32,7 @@ class UpdraftPlus_BackupModule_dropbox {
 
 		if (!function_exists('mcrypt_encrypt')) {
 			$updraftplus->log('The mcrypt PHP module is not installed');
-			$updraftplus->log(sprintf(__('The %s PHP module is not installed', 'updraftplus'), 'mcrypt'), 'error');
+			$updraftplus->log(sprintf(__('The %s PHP module is not installed - ask your web hosting company to enable it', 'updraftplus'), 'mcrypt'), 'error');
 			return false;
 		}
 
@@ -55,7 +55,7 @@ class UpdraftPlus_BackupModule_dropbox {
 		$updraft_dir = $updraftplus->backups_dir_location();
 		$dropbox_folder = trailingslashit(UpdraftPlus_Options::get_updraft_option('updraft_dropbox_folder'));
 
-		foreach($backup_array as $file) {
+		foreach ($backup_array as $file) {
 
 			$available_quota = -1;
 
@@ -89,7 +89,7 @@ class UpdraftPlus_BackupModule_dropbox {
 			$file_success = 1;
 
 			$hash = md5($file);
-			$this->current_file_hash=$hash;
+			$this->current_file_hash = $hash;
 
 			$filesize = filesize($updraft_dir.'/'.$file);
 			$this->current_file_size = $filesize;
@@ -129,7 +129,7 @@ class UpdraftPlus_BackupModule_dropbox {
 					// Try the indicated offset
 					$we_tried = $matches[1];
 					$dropbox_wanted = $matches[2];
-					$updraftplus->log("Dropbox alignment error: tried=$we_tried, wanted=$dropbox_wanted; will attempt recovery");
+					$updraftplus->log("Dropbox not yet aligned: tried=$we_tried, wanted=$dropbox_wanted; will attempt recovery");
 					try {
 						$dropbox->chunkedUpload($updraft_dir.'/'.$file, '', $ufile, true, $dropbox_wanted, $upload_id, array($ourself, 'chunked_callback'));
 					} catch (Exception $e) {
@@ -155,7 +155,7 @@ class UpdraftPlus_BackupModule_dropbox {
 
 		}
 
-		$updraftplus_backup->prune_retained_backups('dropbox', $this, null);
+		return null;
 
 	}
 
