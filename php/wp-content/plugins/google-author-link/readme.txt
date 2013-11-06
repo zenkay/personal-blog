@@ -49,6 +49,7 @@ http://helpforwp.com/tag/google-author-link/
 2. Google profile URL in the user profile
 
 == Changelog ==
+1.4 Minor update to make instructions more clear for the plugin settings page
 1.3 Update to allow users to select categories to not show authorship on, as well as support to also hide authorship on custom post types.
 1.2 Update to support Google Publisher Profile in additional to Google Authorship. Update if you have a Google Profile for a business that you would like to connect your site with.
 1.0.1 Initial public release

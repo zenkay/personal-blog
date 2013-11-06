@@ -61,8 +61,9 @@ function galink_options_show() {
             </tr>
         </table>
         <h3>Remove authorship from these categories</h3>
-        <p>Why remove Authorship code from certain content in your site - read the instructions <a href="http://helpforwp.com/why-remove-google-authorship-code?utm_source=AuthorLink&utm_medium=SettingPage&utm_campaign=GoogleAuthorLink" target="_blank">here</a></p>
-        <p>
+        <p>Select the categories below that you don't want to show Authorship code on.</p>
+	        <p>Why remove Authorship code from certain content in your site - get more information <a href="http://helpforwp.com/why-remove-google-authorship-code?utm_source=AuthorLink&utm_medium=SettingPage&utm_campaign=GoogleAuthorLink" target="_blank">here</a>.</p>
+	        <p>
 			<?php
 				$selected = get_option('galink_exclude_post_categories', ''); 
 				$args = array( 'hide_empty' => 0, 'depth' => 0, 'hierarchical' => 1, 'name' => 'galink_exclude_post_categories[]', 'id' => 'galink_exclude_post_categories_id', 'echo' => 0,  );
@@ -87,6 +88,7 @@ function galink_options_show() {
 		</p>
         <p>Hold down Control or Command(Mac) for multiple selection</p>
         <h3>Remove authorship from these custom post types</h3>
+<p>Each custom post type you choose here will no longer show your Authorship code</p>
         <p>
         	<?php
 				$selected = get_option('galink_exclude_custom_post_type', ''); 

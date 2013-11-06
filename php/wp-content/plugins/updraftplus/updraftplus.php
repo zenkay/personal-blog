@@ -4,7 +4,7 @@ Plugin Name: UpdraftPlus - Backup/Restore
 Plugin URI: http://updraftplus.com
 Description: Backup and restore: take backups locally, or backup to Amazon S3, Dropbox, Google Drive, Rackspace, (S)FTP, WebDAV & email, on automatic schedules.
 Author: UpdraftPlus.Com, DavidAnderson
-Version: 1.7.20
+Version: 1.7.35
 Donate link: http://david.dw-perspective.org.uk/donate
 License: GPLv3 or later
 Text Domain: updraftplus
@@ -13,35 +13,44 @@ Author URI: http://updraftplus.com
 
 /*
 TODO - some of these are out of date/done, needs pruning
-// Raise a warning for probably-too-large email attachments (make intelligent - i.e. record what's the largest succesfully despatched so far? Or is that not relevant, since that only tells us about the first link?)
 // After Oct 15 2013: Remove page(s) from websites discussing W3TC
 // Change migrate window: 1) Retain link to article 2) Have selector to choose which backup set to migrate - or a fresh one 3) Have option for FTP/SFTP/SCP despatch 4) Have big "Go" button. Have some indication of what happens next. Test the login first. Have the remote site auto-scan its directory + pick up new sets. Have a way of querying the remote site for its UD-dir. Have a way of saving the settings as a 'profile'. Or just save the last set of settings (since mostly will be just one place to send to). Implement an HTTP/JSON method for sending files too.
-// ancient .table.gz files need to be purged by the temp reaper
-// Backup Now should have an option for files-only/database-only
-// Prettify shop page: http://wordpress.org/plugins/pricing-table-extended/
+// Place in maintenance mode during restore - ?
+// Add more info to email - e.g. names + sizes + checksums of uploads + locations. Make the report beautiful!
+// Warn/prevent if trying to migrate between sub-domain/sub-folder based multisites
+// Detect low-memory VPSes, and don't use BinZip
+// Change default setting of retain 1 backup set? (Auto-backup could replace it in that case... don't perform pruning when doing auto-backup?)
+// Update updates checker so that it checks for updates on a sliding-scale: those who've not updated in last X only end up checking every Y
+// Change add-ons screen, to be less confusing for people who haven't yet updated but have connected
+// Put a 'what do I get if I upgrade?' link into the mix
+// Add to admin bar (and make it something that can be turned off)
+// New reporting add-on: Multiple email addresses, send backup to 1st only, option to send email only on failure, include checksums (SHA1) in report (store these in job data immediately post-creation; then aggregate them into the backup history on job finish), option to include log file always, option to log to syslog
+// If migrated database from somewhere else, then add note about revising UD settings
+// Strategy for what to do if the updraft_dir contains untracked backups. Automatically rescan?
+// MySQL manual: See Section 8.2.2.1, Speed of INSERT Statements.
 // Exempt UD itself from a plugins restore? (will options be out-of-sync? exempt options too?)
 // Post restore/migrate, check updraft_dir, and reset if non-existent
 // Auto-empty caches post-restore/post-migration (prevent support requests from people with state/wrong cacheing data)
 // Show 'Migrate' instead of 'Restore' on the button if relevant
 // Test with: http://wordpress.org/plugins/wp-db-driver/
 // Backup notes
-// The delete-em at the end needs to be made resumable
-// Show running jobs at top. If there are some, and are overdue, kick off a few visits to wp-cron.php to help along.
+// The delete-em at the end needs to be made resumable. And to only run on last run-through (i.e. no errors, or no resumption)
 // Incremental - can leverage some of the multi-zip work???
 // Put in a help link to explain what WordPress core (including any additions to your WordPress root directory) does (was asked for support)
-// mysqldump, if available, for faster database dumps. Need then to test compatibility with max_packet_size detection in restoration
-// Check flow of activation on multisite
-// Find a faster encryption method
+// More databases
 // Multiple files in more-files
+// On multisite, the settings should be in the network panel. Connection settings need migrating into site options.
 // On restore, raise a warning for ginormous zips
 // Detect double-compressed files when they are uploaded (need a way to detect gz compression in general)
 // Log migrations/restores, and have an option for auto-emailing the log
 # Email backup method should be able to force split limit down to something manageable - or at least, should make the option display. (Put it in email class. Tweak the storage dropdown to not hide stuff also in expert class if expert is shown).
 // What happens if you restore with a database that then changes the setting for updraft_dir ? Should be safe, as the setting is cached during a run: double-check.
+// Multi-site manager at updraftplus.com
 // Import/slurp backups from other sites. See: http://www.skyverge.com/blog/extending-the-wordpress-xml-rpc-api/
 // More sophisticated options for retaining/deleting (e.g. 4/day for X days, then 7/week for Z weeks, then 1/month for Y months)
 // Unpack zips via AJAX? Do bit-by-bit to allow enormous opens a better chance? (have a huge one in Dropbox)
 // Put in a maintenance-mode detector
+// Add update warning if they've got an add-on but not connected account
 // Detect CloudFlare output in attempts to connect - detecting cloudflare.com should be sufficient
 // Bring multisite shop page up to date
 // Re-do pricing + support packages
@@ -50,7 +59,6 @@ TODO - some of these are out of date/done, needs pruning
 // Give a help page to go with the message: A zip error occurred - check your log for more details (reduce support requests)
 // Exclude .git and .svn by default from wpcore
 // Add option to add, not just replace entities on restore/migrate
-// Warnings of unreadable files upon PclZip fall-back may need to be more visible - test
 // Add warning to backup run at beginning if -old dirs exist
 // Auto-alert if disk usage passes user-defined threshold / or an automatically computed one. Auto-alert if more backups are known than should be (usually a sign of incompleteness). Actually should just delete unknown backups over a certain age.
 // Generic S3 provider: add page to site. S3-compatible storage providers: http://www.dragondisk.com/s3-storage-providers.html
@@ -63,8 +71,6 @@ TODO - some of these are out of date/done, needs pruning
 // Get link - http://www.rackspace.com/knowledge_center/article/how-to-use-updraftplus-to-back-up-cloud-sites-to-cloud-files
 // 'Delete from your webserver' should trigger a rescan if the backup was local-only
 // Notify user only if backup fails
-// Log file SHA1 after finishing creation
-// Add more info to email - e.g. names + sizes + checksums of uploads + locations
 // Encrypt archives - http://www.frostjedi.com/phpbb3/viewtopic.php?f=46&t=168508&p=391881&e=391881
 // Option for additive restores - i.e. add content (themes, plugins,...) instead of replacing
 // Testing framework - automated testing of all file upload / download / deletion methods
@@ -93,10 +99,8 @@ TODO - some of these are out of date/done, needs pruning
 // More DB add-on (other non-WP tables; even other databases)
 // Unlimited customers should be auto-emailed each time they add a site (security)
 // Update all-features page at updraftplus.com (not updated after 1.5.5)
-// Add in downloading in the 'Restore' modal, and remove the advice to do so manually.
 // Save database encryption key inside backup history on per-db basis, so that if it changes we can still decrypt
 // Switch to Google Drive SDK. Google folders. https://developers.google.com/drive/folder
-// Convert S3.php to use WP's native HTTP functions
 // AJAX-ify restoration
 // Ability to re-scan existing cloud storage
 // Dropbox uses one mcrypt function - port to phpseclib for more portability
@@ -106,7 +110,7 @@ TODO - some of these are out of date/done, needs pruning
 //Do an automated test periodically for the success of loop-back connections
 //When a manual backup is run, use a timer to update the 'Download backups and logs' section, just like 'Last finished backup run'. Beware of over-writing anything that's in there from a resumable downloader.
 //Change DB encryption to not require whole gzip in memory (twice)
-//Add Box.Net, SugarSync, Me.Ga support??
+//Add YouSendIt, Box.Net, SugarSync, Me.Ga support??
 //Make it easier to find add-ons
 // Move the inclusion, cloud and retention data into the backup job (i.e. don't read current config, make it an attribute of each job). In fact, everything should be. So audit all code for where get_option is called inside a backup run: it shouldn't happen.
 // Should we resume if the only errors were upon deletion (i.e. the backup itself was fine?) Presently we do, but it displays errors for the user to confuse them. Perhaps better to make pruning a separate scheuled task??
@@ -114,13 +118,11 @@ TODO - some of these are out of date/done, needs pruning
 // Chunking + resuming on SFTP
 // Add-on to check integrity of backups
 // Add-on to manage all your backups from a single dashboard
-// Make disk space check more intelligent (currently hard-coded at 35Mb)
 // Provide backup/restoration for UpdraftPlus's settings, to allow 'bootstrap' on a fresh WP install - some kind of single-use code which a remote UpdraftPlus can use to authenticate
-// Multiple jobs
+// Multiple schedules
 // Allow connecting to remote storage, scanning + populating backup history from it
 // GoogleDrive in-dashboard download resumption loads the whole archive into memory - should instead either chunk or directly stream fo the file handle
 // Multisite add-on should allow restoring of each blog individually
-// Create single zip, containing even WordPress itself
 // Remove the recurrence of admin notices when settings are saved due to _wp_referer
 
 Encrypt filesystem, if memory allows (and have option for abort if not)
@@ -153,29 +155,33 @@ define('UPDRAFT_DEFAULT_OTHERS_EXCLUDE','upgrade,cache,updraft,backup*');
 
 # The following can go in your wp-config.php
 if (!defined('UPDRAFTPLUS_ZIP_EXECUTABLE')) define('UPDRAFTPLUS_ZIP_EXECUTABLE', "/usr/bin/zip,/bin/zip,/usr/local/bin/zip,/usr/sfw/bin/zip,/usr/xdg4/bin/zip,/opt/bin/zip");
+if (!defined('UPDRAFTPLUS_MYSQLDUMP_EXECUTABLE')) define('UPDRAFTPLUS_MYSQLDUMP_EXECUTABLE', "/usr/bin/mysqldump,/bin/mysqldump,/usr/local/bin/mysqldump,/usr/sfw/bin/mysqldump,/usr/xdg4/bin/mysqldump,/opt/bin/mysqldump");
 # If any individual file size is greater than this, then a warning is given
 if (!defined('UPDRAFTPLUS_WARN_FILE_SIZE')) define('UPDRAFTPLUS_WARN_FILE_SIZE', 1024*1024*250);
 # On a test on a Pentium laptop, 100,000 rows needed ~ 1 minute to write out - so 150,000 is around the CPanel default of 90 seconds execution time.
 if (!defined('UPDRAFTPLUS_WARN_DB_ROWS')) define('UPDRAFTPLUS_WARN_DB_ROWS', 150000);
 
 # The smallest value (in megabytes) that the "split zip files at" setting is allowed to be set to
-if (!defined('UPDRAFTPLUS_SPLIT_MIN')) define('UPDRAFTPLUS_SPLIT_MIN', 75);
+if (!defined('UPDRAFTPLUS_SPLIT_MIN')) define('UPDRAFTPLUS_SPLIT_MIN', 50);
 
 // Load add-ons and various files that may or may not be present, depending on where the plugin was distributed
 if (is_file(UPDRAFTPLUS_DIR.'/premium.php')) require_once(UPDRAFTPLUS_DIR.'/premium.php');
 if (is_file(UPDRAFTPLUS_DIR.'/autoload.php')) require_once(UPDRAFTPLUS_DIR.'/autoload.php');
 if (is_file(UPDRAFTPLUS_DIR.'/udaddons/updraftplus-addons.php')) include_once(UPDRAFTPLUS_DIR.'/udaddons/updraftplus-addons.php');
 
+$updraftplus_have_addons = 0;
 if (is_dir(UPDRAFTPLUS_DIR.'/addons') && $dir_handle = opendir(UPDRAFTPLUS_DIR.'/addons')) {
 	while (false !== ($e = readdir($dir_handle))) {
 		if (is_file(UPDRAFTPLUS_DIR.'/addons/'.$e) && preg_match('/\.php$/', $e)) {
+			$updraftplus_have_addons++;
 			include_once(UPDRAFTPLUS_DIR.'/addons/'.$e);
 		}
 	}
 	@closedir($dir_handle);
 }
 
-if (!isset($updraftplus)) $updraftplus = new UpdraftPlus();
+$updraftplus = new UpdraftPlus();
+$updraftplus->have_addons = $updraftplus_have_addons;
 
 if (!$updraftplus->memory_check(192)) {
 // Experience appears to show that the memory limit is only likely to be hit (unless it is very low) by single files that are larger than available memory (when compressed)
@@ -215,7 +221,7 @@ class UpdraftPlus {
 	public $logfile_name = "";
 	public $logfile_handle = false;
 	public $backup_time;
-	public $backup_time_ms;
+	public $job_time_ms;
 
 	public $opened_log_time;
 	private $backup_dir;
@@ -223,6 +229,7 @@ class UpdraftPlus {
 	private $jobdata;
 
 	public $something_useful_happened = false;
+	public $have_addons = false;
 
 	// Used to schedule resumption attempts beyond the tenth, if needed
 	public $current_resumption;
@@ -232,7 +239,7 @@ class UpdraftPlus {
 
 		// Initialisation actions - takes place on plugin load
 
-		if ($fp = fopen( __FILE__, 'r')) {
+		if ($fp = fopen(__FILE__, 'r')) {
 			$file_data = fread( $fp, 1024 );
 			if (preg_match("/Version: ([\d\.]+)(\r|\n)/", $file_data, $matches)) {
 				$this->version = $matches[1];
@@ -243,13 +250,17 @@ class UpdraftPlus {
 		# Create admin page
 		add_action('init', array($this, 'handle_url_actions'));
 		// Run earlier than default - hence earlier than other components
-		add_action('admin_init', array($this,'admin_init'), 9);
 		// admin_menu runs earlier, and we need it because options.php wants to use $updraftplus_admin before admin_init happens
-		add_action('admin_menu', array($this,'admin_init'), 9);
+		add_action(apply_filters('updraft_admin_menu_hook', 'admin_menu'), array($this, 'admin_menu'), 9);
+		# Not a mistake: admin-ajax.php calls only admin_init and not admin_menu
+		add_action('admin_init', array($this, 'admin_menu'), 9);
 		add_action('updraft_backup', array($this,'backup_files'));
 		add_action('updraft_backup_database', array($this,'backup_database'));
-		# backup_all is used by the manual "Backup Now" button
+		add_action('updraft_backupnow_backup', array($this,'backupnow_files'));
+		add_action('updraft_backupnow_backup_database', array($this,'backupnow_database'));
+		# backup_all as an action is legacy (Oct 2013) - there may be some people who wrote cron scripts to use it
 		add_action('updraft_backup_all', array($this,'backup_all'));
+		add_action('updraft_backupnow_backup_all', array($this,'backup_all'));
 		# this is our runs-after-backup event, whose purpose is to see if it succeeded or failed, and resume/mom-up etc.
 		add_action('updraft_backup_resume', array($this,'backup_resume'), 10, 3);
 		# http://codex.wordpress.org/Plugin_API/Filter_Reference/cron_schedules. Raised priority because some plugins wrongly over-write all prior schedule changes (including BackupBuddy!)
@@ -266,7 +277,34 @@ class UpdraftPlus {
 		if ($class_path) require_once(UPDRAFTPLUS_DIR.'/includes/phpseclib/'.$class_path.'.php');
 	}
 
-	public function admin_init() {
+	// Returns the number of bytes free, if it can be detected; otherwise, false
+	// Presently, we only detect CPanel. If you know of others, then feel free to contribute!
+	public function get_hosting_disk_quota_free() {
+		if (!@is_dir('/usr/local/cpanel') || $this->detect_safe_mode() || !function_exists('popen') || (!@is_executable('/usr/local/bin/perl') && !@is_executable('/usr/local/cpanel/3rdparty/bin/perl'))) return false;
+
+		$perl = (@is_executable('/usr/local/cpanel/3rdparty/bin/perl')) ? '/usr/local/cpanel/3rdparty/bin/perl' : '/usr/local/bin/perl';
+
+		$exec = "UPDRAFTPLUSKEY=updraftplus $perl ".UPDRAFTPLUS_DIR."/includes/get-cpanel-quota-usage.pl";
+
+		$handle = popen($exec, 'r');
+		if (false === $handle) return false;
+
+		$found = false;
+		while (false === $found && !feof($handle)) {
+			$w = fgets($handle);
+			# Used, limit, remain
+			if (preg_match('/RESULT: (\d+) (\d+) (\d+) /', $w, $matches)) { $found = true; }
+		}
+		$ret = pclose($handle);
+		if (false === $found ||$ret != 0) return false;
+
+		if ((int)$matches[2]<100 || ($matches[1] + $matches[3] != $matches[2])) return false;
+
+		return $matches;
+	}
+
+	// This function may get called multiple times, so write accordingly
+	public function admin_menu() {
 		// We are in the admin area: now load all that code
 		global $updraftplus_admin;
 		if (empty($updraftplus_admin)) require_once(UPDRAFTPLUS_DIR.'/admin.php');
@@ -298,10 +336,10 @@ class UpdraftPlus {
 					readfile($log_file);
 					exit;
 				} else {
-					add_action('admin_notices', array($this,'show_admin_warning_unreadablelog') );
+					add_action('all_admin_notices', array($this,'show_admin_warning_unreadablelog') );
 				}
 			} else {
-				add_action('admin_notices', array($this,'show_admin_warning_nolog') );
+				add_action('all_admin_notices', array($this,'show_admin_warning_nolog') );
 			}
 		}
 
@@ -336,7 +374,7 @@ class UpdraftPlus {
 					readfile($log_file);
 					exit;
 				} else {
-					add_action('admin_notices', array($this,'show_admin_warning_unreadablelog') );
+					add_action('all_admin_notices', array($this,'show_admin_warning_unreadablelog') );
 				}
 			} elseif ($_GET['action'] == 'downloadfile' && isset($_GET['updraftplus_file']) && preg_match('/^backup_([\-0-9]{15})_.*_([0-9a-f]{12})-[\-a-z]+\.(gz\.crypt)$/i', $_GET['updraftplus_file'])) {
 				$updraft_dir = $this->backups_dir_location();
@@ -346,7 +384,7 @@ class UpdraftPlus {
 					$this->spool_file('db', $spool_file, $dkey);
 					exit;
 				} else {
-					add_action('admin_notices', array($this,'show_admin_warning_unreadablefile') );
+					add_action('all_admin_notices', array($this,'show_admin_warning_unreadablefile') );
 				}
 			}
 		}
@@ -354,7 +392,7 @@ class UpdraftPlus {
 
 	public function get_table_prefix() {
 		global $wpdb;
-		if (!empty($wpdb->base_prefix)) return $wpdb->base_prefix;
+		#if (!empty($wpdb->base_prefix)) return $wpdb->base_prefix;
 		return $wpdb->get_blog_prefix(0);
 	}
 
@@ -389,7 +427,12 @@ class UpdraftPlus {
 			$all_jobs = $wpdb->get_results("SELECT option_name, option_value FROM $wpdb->options WHERE option_name LIKE 'updraft_jobdata_%'", ARRAY_A);
 			foreach ($all_jobs as $job) {
 				$val = maybe_unserialize($job['option_value']);
+				# TODO: Can simplify this after a while (now all jobs use job_time_ms) - 1 Jan 2014
 				if (!empty($val['backup_time_ms']) && time() > $val['backup_time_ms'] + 86400) {
+					delete_option($job['option_name']);
+				} elseif (!empty($val['job_time_ms']) && time() > $val['job_time_ms'] + 86400) {
+					delete_option($job['option_name']);
+				} elseif (empty($val['backup_time_ms']) && empty($val['job_time_ms']) && !empty($val['job_type']) && $val['job_type'] != 'backup') {
 					delete_option($job['option_name']);
 				}
 			}
@@ -403,7 +446,9 @@ class UpdraftPlus {
 				$ziparchive_match = preg_match("/$match([0-9]+)?\.zip\.tmp\.([A-Za-z0-9]){6}?$/i", $entry);
 				// zi followed by 6 characters is the pattern used by /usr/bin/zip on Linux systems. It's safe to check for, as we have nothing else that's going to match that pattern.
 				$binzip_match = preg_match("/^zi([A-Za-z0-9]){6}$/", $entry);
-				if ((preg_match("/$match\.tmp(\.gz)?$/i", $entry) || $ziparchive_match || $binzip_match) && is_file($updraft_dir.'/'.$entry)) {
+				# Temporary files from the database dump process - not needed, as is caught by the catch-all
+				# $table_match = preg_match("/${match}-table-(.*)\.table(\.tmp)?\.gz$/i", $entry);
+				if ((preg_match("/$match\.(tmp|table)(\.gz)?$/i", $entry) || $ziparchive_match || $binzip_match) && is_file($updraft_dir.'/'.$entry)) {
 					// We delete if a parameter was specified (and either it is a ZipArchive match or an order to delete of whatever age), or if over 12 hours old
 					if (($match && ($ziparchive_match || $binzip_match || 0 == $older_than) && $now_time-filemtime($updraft_dir.'/'.$entry) >= $older_than) || $now_time-filemtime($updraft_dir.'/'.$entry)>43200) {
 						$this->log("Deleting old temporary file: $entry");
@@ -428,10 +473,10 @@ class UpdraftPlus {
 		}
 	}
 
-	public function backup_time_nonce() {
-		$this->backup_time_ms = microtime(true);
+	public function backup_time_nonce($nonce = false) {
+		$this->job_time_ms = microtime(true);
 		$this->backup_time = time();
-		$nonce = substr(md5(time().rand()), 20);
+		if (false === $nonce) $nonce = substr(md5(time().rand()), 20);
 		$this->nonce = $nonce;
 	}
 
@@ -471,9 +516,15 @@ class UpdraftPlus {
 
 		$safe_mode = $this->detect_safe_mode();
 
+		$memory_limit = ini_get('memory_limit');
 		$memory_usage = round(@memory_get_usage(false)/1048576, 1);
 		$memory_usage2 = round(@memory_get_usage(true)/1048576, 1);
-		$logline = "UpdraftPlus WordPress backup plugin (http://updraftplus.com): ".$this->version." WP: ".$wp_version." PHP: ".phpversion()." (".php_uname().") MySQL: $mysql_version Server: ".$_SERVER["SERVER_SOFTWARE"]." safe_mode: $safe_mode max_execution_time: ".@ini_get("max_execution_time")." memory_limit: ".ini_get('memory_limit')." (used: ${memory_usage}M | ${memory_usage2}M) ZipArchive::addFile: ";
+
+		# Attempt to raise limit to avoid false positives
+		@set_time_limit(900);
+		$max_execution_time = (int)@ini_get("max_execution_time");
+
+		$logline = "UpdraftPlus WordPress backup plugin (http://updraftplus.com): ".$this->version." WP: ".$wp_version." PHP: ".phpversion()." (".@php_uname().") MySQL: $mysql_version Server: ".$_SERVER["SERVER_SOFTWARE"]." safe_mode: $safe_mode max_execution_time: $max_execution_time memory_limit: $memory_limit (used: ${memory_usage}M | ${memory_usage2}M) multisite: ".((is_multisite()) ? 'Y' : 'N')." mcrypt: ".((function_exists('mcrypt_encrypt')) ? 'Y' : 'N')." ZipArchive::addFile: ";
 
 		// method_exists causes some faulty PHP installations to segfault, leading to support requests
 		if (version_compare(phpversion(), '5.2.0', '>=') && extension_loaded('zip')) {
@@ -484,6 +535,13 @@ class UpdraftPlus {
 
 		$w3oc = 'N';
 		if (0 === $this->current_resumption) {
+			$memlim = $this->memory_check_current();
+			if ($memlim<65) {
+				$this->log(sprintf(__('The amount of memory (RAM) allowed for PHP is very low (%s Mb) - you should increase it to avoid failures due to insufficient memory (consult your web hosting company for more help)', 'updraftplus'), round($memlim, 1)), 'warning', 'lowram');
+			}
+			if ($max_execution_time>0 && $max_execution_time<20) {
+				$this->log(sprintf(__('The amount of time allowed for WordPress plugins to run is very low (%s seconds) - you should increase it to avoid backup failures due to time-outs (consult your web hosting company for more help - it is the max_execution_time PHP setting; the recommmended value is %s seconds or more)', 'updraftplus'), $max_execution_time, 90), 'warning', 'lowmaxexecutiontime');
+			}
 			if (defined('W3TC') && W3TC == true && function_exists('w3_instance')) {
 				$modules = w3_instance('W3_ModuleStatus');
 				if ($modules->is_enabled('objectcache')) {
@@ -495,13 +553,27 @@ class UpdraftPlus {
 
 		$this->log($logline);
 
+		$hosting_bytes_free = $this->get_hosting_disk_quota_free();
+		if (is_array($hosting_bytes_free)) {
+			$perc = round(100*$hosting_bytes_free[1]/(max($hosting_bytes_free[2], 1)), 1);
+			$quota_free = ' / '.sprintf('Free disk space in account: %s (%s used)', round($hosting_bytes_free[3]/1048576, 1)." Mb", "$perc %");
+			if ($hosting_bytes_free[3] < 1048576*50) {
+				$quota_free_mb = round($hosting_bytes_free[3]/1048576, 1);
+				$this->log(sprintf(__('Your free space in your hosting account is very low - only %s Mb remain', 'updraftplus'), $quota_free_mb), 'warning', 'lowaccountspace'.$quota_free_mb);
+			}
+		} else {
+			$quota_free = '';
+		}
+
 		$disk_free_space = @disk_free_space($updraft_dir);
 		if ($disk_free_space === false) {
-			$this->log("Free space on disk containing Updraft's temporary directory: Unknown");
+			$this->log("Free space on disk containing Updraft's temporary directory: Unknown".$quota_free);
 		} else {
-			$this->log("Free space on disk containing Updraft's temporary directory: ".round($disk_free_space/1048576,1)." Mb");
-			if ($disk_free_space < 50*1048576) $this->log(sprintf(__('Your free disk space is very low - only %s Mb remain', 'updraftplus'), round($disk_free_space/1048576, 1)), 'warning');
+			$this->log("Free space on disk containing Updraft's temporary directory: ".round($disk_free_space/1048576,1)." Mb".$quota_free);
+			$disk_free_mb = round($disk_free_space/1048576, 1);
+			if ($disk_free_space < 50*1048576) $this->log(sprintf(__('Your free disk space is very low - only %s Mb remain', 'updraftplus'), round($disk_free_space/1048576, 1)), 'warning', 'lowdiskspace'.$disk_free_mb);
 		}
+
 	}
 
 	/* Logs the given line, adding (relative) time stamp and newline
@@ -510,11 +582,16 @@ class UpdraftPlus {
 	- Messages at level 'error' do not persist through the job (they are only saved with save_backup_history(), and never restored from there - so only the final save_backup_history() errors persist); we presume that either a) they will be cleared on the next attempt, or b) they will occur again on the final attempt (at which point they will go to the user). But...
 	- ... messages at level 'warning' persist. These are conditions that are unlikely to be cleared, not-fatal, but the user should be informed about. The $uniq_id field (which should not be numeric) can then be used for warnings that should only be logged once
 	*/
+
 	public function log($line, $level = 'notice', $uniq_id = false) {
 
 		if ('error' == $level || 'warning' == $level) {
 			if ('error' == $level && $this->error_count() == 0) $this->log("An error condition has occurred for the first time during this job");
-			$this->errors[] = array('level' => $level, 'message' => $line);
+			if ($uniq_id) {
+				$this->errors[$uniq_id] = array('level' => $level, 'message' => $line);
+			} else {
+				$this->errors[] = array('level' => $level, 'message' => $line);
+			}
 			# Errors are logged separately
 			if ('error' == $level) return;
 			# It's a warning
@@ -530,7 +607,7 @@ class UpdraftPlus {
 
 		if ($this->logfile_handle) {
 			# Record log file times relative to the backup start, if possible
-			$rtime = (!empty($this->backup_time_ms)) ? microtime(true)-$this->backup_time_ms : microtime(true)-$this->opened_log_time;
+			$rtime = (!empty($this->job_time_ms)) ? microtime(true)-$this->job_time_ms : microtime(true)-$this->opened_log_time;
 			fwrite($this->logfile_handle, sprintf("%08.03f", round($rtime, 3))." (".$this->current_resumption.") $line\n");
 		}
 
@@ -539,18 +616,28 @@ class UpdraftPlus {
 				// Download messages are keyed on the job (since they could be running several), and type
 				// The values of the POST array were checked before
 				$findex = (!empty($_POST['findex'])) ? $_POST['findex'] : 0;
-				set_transient('ud_dlmess_'.$_POST['timestamp'].'_'.$_POST['type'].'_'.$findex, $line." (".date('M d H:i:s').")", 3600);
+
+				$this->jobdata_set('dlmessage_'.$_POST['timestamp'].'_'.$_POST['type'].'_'.$findex, $line);
+
 				break;
 			case 'restore':
 				#if ('debug' != $level) echo $line."\n";
 				break;
 			default:
-				if ('debug' != $level) UpdraftPlus_Options::update_updraft_option('updraft_lastmessage', $line." (".date_i18n('M d H:i:s').")");
+				if ('debug' != $level) UpdraftPlus_Options::update_updraft_option('updraft_lastmessage', $line." (".date_i18n('M d H:i:s').")", false);
 				break;
 		}
 
 		if (defined('UPDRAFTPLUS_CONSOLELOG')) print $line."\n";
 		if (defined('UPDRAFTPLUS_BROWSERLOG')) print htmlentities($line)."\n";
+	}
+
+	public function log_removewarning($uniq_id) {
+		$warnings = $this->jobdata_get('warnings');
+		if (!is_array($warnings)) $warnings=array();
+		unset($warnings[$uniq_id]);
+		$this->jobdata_set('warnings', $warnings);
+		unset($this->errors[$uniq_id]);
 	}
 
 	# Q. Why is this abstracted into a separate function? A. To allow poedit and other parsers to pick up the need to translate strings passed to it (and not pick up all of those passed to log()).
@@ -573,6 +660,9 @@ class UpdraftPlus {
 		// Touch the original file, which helps prevent overlapping runs
 		if ($file_path) touch($file_path);
 
+		// What this means in effect is that at least one of the files touched during the run must reach this percentage (so lapping round from 100 is OK)
+		if ($percent > 0.7 * ($this->current_resumption - 9)) $this->something_useful_happened();
+
 		// Log it
 		global $updraftplus_backup;
 		$log = ucfirst($updraftplus_backup->current_service)." chunked upload: $percent % uploaded";
@@ -583,11 +673,6 @@ class UpdraftPlus {
 		// i.e. Max 100/.7 + 9 = 150 runs = 760 minutes = 12 hrs 40, if spaced at 5 minute intervals. However, our algorithm now decreases the intervals if it can, so this should not really come into play
 		// If they get 2 minutes on each run, and the file is 1Gb, then that equals 10.2Mb/120s = minimum 59Kb/s upload speed required
 
-		// What this means in effect is that at least one of the files touched during the run must reach this percentage (so lapping round from 100 is OK)
-		if ($percent > 0.7 * ( $this->current_resumption - 9)) {
-			$this->something_useful_happened();
-		}
-
 		$upload_status = $this->jobdata_get('uploading_substatus');
 		if (is_array($upload_status)) {
 			$upload_status['p'] = $percent/100;
@@ -596,119 +681,206 @@ class UpdraftPlus {
 
 	}
 
+	function decrypt($fullpath, $key, $ciphertext = false) {
+		$this->ensure_phpseclib('Crypt_Rijndael', 'Crypt/Rijndael');
+		$rijndael = new Crypt_Rijndael();
+		$rijndael->setKey($key);
+		return (false == $ciphertext) ? $rijndael->decrypt(file_get_contents($fullpath)) : $rijndael->decrypt($ciphertext);
+	}
+
+	function encrypt($fullpath, $key, $rformat = 'inline') {
+		if (!function_exists('mcrypt_encrypt')) {
+			$this->log(sprintf(__('Your web-server does not have the %s module installed.', 'updraftplus'), 'mcrypt').' '.__('Without it, encryption will be a lot slower.', 'updraftplus'), 'warning', 'nomcrypt');
+		}
+		if ($this->have_addons < 10) {
+			$this->log(__("A future release of UpdraftPlus will move the encryption feature into an add-on (and add more features to it).", 'updraftplus').' '.sprintf(__('See: %s', 'updraftplus'), 'http://updraftplus.com/next-updraftplus-release-ready-testing/'), 'warning', 'needpremiumforcrypt');
+		}
+		$this->ensure_phpseclib('Crypt_Rijndael', 'Crypt/Rijndael');
+		$rijndael = new Crypt_Rijndael();
+		$rijndael->setKey($key);
+		if ('inline' === $rformat) {
+			return $rijndael->encrypt(file_get_contents($fullpath));
+		}
+	}
+
 	function detect_safe_mode() {
 		return (@ini_get('safe_mode') && strtolower(@ini_get('safe_mode')) != "off") ? 1 : 0;
 	}
 
+	function find_working_sqldump($logit = true, $cacheit = true) {
+
+		// The hosting provider may have explicitly disabled the popen or proc_open functions
+		if ($this->detect_safe_mode() || !function_exists('popen')) {
+			if ($cacheit) $this->jobdata_set('binsqldump', false);
+			return false;
+		}
+		$existing = $this->jobdata_get('binsqldump', null);
+		# Theoretically, we could have moved machines, due to a migration
+		if (null !== $existing && (!is_string($existing) || @is_executable($existing))) return $existing;
+
+		$updraft_dir = $this->backups_dir_location();
+		global $wpdb;
+		$table_name = $wpdb->get_blog_prefix().'options';
+		$tmp_file = md5(time().rand()).".sqltest.tmp";
+		$pfile = md5(time().rand()).'.tmp';
+		file_put_contents($updraft_dir.'/'.$pfile, "[mysqldump]\npassword=".DB_PASSWORD."\n");
+
+		foreach (explode(',', UPDRAFTPLUS_MYSQLDUMP_EXECUTABLE) as $potsql) {
+			if (!@is_executable($potsql)) continue;
+			if ($logit) $this->log("Testing: $potsql");
+
+			$exec = "cd ".escapeshellarg($updraft_dir)."; $potsql  --defaults-file=$pfile --max_allowed_packet=1M --quote-names --add-drop-table --skip-comments --skip-set-charset --allow-keywords --dump-date --extended-insert --where=option_name=\\'siteurl\\' --user=".escapeshellarg(DB_USER)." --host=".escapeshellarg(DB_HOST)." ".DB_NAME." ".escapeshellarg($table_name)." >$tmp_file";
+
+			$result = false;
+			$handle = popen($exec, "r");
+			if ($handle) {
+				while (!feof($handle)) {
+					$w = fgets($handle);
+					if ($w && $logit) $this->log("Output: ".trim($w));
+				}
+				$ret = pclose($handle);
+				if ($ret !=0) {
+					if ($logit) $this->log("Binary mysqldump: error (code: $ret)");
+				} else {
+					$dumped = file_get_contents($updraft_dir.'/'.$tmp_file, false, null, 0, 4096);
+					if (stripos($dumped, 'insert into') !== false) {
+						if ($logit) $this->log("Working binary mysqldump found: $potsql");
+						$result = $potsql;
+						break;
+					}
+				}
+			} else {
+				if ($logit) $this->log("Error: popen failed");
+			}
+		}
+
+		@unlink($updraft_dir.'/'.$pfile);
+		@unlink($updraft_dir.'/'.$tmp_file);
+
+		if ($cacheit) $this->jobdata_set('binsqldump', $result);
+
+		return $result;
+	}
+
 	# We require -@ and -u -r to work - which is the usual Linux binzip
-	function find_working_bin_zip($logit = true) {
+	function find_working_bin_zip($logit = true, $cacheit = true) {
 		if ($this->detect_safe_mode()) return false;
 		// The hosting provider may have explicitly disabled the popen or proc_open functions
-		if (!function_exists('popen') || !function_exists('proc_open')) return false;
+		if (!function_exists('popen') || !function_exists('proc_open')) {
+			if ($cacheit) $this->jobdata_set('binzip', false);
+			return false;
+		}
+
+		$existing = $this->jobdata_get('binzip', null);
+		# Theoretically, we could have moved machines, due to a migration
+		if (null !== $existing && (!is_string($existing) || @is_executable($existing))) return $existing;
+
 		$updraft_dir = $this->backups_dir_location();
 		foreach (explode(',', UPDRAFTPLUS_ZIP_EXECUTABLE) as $potzip) {
+			if (!@is_executable($potzip)) continue;
 			if ($logit) $this->log("Testing: $potzip");
-			if (@is_executable($potzip)) {
-				# Test it, see if it is compatible with Info-ZIP
-				# If you have another kind of zip, then feel free to tell me about it
-				@mkdir($updraft_dir.'/binziptest/subdir1/subdir2', 0777, true);
-				file_put_contents($updraft_dir.'/binziptest/subdir1/subdir2/test.html', '<html></body><a href="http://updraftplus.com">UpdraftPlus is a great backup and restoration plugin for WordPress.</body></html>');
-				@unlink($updraft_dir.'/binziptest/test.zip');
-				if (is_file($updraft_dir.'/binziptest/subdir1/subdir2/test.html')) {
 
-					$exec = "cd ".escapeshellarg($updraft_dir)."; $potzip -v -u -r binziptest/test.zip binziptest/subdir1";
+			# Test it, see if it is compatible with Info-ZIP
+			# If you have another kind of zip, then feel free to tell me about it
+			@mkdir($updraft_dir.'/binziptest/subdir1/subdir2', 0777, true);
+			file_put_contents($updraft_dir.'/binziptest/subdir1/subdir2/test.html', '<html></body><a href="http://updraftplus.com">UpdraftPlus is a great backup and restoration plugin for WordPress.</body></html>');
+			@unlink($updraft_dir.'/binziptest/test.zip');
+			if (is_file($updraft_dir.'/binziptest/subdir1/subdir2/test.html')) {
+
+				$exec = "cd ".escapeshellarg($updraft_dir)."; $potzip -v -u -r binziptest/test.zip binziptest/subdir1";
+
+				$all_ok=true;
+				$handle = popen($exec, "r");
+				if ($handle) {
+					while (!feof($handle)) {
+						$w = fgets($handle);
+						if ($w && $logit) $this->log("Output: ".trim($w));
+					}
+					$ret = pclose($handle);
+					if ($ret !=0) {
+						if ($logit) $this->log("Binary zip: error (code: $ret)");
+						$all_ok = false;
+					}
+				} else {
+					if ($logit) $this->log("Error: popen failed");
+					$all_ok = false;
+				}
+
+				# Now test -@
+				if (true == $all_ok) {
+					file_put_contents($updraft_dir.'/binziptest/subdir1/subdir2/test2.html', '<html></body><a href="http://updraftplus.com">UpdraftPlus is a really great backup and restoration plugin for WordPress.</body></html>');
+					
+					$exec = $potzip." -v -@ binziptest/test.zip";
 
 					$all_ok=true;
-					$handle = popen($exec, "r");
-					if ($handle) {
-						while (!feof($handle)) {
-							$w = fgets($handle);
-							if ($w && $logit) $this->log("Output: ".trim($w));
-						}
-						$ret = pclose($handle);
-						if ($ret !=0) {
-							if ($logit) $this->log("Binary zip: error (code: $ret)");
+
+					$descriptorspec = array(
+						0 => array('pipe', 'r'),
+						1 => array('pipe', 'w'),
+						2 => array('pipe', 'w')
+					);
+					$handle = proc_open($exec, $descriptorspec, $pipes, $updraft_dir);
+					if (is_resource($handle)) {
+						if (!fwrite($pipes[0], "binziptest/subdir1/subdir2/test2.html\n")) {
+							@fclose($pipes[0]);
+							@fclose($pipes[1]);
+							@fclose($pipes[2]);
 							$all_ok = false;
+						} else {
+							fclose($pipes[0]);
+							while (!feof($pipes[1])) {
+								$w = fgets($pipes[1]);
+								if ($w && $logit) $this->log("Output: ".trim($w));
+							}
+							fclose($pipes[1]);
+							
+							while (!feof($pipes[2])) {
+								$last_error = fgets($pipes[2]);
+								if (!empty($last_error) && $logit) $this->log("Stderr output: ".trim($w));
+							}
+							fclose($pipes[2]);
+
+							$ret = proc_close($handle);
+							if ($ret !=0) {
+								if ($logit) $this->log("Binary zip: error (code: $ret)");
+								$all_ok = false;
+							}
+
 						}
+
 					} else {
-						if ($logit) $this->log("Error: popen failed");
+						if ($logit) $this->log("Error: proc_open failed");
 						$all_ok = false;
 					}
 
-					# Now test -@
-					if (true == $all_ok) {
-						file_put_contents($updraft_dir.'/binziptest/subdir1/subdir2/test2.html', '<html></body><a href="http://updraftplus.com">UpdraftPlus is a really great backup and restoration plugin for WordPress.</body></html>');
-						
-						$exec = $potzip." -v -@ binziptest/test.zip";
+				}
 
-						$all_ok=true;
-
-						$descriptorspec = array(
-							0 => array('pipe', 'r'),
-							1 => array('pipe', 'w'),
-							2 => array('pipe', 'w')
-						);
-						$handle = proc_open($exec, $descriptorspec, $pipes, $updraft_dir);
-						if (is_resource($handle)) {
-							if (!fwrite($pipes[0], "binziptest/subdir1/subdir2/test2.html\n")) {
-								@fclose($pipes[0]);
-								@fclose($pipes[1]);
-								@fclose($pipes[2]);
-								$all_ok = false;
-							} else {
-								fclose($pipes[0]);
-								while (!feof($pipes[1])) {
-									$w = fgets($pipes[1]);
-									if ($w && $logit) $this->log("Output: ".trim($w));
-								}
-								fclose($pipes[1]);
-								
-								while (!feof($pipes[2])) {
-									$last_error = fgets($pipes[2]);
-									if (!empty($last_error) && $logit) $this->log("Error output: ".trim($w));
-								}
-								fclose($pipes[2]);
-
-								$ret = proc_close($handle);
-								if ($ret !=0) {
-									if ($logit) $this->log("Binary zip: error (code: $ret)");
-									$all_ok = false;
-								}
-
-							}
-
-						} else {
-							if ($logit) $this->log("Error: proc_open failed");
-							$all_ok = false;
-						}
-
-					}
-
-					// Do we now actually have a working zip? Need to test the created object using PclZip
-					// If it passes, then remove dirs and then return $potzip;
-					$found_first = false;
-					$found_second = false;
-					if ($all_ok && file_exists($updraft_dir.'/binziptest/test.zip')) {
-						if(!class_exists('PclZip')) require_once(ABSPATH.'/wp-admin/includes/class-pclzip.php');
-						$zip = new PclZip($updraft_dir.'/binziptest/test.zip');
-						$foundit = 0;
-						if (($list = $zip->listContent()) != 0) {
-							foreach ($list as $obj) {
-								if ($obj['filename'] && !empty($obj['stored_filename']) && 'binziptest/subdir1/subdir2/test.html' == $obj['stored_filename'] && $obj['size']==127) $found_first=true;
-								if ($obj['filename'] && !empty($obj['stored_filename']) && 'binziptest/subdir1/subdir2/test2.html' == $obj['stored_filename'] && $obj['size']==134) $found_second=true;
-							}
+				// Do we now actually have a working zip? Need to test the created object using PclZip
+				// If it passes, then remove dirs and then return $potzip;
+				$found_first = false;
+				$found_second = false;
+				if ($all_ok && file_exists($updraft_dir.'/binziptest/test.zip')) {
+					if(!class_exists('PclZip')) require_once(ABSPATH.'/wp-admin/includes/class-pclzip.php');
+					$zip = new PclZip($updraft_dir.'/binziptest/test.zip');
+					$foundit = 0;
+					if (($list = $zip->listContent()) != 0) {
+						foreach ($list as $obj) {
+							if ($obj['filename'] && !empty($obj['stored_filename']) && 'binziptest/subdir1/subdir2/test.html' == $obj['stored_filename'] && $obj['size']==127) $found_first=true;
+							if ($obj['filename'] && !empty($obj['stored_filename']) && 'binziptest/subdir1/subdir2/test2.html' == $obj['stored_filename'] && $obj['size']==134) $found_second=true;
 						}
 					}
-					$this->remove_binzip_test_files($updraft_dir);
-					if ($found_first && $found_second) {
-						if ($logit) $this->log("Working binary zip found: $potzip");
-						return $potzip;
-					}
-
 				}
 				$this->remove_binzip_test_files($updraft_dir);
+				if ($found_first && $found_second) {
+					if ($logit) $this->log("Working binary zip found: $potzip");
+					if ($cacheit) $this->jobdata_set('binzip', $potzip);
+					return $potzip;
+				}
+
 			}
+			$this->remove_binzip_test_files($updraft_dir);
 		}
+		if ($cacheit) $this->jobdata_set('binzip', false);
 		return false;
 	}
 
@@ -734,7 +906,7 @@ class UpdraftPlus {
 		$resume_interval = $this->jobdata_get('resume_interval');
 		if ($time_this_run + 30 > $resume_interval) {
 			$new_interval = ceil($time_this_run + 30);
-			set_transient('updraft_initial_resume_interval', (int)$new_interval, 8*86400);
+			set_site_transient('updraft_initial_resume_interval', (int)$new_interval, 8*86400);
 			$this->log("The time we have been running (".round($time_this_run,1).") is approaching the resumption interval ($resume_interval) - increasing resumption interval to $new_interval");
 			$this->jobdata_set('resume_interval', $new_interval);
 		}
@@ -828,11 +1000,27 @@ class UpdraftPlus {
 
 		// Restore state
 		$resumption_extralog = '';
+		$prev_resumption = $resumption_no - 1;
+
 		if ($resumption_no > 0) {
 			$this->nonce = $bnonce;
 			$this->backup_time = $this->jobdata_get('backup_time');
-			$this->backup_time_ms = $this->jobdata_get('backup_time_ms');
+			# TODO: Remove legacy use of backup_time_ms after 1 Jan 2014
+			$bts = $this->jobdata_get('backup_time_ms');
+			if (!empty($bts)) {
+				$this->job_time_ms = $this->jobdata_get('backup_time_ms');
+			} else {
+				$this->job_time_ms = $this->jobdata_get('job_time_ms');
+			}
+			# Get the warnings before opening the log file, as opening the log file may generate new ones (which then leads to $this->errors having duplicate entries when they are copied over below)
+			$warnings = $this->jobdata_get('warnings');
 			$this->logfile_open($bnonce);
+			// Import existing warnings. The purpose of this is so that when save_backup_history() is called, it has a complete set - because job data expires quickly, whilst the warnings of the last backup run need to persist
+			if (is_array($warnings)) {
+				foreach ($warnings as $warning) {
+					$this->errors[] = array('level' => 'warning', 'message' => $warning);
+				}
+			}
 
 			$runs_started = $this->jobdata_get('runs_started');
 			if (!is_array($runs_started)) $runs_started=array();
@@ -844,7 +1032,6 @@ class UpdraftPlus {
 				}
 			}
 
-			$prev_resumption = $resumption_no - 1;
 			if (isset($time_passed[$prev_resumption])) {
 				$resumption_extralog = ", previous check-in=".round($time_passed[$prev_resumption], 1)."s";
 			} else {
@@ -856,26 +1043,9 @@ class UpdraftPlus {
 		$runs_started[$resumption_no] = $time_now;
 		if (!empty($this->backup_time)) $this->jobdata_set('runs_started', $runs_started);
 
-		// Import existing warnings. The purpose of this is so that when save_backup_history() is called, it has a complete set - because job data expires quickly, whilst the warnings of the last backup run need to persist
-		$warnings = $this->jobdata_get('warnings');
-		if (is_array($warnings)) {
-			foreach ($warnings as $warning) {
-				$this->errors[] = array('level' => 'warning', 'message' => $warning);
-			}
-		}
-
 		// Schedule again, to run in 5 minutes again, in case we again fail
 		// The actual interval can be increased (for future resumptions) by other code, if it detects apparent overlapping
 		$resume_interval = max(intval($this->jobdata_get('resume_interval')), 100);
-
-		if ($resumption_no > 0 && isset($runs_started[$prev_resumption])) {
-			$our_expected_start = $runs_started[$prev_resumption] + $resume_interval;
-			# More than 12 minutes late?
-			if ($time_now > $our_expected_start + 720) {
-				$this->log('Long time past since expected resumption time: approx expected= '.round($our_expected_start,1).", now=".round($time_now, 1).", diff=".round($time_now-$our_expected_start,1));
-				$this->log(__('Your website is visited infrequently and UpdraftPlus is not getting the resources it hoped for; please read this page:', 'updraftplus').' http://updraftplus.com/faqs/why-am-i-getting-warnings-about-my-site-not-having-enough-visitors/', 'warning', 'infrequentvisits');
-			}
-		}
 
 		$btime = $this->backup_time;
 		$job_type = $this->jobdata_get('job_type');
@@ -891,6 +1061,17 @@ class UpdraftPlus {
 		if (($resumption_no >= 1 && 'finished' == $this->jobdata_get('jobstatus')) || (!empty($this->backup_is_already_complete))) {
 			$this->log('Terminate: This backup job is already finished.');
 			die;
+		}
+
+		if ($resumption_no > 0 && isset($runs_started[$prev_resumption])) {
+			$our_expected_start = $runs_started[$prev_resumption] + $resume_interval;
+			# If the previous run increased the resumption time, then it is timed from the end of the previous run, not the start
+			if (isset($time_passed[$prev_resumption]) && $time_passed[$prev_resumption]>0) $our_expected_start += $time_passed[$prev_resumption];
+			# More than 12 minutes late?
+			if ($time_now > $our_expected_start + 720) {
+				$this->log('Long time past since expected resumption time: approx expected='.round($our_expected_start,1).", now=".round($time_now, 1).", diff=".round($time_now-$our_expected_start,1));
+				$this->log(__('Your website is visited infrequently and UpdraftPlus is not getting the resources it hoped for; please read this page:', 'updraftplus').' http://updraftplus.com/faqs/why-am-i-getting-warnings-about-my-site-not-having-enough-visitors/', 'warning', 'infrequentvisits');
+			}
 		}
 
 		// We just do this once, as we don't want to be in permanent conflict with the overlap detector
@@ -925,6 +1106,13 @@ class UpdraftPlus {
 				$schedule_resumption = true;
 			}
 		}
+
+		// Sanity check
+		if (empty($this->backup_time)) {
+			$this->log('Abort this run: the backup_time parameter appears to be empty (this is either a one-time error caused by upgrading from a version earlier than 1.7.18 whilst a backup was in progress (which you can ignore), or caused by resuming an already-complete backup.');
+			return false;
+		}
+
 		if (isset($schedule_resumption)) {
 			$schedule_for = time()+$resume_interval;
 			$this->log("Scheduling a resumption ($next_resumption) after $resume_interval seconds ($schedule_for) in case this run gets aborted");
@@ -932,36 +1120,39 @@ class UpdraftPlus {
 			$this->newresumption_scheduled = $schedule_for;
 		}
 
-		// Sanity check
-		if (empty($this->backup_time)) {
-			# TODO: We no longer use object cache-ing - alter this message
-			$this->log('Abort this run: the backup_time parameter appears to be empty (this is either a one-time error caused by upgrading from a version earlier than 1.7.18 whilst a backup was in progress (which you can ignore), or caused by resuming an already-complete backup, or by your site having a faulty object cache active (e.g. W3 Total Cache\'s object cache))');
-			return false;
-		}
-
 		global $updraftplus_backup;
-		// Bring in all the zip routines
+		// Bring in all the backup routines
 		if (!is_a($updraftplus_backup, 'UpdraftPlus_Backup')) require_once(UPDRAFTPLUS_DIR.'/backup.php');
 
-		// This should be always called; if there were no files in this run, it returns us an empty array
-		$backup_array = $updraftplus_backup->resumable_backup_of_files($resumption_no);
+		$backup_files = $this->jobdata_get('backup_files');
+		if ('no' == $backup_files) {
 
-		// This save, if there was something, is then immediately picked up again
-		if (is_array($backup_array)) {
-			$this->log('Saving backup status to database (elements: '.count($backup_array).")");
-			$this->save_backup_history($backup_array);
+			$this->log("This backup run is not intended for files - skipping");
+			$our_files = array();
+
+		} else {
+
+			// This should be always called; if there were no files in this run, it returns us an empty array
+			$backup_array = $updraftplus_backup->resumable_backup_of_files($resumption_no);
+
+			// This save, if there was something, is then immediately picked up again
+			if (is_array($backup_array)) {
+				$this->log('Saving backup status to database (elements: '.count($backup_array).")");
+				$this->save_backup_history($backup_array);
+			}
+
+			// Switch of variable name is purely vestigial
+			$our_files = $backup_array;
+			if (!is_array($our_files)) $our_files = array();
+
+			$undone_files = array();
+
 		}
-
-		// Switch of variable name is purely vestigial
-		$our_files = $backup_array;
-		if (!is_array($our_files)) $our_files = array();
-
-		$undone_files = array();
 
 		$backup_database = $this->jobdata_get('backup_database');
 
 		// The value of jobdata['backup_database'] is read and written below (instead of using the existing variable) so that we can copy-and-paste this part as needed.
-		if ($backup_database == "begun" || $backup_database == 'finished' || $backup_database == 'encrypted') {
+		if ('begun' == $backup_database || 'finished' == $backup_database || 'encrypted' == $backup_database) {
 			if ($backup_database == "begun") {
 				if ($resumption_no > 0) {
 					$this->log("Resuming creation of database dump");
@@ -975,9 +1166,7 @@ class UpdraftPlus {
 			}
 
 			$db_backup = $updraftplus_backup->backup_db($backup_database);
-			if(is_array($our_files) && is_string($db_backup)) {
-				$our_files['db'] = $db_backup;
-			}
+			if(is_array($our_files) && is_string($db_backup)) $our_files['db'] = $db_backup;
 
 			if ($backup_database != 'encrypted') $this->jobdata_set('backup_database', 'finished');
 		} elseif ('no' == $backup_database) {
@@ -1005,12 +1194,18 @@ class UpdraftPlus {
 
 		$backupable_entities = $this->get_backupable_file_entities(true);
 
+		$checksums = array('sha1' => array());
+
 		# Queue files for upload
 		foreach ($our_files as $key => $files) {
 			// Only continue if the stored info was about a dump
 			if (!isset($backupable_entities[$key]) && $key != 'db') continue;
 			if (is_string($files)) $files = array($files);
 			foreach ($files as $findex => $file) {
+				$sha = $this->jobdata_get('sha1-'.$key.$findex);
+				if ($sha) $checksums['sha1'][$key.$findex] = $sha;
+				$sha = $this->jobdata_get('sha1-'.$key.$findex.'.crypt');
+				if ($sha) $checksums['sha1'][$key.$findex.".crypt"] = $sha;
 				if ($this->is_uploaded($file)) {
 					$this->log("$file: $key: This file has already been successfully uploaded");
 				} elseif (is_file($updraft_dir.'/'.$file)) {
@@ -1022,8 +1217,13 @@ class UpdraftPlus {
 				}
 			}
 		}
+		$our_files['checksums'] = $checksums;
 
-		if (!empty($this->semaphore)) $this->semaphore->unlock();
+		# Save again (now that we have checksums)
+		$this->save_backup_history($our_files);
+
+		// We finished; so, low memory was not a problem
+		$this->log_removewarning('lowram');
 
 		if (count($undone_files) == 0) {
 			$this->log("Resume backup ($bnonce, $resumption_no): finish run");
@@ -1060,17 +1260,25 @@ class UpdraftPlus {
 	}
 
 	function backup_all() {
-		$this->boot_backup(true,true);
+		$this->boot_backup(1, 1);
 	}
 	
 	function backup_files() {
 		# Note that the "false" for database gets over-ridden automatically if they turn out to have the same schedules
-		$this->boot_backup(true,false);
+		$this->boot_backup(true, false);
 	}
 	
 	function backup_database() {
 		# Note that nothing will happen if the file backup had the same schedule
-		$this->boot_backup(false,true);
+		$this->boot_backup(false, true);
+	}
+
+	function backupnow_files() {
+		$this->boot_backup(1, 0);
+	}
+	
+	function backupnow_database() {
+		$this->boot_backup(0, 1);
 	}
 
 	public function jobdata_getarray($non) {
@@ -1127,6 +1335,7 @@ class UpdraftPlus {
 	}
 
 	// This procedure initiates a backup run
+	// $backup_files/$backup_database: true/false = yes/no (over-write allowed); 1/0 = yes/no (force)
 	public function boot_backup($backup_files, $backup_database, $restrict_files_to_override = false, $one_shot = false, $service = false) {
 
 		@ignore_user_abort(true);
@@ -1152,7 +1361,7 @@ class UpdraftPlus {
 		// Log some information that may be helpful
 		$this->log("Tasks: Backup files: $backup_files (schedule: ".UpdraftPlus_Options::get_updraft_option('updraft_interval', 'unset').") Backup DB: $backup_database (schedule: ".UpdraftPlus_Options::get_updraft_option('updraft_interval_database', 'unset').")");
 
-		if (false === $one_shot) {
+		if (false === $one_shot && is_bool($backup_database)) {
 			# If the files and database schedules are the same, and if this the file one, then we rope in database too.
 			# On the other hand, if the schedules were the same and this was the database run, then there is nothing to do.
 			if ('manual' != UpdraftPlus_Options::get_updraft_option('updraft_interval') && (UpdraftPlus_Options::get_updraft_option('updraft_interval') == UpdraftPlus_Options::get_updraft_option('updraft_interval_database') || UpdraftPlus_Options::get_updraft_option('updraft_interval_database', 'xyz') == 'xyz' )) {
@@ -1209,14 +1418,14 @@ class UpdraftPlus {
 		$this->semaphore->lock_name = $semaphore;
 		$this->log('Requesting semaphore lock ('.$semaphore.')');
 		if (!$this->semaphore->lock()) {
-			$this->log('Failed to gain semaphore lock ('.$semaphore.') - another backup is apparently already active - aborting (backups of the same time must be started at least 1 minute apart; otherwise they are assumed to be unwanted duplicates)');
+			$this->log('Failed to gain semaphore lock ('.$semaphore.') - another backup of this type is apparently already active - aborting (if this is wrong - i.e. if the other backup crashed without removing the lock, then another can be started after 3 minutes)');
 			return;
 		}
 
 		// Allow the resume interval to be more than 300 if last time we know we went beyond that - but never more than 600
-		$resume_interval = (int)min(max(300, get_transient('updraft_initial_resume_interval')), 600);
+		$resume_interval = (int)min(max(300, get_site_transient('updraft_initial_resume_interval')), 600);
 		# We delete it because we only want to know about behaviour found during the very last backup run (so, if you move servers then old data is not retained)
-		delete_transient('updraft_initial_resume_interval');
+		delete_site_transient('updraft_initial_resume_interval');
 
 		$job_file_entities = array();
 		if ($backup_files) {
@@ -1236,7 +1445,7 @@ class UpdraftPlus {
 			'job_type', 'backup',
 			'jobstatus', 'begun',
 			'backup_time', $this->backup_time,
-			'backup_time_ms', $this->backup_time_ms,
+			'job_time_ms', $this->job_time_ms,
 			'service', $service,
 			'split_every', max(intval(UpdraftPlus_Options::get_updraft_option('updraft_split_every', 800)), UPDRAFTPLUS_SPLIT_MIN),
 			'maxzipbatch', 26214400, #25Mb
@@ -1249,7 +1458,7 @@ class UpdraftPlus {
 
 		// Save what *should* be done, to make it resumable from this point on
 		array_push($initial_jobdata, 'backup_database', (($backup_database) ? 'begun' : 'no'));
-		if ($backup_files) array_push($initial_jobdata, 'backup_files', 'begun');
+		array_push($initial_jobdata, 'backup_files', (($backup_files) ? 'begun' : 'no'));
 
 		// Use of jobdata_set_multi saves around 200ms
 		call_user_func_array(array($this, 'jobdata_set_multi'), $initial_jobdata);
@@ -1262,6 +1471,8 @@ class UpdraftPlus {
 	}
 
 	function backup_finish($cancel_event, $do_cleanup, $allow_email, $resumption_no) {
+
+		if (!empty($this->semaphore)) $this->semaphore->unlock();
 
 		$delete_jobdata = false;
 
@@ -1371,10 +1582,8 @@ class UpdraftPlus {
 
 	function save_last_backup($backup_array) {
 		$success = ($this->error_count() == 0) ? 1 : 0;
-
 		$last_backup = array('backup_time'=>$this->backup_time, 'backup_array'=>$backup_array, 'success'=>$success, 'errors'=>$this->errors, 'backup_nonce' => $this->nonce);
-
-		UpdraftPlus_Options::update_updraft_option('updraft_last_backup', $last_backup);
+		UpdraftPlus_Options::update_updraft_option('updraft_last_backup', $last_backup, false);
 	}
 
 	// This should be called whenever a file is successfully uploaded
@@ -1404,7 +1613,7 @@ class UpdraftPlus {
 		if ($id) {
 			$ids = UpdraftPlus_Options::get_updraft_option('updraft_file_ids', array() );
 			$ids[$file] = $id;
-			UpdraftPlus_Options::update_updraft_option('updraft_file_ids',$ids);
+			UpdraftPlus_Options::update_updraft_option('updraft_file_ids', $ids, false);
 			$this->log("Stored file<->id correlation in database ($file <-> $id)");
 		}
 
@@ -1416,7 +1625,7 @@ class UpdraftPlus {
 	}
 
 	function is_uploaded($file, $service = '') {
-		$hash = $service.'-'.md5($file);
+		$hash = $service.(('' == $service) ? '' : '-').md5($file);
 		return ($this->jobdata_get("uploaded_$hash") === "yes") ? true : false;
 	}
 
@@ -1594,7 +1803,7 @@ class UpdraftPlus {
 			$backup_array['nonce'] = $this->nonce;
 			$backup_array['service'] = $this->jobdata_get('service');
 			$backup_history[$this->backup_time] = $backup_array;
-			UpdraftPlus_Options::update_updraft_option('updraft_backup_history', $backup_history);
+			UpdraftPlus_Options::update_updraft_option('updraft_backup_history', $backup_history, false);
 		} else {
 			$this->log('Could not save backup history because we have no backup array. Backup probably failed.');
 			$this->log(__('Could not save backup history because we have no backup array. Backup probably failed.','updraftplus'), 'error');
@@ -1771,10 +1980,7 @@ class UpdraftPlus {
 					_e("Decryption failed. The database file is encrypted, but you have no encryption key entered.",'updraftplus');
 					$this->log('Decryption of database failed: the database file is encrypted, but you have no encryption key entered.', 'error');
 				} else {
-					$this->ensure_phpseclib('Crypt_Rijndael', 'Crypt/Rijndael');
-					$rijndael = new Crypt_Rijndael();
-					$rijndael->setKey($encryption);
-					$ciphertext = $rijndael->decrypt(file_get_contents($fullpath));
+					$ciphertext = $this->decrypt($fullpath, $encryption);
 					if ($ciphertext) {
 						header('Content-type: application/x-gzip');
 						header("Content-Disposition: attachment; filename=\"".substr($file,0,-6)."\";");
@@ -1819,9 +2025,17 @@ class UpdraftPlus {
 		if ($memory_limit == false) $memory_limit = ini_get('memory_limit');
 		$memory_limit = rtrim($memory_limit);
 		$memory_unit = $memory_limit[strlen($memory_limit)-1];
-		$memory_limit = substr($memory_limit,0,strlen($memory_limit)-1);
+		if ((int)$memory_unit == 0 && $memory_unit !== '0') {
+			$memory_limit = substr($memory_limit,0,strlen($memory_limit)-1);
+		} else {
+			$memory_unit = '';
+		}
 		switch($memory_unit) {
+			case '':
+				$memory_limit = floor($memory_limit/1048576);
+			break;
 			case 'K':
+			case 'k':
 				$memory_limit = floor($memory_limit/1024);
 			break;
 			case 'G':
@@ -1852,7 +2066,7 @@ class UpdraftPlus {
 		$rad = rand(0,8);
 		switch ($rad) {
 		case 0:
-			return $this->url_start($urls,'updraftplus.com')."Want more features or paid, guaranteed support? Check out UpdraftPlus.Com".$this->url_end($urls,'updraftplus.com');
+			return $this->url_start($urls,'updraftplus.com').__("Want more features or paid, guaranteed support? Check out UpdraftPlus.Com", 'updraftplus').$this->url_end($urls,'updraftplus.com');
 			break;
 		case 1:
 			if (defined('WPLANG') && strlen(WPLANG)>0 && !is_file(UPDRAFTPLUS_DIR.'/languages/updraftplus-'.WPLANG.
@@ -1861,7 +2075,7 @@ class UpdraftPlus {
 			return __('Like UpdraftPlus and can spare one minute?','updraftplus').$this->url_start($urls,'wordpress.org/support/view/plugin-reviews/updraftplus#postform').' '.__('Please help UpdraftPlus by giving a positive review at wordpress.org','updraftplus').$this->url_end($urls,'wordpress.org/support/view/plugin-reviews/updraftplus#postform');
 			break;
 		case 2:
-			return $this->url_start($urls,'wordshell.net')."Check out WordShell".$this->url_end($urls,'www.wordshell.net')." - manage WordPress from the command line - huge time-saver";
+			return $this->url_start($urls,'wordshell.net').__("Check out WordShell", 'updraftplus').$this->url_end($urls,'www.wordshell.net')." - ".__('manage WordPress from the command line - huge time-saver', 'updraftplus');
 			break;
 		case 3:
 			return __('Like UpdraftPlus and can spare one minute?','updraftplus').$this->url_start($urls,'wordpress.org/support/view/plugin-reviews/updraftplus#postform').' '.__('Please help UpdraftPlus by giving a positive review at wordpress.org','updraftplus').$this->url_end($urls,'wordpress.org/support/view/plugin-reviews/updraftplus#postform');

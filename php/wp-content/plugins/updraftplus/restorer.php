@@ -86,16 +86,11 @@ class Updraft_Restorer extends WP_Upgrader {
 			$encryption = UpdraftPlus_Options::get_updraft_option('updraft_encryptionphrase');
 			if (!$encryption) return new WP_Error('no_encryption_key', __('Decryption failed. The database file is encrypted, but you have no encryption key entered.', 'updraftplus'));
 
-			// Encrypted - decrypt it
-			$updraftplus->ensure_phpseclib('Crypt_Rijndael', 'Crypt/Rijndael');
-			$rijndael = new Crypt_Rijndael();
+			$plaintext = $updraftplus->decrypt(false, $encryption, $wp_filesystem->get_contents($backup_dir.$package));
 
-			// Get decryption key
-			$rijndael->setKey($encryption);
-			$ciphertext = $rijndael->decrypt($wp_filesystem->get_contents($backup_dir.$package));
-			if ($ciphertext) {
+			if ($plaintext) {
 				$this->skin->feedback('decrypted_database');
-				if (!$wp_filesystem->put_contents($working_dir.'/backup.db.gz', $ciphertext)) {
+				if (!$wp_filesystem->put_contents($working_dir.'/backup.db.gz', $plaintext)) {
 					return new WP_Error('write_failed', __('Failed to write out the decrypted database to the filesystem','updraftplus'));
 				}
 			} else {
@@ -511,7 +506,7 @@ class Updraft_Restorer extends WP_Upgrader {
 				@$wp_filesystem->chmod($wp_filesystem_dir, 0775, true);
 			break;
 			case 'db':
-				do_action('updraftplus_restored_db', array('expected_oldsiteurl' => $old_siteurl), $import_table_prefix);
+				do_action('updraftplus_restored_db', array('expected_oldsiteurl' => $old_siteurl, 'expected_oldhome' => $old_home), $import_table_prefix);
 				$this->flush_rewrite_rules();
 			break;
 			default:
@@ -654,9 +649,9 @@ class Updraft_Restorer extends WP_Upgrader {
 
 		$this->start_time = microtime(true);
 
-		// TODO: Print a warning if restoring to a different WP version
 		$old_wpversion = '';
 		$old_siteurl = '';
+		$old_home = '';
 		$old_table_prefix = '';
 		$old_siteinfo = array();
 		$gathering_siteinfo = true;
@@ -666,7 +661,7 @@ class Updraft_Restorer extends WP_Upgrader {
 
 		$this->last_error = '';
 		$random_table_name = 'updraft_tmp_'.rand(0,9999999).md5(microtime(true));
-		if ($use_wpdb) {
+		if ($this->use_wpdb) {
 			$req = $wpdb->query("CREATE TABLE $random_table_name");
 			if (!$req) $this->last_error = $wpdb->last_error;
 			$this->last_error_no = false;
@@ -689,7 +684,7 @@ class Updraft_Restorer extends WP_Upgrader {
 				if (!$req) $this->last_error = $wpdb->last_error;
 				$this->last_error_no = false;
 			} else {
-				$req = mysql_unbuffered_query("DROP TABLE $random_table_name", $this->mysql_dbh );
+				$req = mysql_unbuffered_query("DROP TABLE $random_table_name", $this->mysql_dbh);
 				if (!$req) {
 					$this->last_error = mysql_error($this->mysql_dbh);
 					$this->last_error_no = mysql_errno($this->mysql_dbh);
@@ -714,6 +709,10 @@ class Updraft_Restorer extends WP_Upgrader {
 					$old_siteurl = $matches[1];
 					echo '<strong>'.__('Backup of:', 'updraftplus').'</strong> '.htmlspecialchars($old_siteurl).'<br>';
 					do_action('updraftplus_restore_db_record_old_siteurl', $old_siteurl);
+				} elseif ('' == $old_home && preg_match('/^\# Home URL: (http(.*))$/', $buffer, $matches)) {
+					$old_home = $matches[1];
+					if ($old_siteurl && $old_home != $old_siteurl) echo '<strong>'.__('Site home:', 'updraftplus').'</strong> '.htmlspecialchars($old_home).'<br>';
+					do_action('updraftplus_restore_db_record_old_home', $old_home);
 				} elseif ('' == $old_table_prefix && preg_match('/^\# Table prefix: (\S+)$/', $buffer, $matches)) {
 					$old_table_prefix = $matches[1];
 					echo '<strong>'.__('Old table prefix:', 'updraftplus').'</strong> '.htmlspecialchars($old_table_prefix).'<br>';
@@ -783,11 +782,15 @@ class Updraft_Restorer extends WP_Upgrader {
 				}
 
 				$this->table_name = $matches[1];
+				
 				// Legacy, less reliable - in case it was not caught before
 				if ($old_table_prefix == '' && preg_match('/^([a-z0-9]+)_.*$/i', $this->table_name, $tmatches)) {
 					$old_table_prefix = $tmatches[1].'_';
 					echo '<strong>'.__('Old table prefix:', 'updraftplus').'</strong> '.htmlspecialchars($old_table_prefix).'<br>';
 				}
+
+				$this->new_table_name = ($old_table_prefix) ? $updraftplus->str_replace_once($old_table_prefix, $import_table_prefix, $this->table_name) : $this->table_name;
+
 				if ('' != $old_table_prefix && $import_table_prefix != $old_table_prefix) {
 					$sql_line = $updraftplus->str_replace_once($old_table_prefix, $import_table_prefix, $sql_line);
 				}
@@ -807,20 +810,26 @@ class Updraft_Restorer extends WP_Upgrader {
 				// This CREATE TABLE command may be the de-facto mark for the end of processing a previous table (which is so if this is not the first table in the SQL dump)
 				if ($restoring_table) {
 
-					$this->restored_table($restoring_table, $import_table_prefix, $old_table_prefix);
-					
 					// After restoring the options table, we can set old_siteurl if on legacy (i.e. not already set)
 					if ($restoring_table == $import_table_prefix.'options') {
-						if ('' == $old_siteurl) {
+						if ('' == $old_siteurl || '' == $old_home) {
 							global $updraftplus_addons_migrator;
 							if (isset($updraftplus_addons_migrator->new_blogid)) switch_to_blog($updraftplus_addons_migrator->new_blogid);
 
-							$old_siteurl = $wpdb->get_row("SELECT option_value FROM $wpdb->options WHERE option_name='siteurl'")->option_value;
-							do_action('updraftplus_restore_db_record_old_siteurl', $old_siteurl);
-							
+							if ('' == $old_siteurl) {
+								$old_siteurl = $wpdb->get_row("SELECT option_value FROM $wpdb->options WHERE option_name='siteurl'")->option_value;
+								do_action('updraftplus_restore_db_record_old_siteurl', $old_siteurl);
+							}
+							if ('' == $old_home) {
+								$old_home = $wpdb->get_row("SELECT option_value FROM $wpdb->options WHERE option_name='home'")->option_value;
+								do_action('updraftplus_restore_db_record_old_home', $old_home);
+							}
 							if (isset($updraftplus_addons_migrator->new_blogid)) restore_current_blog();
 						}
 					}
+
+					$this->restored_table($restoring_table, $import_table_prefix, $old_table_prefix);
+
 				}
 
 				$engine = "(?)"; $engine_change_message = '';
@@ -891,14 +900,16 @@ class Updraft_Restorer extends WP_Upgrader {
 // 		echo "Memory usage (Mb): ".round(memory_get_usage(false)/1048576, 1)." : ".round(memory_get_usage(true)/1048576, 1)."<br>";
 
 		global $wpdb, $updraftplus;
+			$ignore_errors = false;
 
 		if ($sql_type == 2 && $this->create_forbidden) {
-			echo sprintf(__('Cannot create new tables, so skipping this command (%s)', 'updraftplus'), htmlspecialchars("CREATE TABLE ".$this->table_name))."<br>";
+			echo sprintf(__('Cannot create new tables, so skipping this command (%s)', 'updraftplus'), htmlspecialchars($sql_line))."<br>";
 			$req = true;
 		} else {
 			if ($sql_type == 1 && $this->drop_forbidden) {
-				$sql_line = "DELETE FROM ".$updraftplus->backquote($this->table_name);
+				$sql_line = "DELETE FROM ".$updraftplus->backquote($this->new_table_name);
 				echo sprintf(__('Cannot drop tables, so deleting instead (%s)', 'updraftplus'), $sql_line)."<br>";
+				$ignore_errors = true;
 			}
 // 				echo substr($sql_line, 0, 50)." (".strlen($sql_line).")<br>";
 			if ($this->use_wpdb) {
@@ -912,7 +923,7 @@ class Updraft_Restorer extends WP_Upgrader {
 		}
 
 		if (!$req) {
-			$this->errors++;
+			if (!$ignore_errors) $this->errors++;
 			echo sprintf(_x('An error (%s) occured:', 'The user is being told the number of times an error has happened, e.g. An error (27) occurred', 'updraftplus'), $this->errors)." - ".htmlspecialchars($this->last_error)." - ".__('the database query being run was:','updraftplus').' '.htmlspecialchars($sql_line).'<br>';
 			// First command is expected to be DROP TABLE
 			if (1 == $this->errors && 2 == $sql_type && 0 == $this->tables_created) {
@@ -985,7 +996,7 @@ class Updraft_Restorer extends WP_Upgrader {
 			// The danger situation is absolute and points somewhere that is now perhaps not accessible at all
 			if (!empty($new_upload_path) && $new_upload_path != $this->prior_upload_path && strpos($new_upload_path, '/') === 0) {
 				if (!file_exists($new_upload_path)) {
-					echo sprintf(__("Uploads path (%s) does not exist - resetting (%s)",'updraftplus'), $new_upload_path, $this->prior_upload_path);
+					echo sprintf(__("Uploads path (%s) does not exist - resetting (%s)",'updraftplus'), $new_upload_path, $this->prior_upload_path)."<br>";
 					update_option('upload_path', $this->prior_upload_path);
 				}
 			}
@@ -1005,20 +1016,16 @@ class Updraft_Restorer extends WP_Upgrader {
 
 			$errors_occurred = false;
 			foreach ($meta_keys as $meta_key ) {
-				
-
 				//Create new meta key
 				$new_meta_key = $import_table_prefix . substr($meta_key->meta_key, $old_prefix_length);
 				
 				$query = "UPDATE " . $import_table_prefix . "usermeta 
-										SET meta_key='".$new_meta_key."' 
-										WHERE umeta_id=".$meta_key->umeta_id;
+					SET meta_key='".$new_meta_key."' 
+					WHERE umeta_id=".$meta_key->umeta_id;
 
-				if (false === $wpdb->query($query)) {
-					$errors_occurred = true;
-				}
-			
+				if (false === $wpdb->query($query)) $errors_occurred = true;			
 			}
+
 			if ($errors_occurred) {
 				echo __('Error', 'updraftplus');
 			} else {
@@ -1028,12 +1035,10 @@ class Updraft_Restorer extends WP_Upgrader {
 
 		}
 
-		do_action('updraftplus_restored_db_table', $table);
+		do_action('updraftplus_restored_db_table', $table, $import_table_prefix);
 
 		// Re-generate permalinks. Do this last - i.e. make sure everything else is fixed up first.
-		if ($table == $import_table_prefix.'options') {
-			$this->flush_rewrite_rules();
-		}
+		if ($table == $import_table_prefix.'options') $this->flush_rewrite_rules();
 
 	}
 

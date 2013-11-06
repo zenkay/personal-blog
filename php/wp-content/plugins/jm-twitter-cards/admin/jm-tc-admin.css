@@ -4,6 +4,32 @@
 ** Styles for admin - inspired by design made by @wabbaly
 */
 
+.jm-tc .hide {
+	display:none;
+}
+
+.jm-tc .notification {
+	font-size:12px;
+	font-weight:bold;
+	background-color: #eaeff2;
+	padding:1em;
+	text-align:center;
+}
+
+.jm-tc .form-loading { 
+	background-positon: center top;
+	background-repeat: no-repeat; 
+	text-align:center; 
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif; 
+	float:right;
+	height:3em;
+	margin-top:1.5em;
+}
+.jm-tc .form-loading .text-loading{
+	margin-left:2.5em;
+	color:#00bbf0;
+}
 
 .jm-tc, .jm-tc .postbox ul {
 	background-color: #eaeff2;
@@ -71,8 +97,9 @@
 	display:block;
 }
 
-.jm-tc .button-primary,.jm-tc .docu {
-	float:right;
+.jm-tc .submit,.jm-tc .docu {
+	display:inline-block;
+	cursor:pointer;
 	border-top: 1px solid #5dade2;
 	background: #5dade2;
 	background: -webkit-gradient(linear, left top, left bottom, from(#5dade2), to(#5dade2));
@@ -94,6 +121,7 @@
 }
 
 .jm-tc .docu {
+	float:right;
     margin-top:2em;
 	width:136px;
 	text-align:center;
@@ -108,16 +136,18 @@
 	background: linear-gradient(to bottom,  #ffffff 0%,#f6f6f6 47%,#ededed 100%);	 
 }
 
-.jm-tc .button-primary:hover {
+.jm-tc .submit:hover,
+.jm-tc .submit:focus {
 	border-top-color: #258ace;
-	background: #258ace;
+	background: #00BBF0;
 	color: #ffffff;
 	text-decoration:none;
 	border:none;
 }
-.jm-tc .button-primary:active {
+.jm-tc .submit:active {
 	border-top-color: #258ace;
-	background: #258ace;
+	background: #00BBF0;
+	color: #ffffff;
 	border:none;
 }
 

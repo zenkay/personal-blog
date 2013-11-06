@@ -378,7 +378,7 @@ msgid ""
 "With this plugin you can grab summary, summary large image, product, photo "
 "and gallery cards."
 msgstr ""
-"Avec ce plugin vosu pourrez obtenir des cards résumé, résumé large image, "
+"Avec ce plugin vous pourrez obtenir des cards résumé, résumé large image, "
 "produit, photo et galerie. "
 
 #. Text in echo
@@ -432,3 +432,18 @@ msgstr "oui"
 #: jm-twitter-cards.php:210
 msgid "yes please, deactivate it"
 msgstr "oui SVP, désactiver la card"
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "SAVING..."
+msgstr "SAUVEGARDE..."
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "Save changes"
+msgstr "Sauvegarder les changements"
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "Options have been saved."
+msgstr "Les options ont été sauvegardées."

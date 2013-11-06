@@ -3,7 +3,7 @@ Contributors: jmlapam
 Tags: twitter, cards, semantic markup, metabox, meta
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=tweetpressfr%40gmail%2ecom&item_name=JM%20Twitter%20Cards&no_shipping=0&no_note=1&tax=0&currency_code=EUR&bn=PP%2dDonationsBF&charset=UTF%2d8
 Requires at least: 3.1.0
-Tested up to: 3.6
+Tested up to: 3.7
 License: GPLv2 or later
 Stable tag: trunk
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -129,6 +129,18 @@ Voir une démo : http://support.tweetpress.fr/demo-twitter-cards-gallery/
 3. metabox
 
 == Changelog ==
+
+=  3.3.7.1 =
+* 30 Oct 2013
+* Fix script bug in admin that broke saving in option page
+
+=  3.3.7 =
+* 28 Oct 2013
+* Add some AJAX in option page to make things faster and smooth
+* Fix some minor bugs
+* Add some jQuery to let user set the plugin and have some cooler experience with the meta box ^^
+* Specific Options that regard specific cards will appear/disappear on select
+* To save just save the post like before
 
 =  3.3.6 =
 * 06 Sep 2013
