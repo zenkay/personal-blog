@@ -4,7 +4,7 @@ Plugin Name: UpdraftPlus - Backup/Restore
 Plugin URI: http://updraftplus.com
 Description: Backup and restore: take backups locally, or backup to Amazon S3, Dropbox, Google Drive, Rackspace, (S)FTP, WebDAV & email, on automatic schedules.
 Author: UpdraftPlus.Com, DavidAnderson
-Version: 1.7.35
+Version: 1.7.40
 Donate link: http://david.dw-perspective.org.uk/donate
 License: GPLv3 or later
 Text Domain: updraftplus
@@ -14,14 +14,22 @@ Author URI: http://updraftplus.com
 /*
 TODO - some of these are out of date/done, needs pruning
 // After Oct 15 2013: Remove page(s) from websites discussing W3TC
+// Change add-ons screen, to be less confusing for people who haven't yet updated but have connected
 // Change migrate window: 1) Retain link to article 2) Have selector to choose which backup set to migrate - or a fresh one 3) Have option for FTP/SFTP/SCP despatch 4) Have big "Go" button. Have some indication of what happens next. Test the login first. Have the remote site auto-scan its directory + pick up new sets. Have a way of querying the remote site for its UD-dir. Have a way of saving the settings as a 'profile'. Or just save the last set of settings (since mostly will be just one place to send to). Implement an HTTP/JSON method for sending files too.
 // Place in maintenance mode during restore - ?
+// Dates in the progress box are apparently untranslated
+// Add-on descriptions are not internationalised
+// http://www.phpclasses.org/package/8269-PHP-Send-MySQL-database-backup-files-to-Ubuntu-One.html
+// Put the -old directories in updraft_dir instead of present location. Prevents file perms issues, and also will be automatically excluded from backups.
+// Backup to Dropbox; delete in Dropbox; try to download in UD: doesn't tell you the file isn't there.
+// Update updates checker so that it checks for updates on a sliding-scale: those who've not updated in last X only end up checking every Y : https://github.com/YahnisElsts/plugin-update-checker/issues/9
+// Add feature in Backup Now to skip cloud despatch for this backup
+// Test restores via cloud service for small $??? (Relevant: http://browshot.com/features) (per-day? per-install?)
 // Add more info to email - e.g. names + sizes + checksums of uploads + locations. Make the report beautiful!
 // Warn/prevent if trying to migrate between sub-domain/sub-folder based multisites
-// Detect low-memory VPSes, and don't use BinZip
-// Change default setting of retain 1 backup set? (Auto-backup could replace it in that case... don't perform pruning when doing auto-backup?)
-// Update updates checker so that it checks for updates on a sliding-scale: those who've not updated in last X only end up checking every Y
-// Change add-ons screen, to be less confusing for people who haven't yet updated but have connected
+// Don't perform pruning when doing auto-backup?
+// Pre-check the search/replace box if migration detected
+// Can some tables be omitted from the search/replace on a migrate? i.e. Special knowledge?
 // Put a 'what do I get if I upgrade?' link into the mix
 // Add to admin bar (and make it something that can be turned off)
 // New reporting add-on: Multiple email addresses, send backup to 1st only, option to send email only on failure, include checksums (SHA1) in report (store these in job data immediately post-creation; then aggregate them into the backup history on job finish), option to include log file always, option to log to syslog
@@ -34,6 +42,9 @@ TODO - some of these are out of date/done, needs pruning
 // Show 'Migrate' instead of 'Restore' on the button if relevant
 // Test with: http://wordpress.org/plugins/wp-db-driver/
 // Backup notes
+// Automatically re-count folder usage after doing a delete
+// Exclude by default: uploads/wp-clone
+// Switch zip engines earlier if no progress - see log.cfd793337563_hostingfails.txt
 // The delete-em at the end needs to be made resumable. And to only run on last run-through (i.e. no errors, or no resumption)
 // Incremental - can leverage some of the multi-zip work???
 // Put in a help link to explain what WordPress core (including any additions to your WordPress root directory) does (was asked for support)
@@ -349,23 +360,24 @@ class UpdraftPlus {
 		if (!UpdraftPlus_Options::get_updraft_option('updraft_ssl_useservercerts')) curl_setopt($handle, CURLOPT_CAINFO, UPDRAFTPLUS_DIR.'/includes/cacert.pem' );
 	}
 
-	// Handle actions passed on to method plugins; e.g. Google OAuth 2.0 - ?page=updraftplus&action=updraftmethod-googledrive-auth
+	// Handle actions passed on to method plugins; e.g. Google OAuth 2.0 - ?action=updraftmethod-googledrive-auth&page=updraftplus
+	// Nov 2013: Google's new cloud console, for reasons as yet unknown, only allows you to enter a redirect_uri with a single URL parameter... thus, we put page second, and re-add it if necessary
 	// Also handle action=downloadlog
 	public function handle_url_actions() {
 
 		// First, basic security check: must be an admin page, with ability to manage options, with the right parameters
 		// Also, only on GET because WordPress on the options page repeats parameters sometimes when POST-ing via the _wp_referer field
-		if (isset($_SERVER['REQUEST_METHOD']) && 'GET' == $_SERVER['REQUEST_METHOD'] && UpdraftPlus_Options::user_can_manage() && isset( $_GET['page'] ) && $_GET['page'] == 'updraftplus' && isset($_GET['action']) ) {
-			if (preg_match("/^updraftmethod-([a-z]+)-([a-z]+)$/", $_GET['action'], $matches) && file_exists(UPDRAFTPLUS_DIR.'/methods/'.$matches[1].'.php')) {
+		if (isset($_SERVER['REQUEST_METHOD']) && 'GET' == $_SERVER['REQUEST_METHOD'] && isset($_GET['action'])) {
+			if (preg_match("/^updraftmethod-([a-z]+)-([a-z]+)$/", $_GET['action'], $matches) && file_exists(UPDRAFTPLUS_DIR.'/methods/'.$matches[1].'.php') && UpdraftPlus_Options::user_can_manage()) {
+				$_GET['page'] = 'updraftplus';
 				$method = $matches[1];
 				require_once(UPDRAFTPLUS_DIR.'/methods/'.$method.'.php');
 				$call_class = "UpdraftPlus_BackupModule_".$method;
 				$call_method = "action_".$matches[2];
-
 				add_action('http_api_curl', array($this, 'add_curl_capath'));
-				if (method_exists($call_class, $call_method)) call_user_func(array($call_class,$call_method));
+				if (method_exists($call_class, $call_method)) call_user_func(array($call_class, $call_method));
 				remove_action('http_api_curl', array($this, 'add_curl_capath'));
-			} elseif ($_GET['action'] == 'downloadlog' && isset($_GET['updraftplus_backup_nonce']) && preg_match("/^[0-9a-f]{12}$/",$_GET['updraftplus_backup_nonce'])) {
+			} elseif (isset( $_GET['page'] ) && $_GET['page'] == 'updraftplus' && $_GET['action'] == 'downloadlog' && isset($_GET['updraftplus_backup_nonce']) && preg_match("/^[0-9a-f]{12}$/",$_GET['updraftplus_backup_nonce']) && UpdraftPlus_Options::user_can_manage()) {
 				// No WordPress nonce is needed here or for the next, since the backup is already nonce-based
 				$updraft_dir = $this->backups_dir_location();
 				$log_file = $updraft_dir.'/log.'.$_GET['updraftplus_backup_nonce'].'.txt';
@@ -376,7 +388,7 @@ class UpdraftPlus {
 				} else {
 					add_action('all_admin_notices', array($this,'show_admin_warning_unreadablelog') );
 				}
-			} elseif ($_GET['action'] == 'downloadfile' && isset($_GET['updraftplus_file']) && preg_match('/^backup_([\-0-9]{15})_.*_([0-9a-f]{12})-[\-a-z]+\.(gz\.crypt)$/i', $_GET['updraftplus_file'])) {
+			} elseif (isset( $_GET['page'] ) && $_GET['page'] == 'updraftplus' && $_GET['action'] == 'downloadfile' && isset($_GET['updraftplus_file']) && preg_match('/^backup_([\-0-9]{15})_.*_([0-9a-f]{12})-[\-a-z]+\.(gz\.crypt)$/i', $_GET['updraftplus_file']) && UpdraftPlus_Options::user_can_manage()) {
 				$updraft_dir = $this->backups_dir_location();
 				$spool_file = $updraft_dir.'/'.basename($_GET['updraftplus_file']);
 				if (is_readable($spool_file)) {
@@ -390,10 +402,10 @@ class UpdraftPlus {
 		}
 	}
 
-	public function get_table_prefix() {
+	public function get_table_prefix($allow_override = false) {
 		global $wpdb;
 		#if (!empty($wpdb->base_prefix)) return $wpdb->base_prefix;
-		return $wpdb->get_blog_prefix(0);
+		return ($allow_override) ? apply_filters('updraftplus_get_table_prefix', $wpdb->get_blog_prefix(0)) : $wpdb->get_blog_prefix(0);
 	}
 
 	public function show_admin_warning_unreadablelog() {
@@ -725,13 +737,13 @@ class UpdraftPlus {
 		$pfile = md5(time().rand()).'.tmp';
 		file_put_contents($updraft_dir.'/'.$pfile, "[mysqldump]\npassword=".DB_PASSWORD."\n");
 
+		$result = false;
 		foreach (explode(',', UPDRAFTPLUS_MYSQLDUMP_EXECUTABLE) as $potsql) {
 			if (!@is_executable($potsql)) continue;
 			if ($logit) $this->log("Testing: $potsql");
 
 			$exec = "cd ".escapeshellarg($updraft_dir)."; $potsql  --defaults-file=$pfile --max_allowed_packet=1M --quote-names --add-drop-table --skip-comments --skip-set-charset --allow-keywords --dump-date --extended-insert --where=option_name=\\'siteurl\\' --user=".escapeshellarg(DB_USER)." --host=".escapeshellarg(DB_HOST)." ".DB_NAME." ".escapeshellarg($table_name)." >$tmp_file";
 
-			$result = false;
 			$handle = popen($exec, "r");
 			if ($handle) {
 				while (!feof($handle)) {
@@ -983,7 +995,46 @@ class UpdraftPlus {
 		return false;
 	}
 
+	public function php_error($errno, $errstr, $errfile, $errline) {
+
+		if (0 == error_reporting()) return true;
+
+		switch ($errno) {
+			case 1:     $e_type = 'E_ERROR'; break;
+			case 2:     $e_type = 'E_WARNING'; break;
+			case 4:     $e_type = 'E_PARSE'; break;
+			case 8:     $e_type = 'E_NOTICE'; break;
+			case 16:    $e_type = 'E_CORE_ERROR'; break;
+			case 32:    $e_type = 'E_CORE_WARNING'; break;
+			case 64:    $e_type = 'E_COMPILE_ERROR'; break;
+			case 128:   $e_type = 'E_COMPILE_WARNING'; break;
+			case 256:   $e_type = 'E_USER_ERROR'; break;
+			case 512:   $e_type = 'E_USER_WARNING'; break;
+			case 1024:  $e_type = 'E_USER_NOTICE'; break;
+			case 2048:  $e_type = 'E_STRICT'; break;
+			case 4096:  $e_type = 'E_RECOVERABLE_ERROR'; break;
+			case 8192:  $e_type = 'E_DEPRECATED'; break;
+			case 16384: $e_type = 'E_USER_DEPRECATED'; break;
+			case 30719: $e_type = 'E_ALL'; break;
+			default:    $e_type = "E_UNKNOWN ($errno)"; break;
+		}
+
+		if (!is_string($errstr)) $errstr = serialize($errstr);
+
+		if (0 === strpos($errfile, ABSPATH)) $errfile = substr($errfile, strlen(ABSPATH));
+
+		$logline = "PHP event: code $e_type: $errstr (line $errline, $errfile)";
+
+		$this->log($logline);
+
+		# Pass it up the chain
+		return false;
+
+	}
+
 	public function backup_resume($resumption_no, $bnonce) {
+
+		set_error_handler(array($this, 'php_error'), E_ALL & ~E_STRICT);
 
 		$this->current_resumption = $resumption_no;
 
@@ -1239,6 +1290,8 @@ class UpdraftPlus {
 		$this->log("Resume backup ($bnonce, $resumption_no): finish run");
 		if (is_array($our_files)) $this->save_last_backup($our_files);
 		$this->backup_finish($next_resumption, true, true, $resumption_no);
+
+		restore_error_handler();
 
 	}
 

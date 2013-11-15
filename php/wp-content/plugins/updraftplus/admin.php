@@ -74,9 +74,11 @@ class UpdraftPlus_Admin {
 
 		if (version_compare($wp_version, '3.2', '<')) add_action('all_admin_notices', array($this, 'show_admin_warning_wordpressversion'));
 
-		wp_enqueue_script('updraftplus-admin-ui', UPDRAFTPLUS_URL.'/includes/updraft-admin-ui.js', array('jquery', 'jquery-ui-dialog', 'plupload-all'), '27');
+		wp_enqueue_script('updraftplus-admin-ui', UPDRAFTPLUS_URL.'/includes/updraft-admin-ui.js', array('jquery', 'jquery-ui-dialog', 'plupload-all'), '29');
 
 		wp_localize_script( 'updraftplus-admin-ui', 'updraftlion', array(
+			'sendonlyonwarnings' => __('Send a report only when there are warnings/errors', 'updraftplus'),
+			'wholebackup' => __('Send entire backup to this address', 'updraftplus'),
 			'rescanning' => __('Rescanning (looking for backups that you have uploaded manually into the internal backup store)...','updraftplus'),
 			'excludedeverything' => __('If you exclude both the database and the files, then you have excluded everything!', 'updraftplus'),
 			'restoreproceeding' => __('The restore operation has begun. Do not press stop or close your browser until it reports itself as having finished.', 'updraftplus'),
@@ -959,7 +961,7 @@ class UpdraftPlus_Admin {
 
 				if ('' == $old_siteurl && preg_match('/^\# Backup of: (http(.*))$/', $buffer, $matches)) {
 					$old_siteurl = $matches[1];
-					$mess[] = __('Backup of:', 'updraftplus').' '.htmlspecialchars($old_siteurl);
+					$mess[] = __('Backup of:', 'updraftplus').' '.htmlspecialchars($old_siteurl).((!empty($old_wp_version)) ? ' '.sprintf(__('(version: %s)', 'updraftplus'), $old_wp_version) : '');
 					// Check for should-be migration
 					if (!$migration_warning && $old_siteurl != site_url()) {
 						$migration_warning = true;
@@ -977,7 +979,7 @@ class UpdraftPlus_Admin {
 				} elseif ('' == $old_wp_version && preg_match('/^\# WordPress Version: ([0-9]+(\.[0-9]+)+)/', $buffer, $matches)) {
 					$old_wp_version = $matches[1];
 					if (version_compare($old_wp_version, $wp_version, '>')) {
-						$mess[] = sprintf(__('%s version: %s', 'updraftplus'), 'WordPress', $old_wp_version);
+						//$mess[] = sprintf(__('%s version: %s', 'updraftplus'), 'WordPress', $old_wp_version);
 						$warn[] = sprintf(__('You are importing from a newer version of WordPress (%s) into an older one (%s). There are no guarantees that WordPress can handle this.', 'updraftplus'), $old_wp_version, $wp_version);
 					}
 				} elseif ('' == $old_table_prefix && preg_match('/^\# Table prefix: (\S+)$/', $buffer, $matches)) {
@@ -2155,29 +2157,6 @@ CREATE TABLE $wpdb->signups (
 				<p><?php echo apply_filters('updraftplus_admin_directories_description', __('The above directories are everything, except for WordPress core itself which you can download afresh from WordPress.org.', 'updraftplus').' <a href="http://updraftplus.com/shop/">'.htmlspecialchars(__('See also the "More Files" add-on from our shop.', 'updraftplus'))); ?></a> <a href="http://wordshell.net"></p><p>(<?php echo __('Use WordShell for automatic backup, version control and patching', 'updraftplus');?></a>).</p></td>
 				</td>
 			</tr>
-			<tr>
-				<th><?php _e('Email','updraftplus'); ?>:</th>
-				<td>
-					<?php
-						$updraft_email = UpdraftPlus_Options::get_updraft_option('updraft_email');
-					?>
-					<input type="text" title="<?php _e('To send to more than one address, separate each address with a comma.', 'updraftplus'); ?>" style="width:260px" name="updraft_email" value="<?php esc_attr_e($updraft_email); ?>" /> <br><?php _e('Enter an address here to have a report sent (and the whole backup, if you choose) to it.','updraftplus'); ?>
-
-					<?php
-						$admin_email= get_bloginfo('admin_email');
-						if ($updraftplus->have_addons <10) {
-							if ($updraft_email && $updraft_email != $admin_email) {
-								echo '<strong>';
-							}
-							echo ' '.apply_filters('updraft_reportingemailnotice', sprintf(__("With the next release of UpdraftPlus, you will need an add-on to use a different email address to the site owner's (%s).", 'updraftplus'), $admin_email));
-							if ($updraft_email && $updraft_email != $admin_email) {
-								echo '</strong>';
-							}
-						}
-					?>
-
-				</td>
-			</tr>
 
 			<tr>
 				<th><?php _e('Database encryption phrase','updraftplus');?>:</th>
@@ -2222,6 +2201,45 @@ CREATE TABLE $wpdb->signups (
 
 				</td>
 			</tr>
+
+			</table>
+
+
+			<h2><?php _e('Reporting','updraftplus');?></h2>
+
+			<table class="form-table" style="width:900px;">
+
+			<?php
+				$report_rows = apply_filters('updraftplus_report_form', false);
+				if (is_string($report_rows)) {
+					echo $report_rows;
+				} else {
+			?>
+
+			<tr>
+				<th><?php _e('Email','updraftplus'); ?>:</th>
+				<td>
+					<?php
+						$updraft_email = UpdraftPlus_Options::get_updraft_option('updraft_email');
+					?>
+					<input type="text" title="<?php _e('To send to more than one address, separate each address with a comma.', 'updraftplus'); ?>" style="width:260px" name="updraft_email" value="<?php esc_attr_e($updraft_email); ?>" /> <br><?php _e('Enter an address here to have a report sent (and the whole backup, if you choose) to it.','updraftplus'); ?>
+					<?php
+						$admin_email= get_bloginfo('admin_email');
+						if ($updraftplus->have_addons <10) {
+							if ($updraft_email && $updraft_email != $admin_email) {
+								echo '<strong>';
+							}
+							echo ' '.apply_filters('updraft_reportingemailnotice', sprintf(__("With the next release of UpdraftPlus, you will need an add-on to use a different email address to the site owner's (%s).", 'updraftplus'), $admin_email));
+							if ($updraft_email && $updraft_email != $admin_email) {
+								echo '</strong>';
+							}
+						}
+					?>
+				</td>
+			</tr>
+
+			<?php } ?>
+
 			</table>
 
 			<h2><?php _e('Copying Your Backup To Remote Storage','updraftplus');?></h2>
