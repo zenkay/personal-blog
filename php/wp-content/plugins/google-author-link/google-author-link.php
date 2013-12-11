@@ -4,7 +4,7 @@
 Plugin Name: Google Author Link
 Plugin URI: http://HelpForWP.com
 Description: Manage your Google Authorship with this simple plugin. Works for single author and multi-author WordPress sites.
-Version: 1.4
+Version: 1.4.2
 Author: HelpForWP
 Author URI: http://HelpForWP.com
 
@@ -35,11 +35,16 @@ class GoogleAuthorLink {
 	public function __construct() {
 		
 		if(is_admin()) {
+			add_action( 'admin_menu', array($this, 'galink_add_admin_option_page') );
 			add_action( 'admin_init', array($this, 'galink_register_settings') );
 			add_action( 'admin_init', array($this, 'galink_register_styles'));
-			add_action('admin_print_styles', array($this, 'galink_enqueue_styles'));
-	    }
-		
+			add_action( 'admin_print_styles', array($this, 'galink_enqueue_styles'));
+			add_action( 'wp_print_scripts', array($this, 'galink_enqueue_scripts') );
+	    }else{
+			add_action('wp_head', array($this, 'galink_head_output_authorship') );
+			add_action('wp_head', array($this, 'galink_head_output_publisher') );
+		}
+
 		add_filter( 'user_contactmethods', array($this, 'galink_google_profile'), 10, 1);
 		
 		register_activation_hook( __FILE__, array($this, 'galink_activate') );
@@ -54,7 +59,9 @@ class GoogleAuthorLink {
 	function galink_enqueue_styles(){
 		wp_enqueue_style( 'google_author_link_admin_css' );
 	}
-	
+	function galink_enqueue_scripts(){
+		wp_enqueue_script( 'google-author-link', plugin_dir_url( __FILE__ ) . 'js/google-author-link-admin.js', array( 'jquery' ) );
+	}
 	function galink_activate() {
 
 	}
@@ -66,6 +73,10 @@ class GoogleAuthorLink {
 	function galink_remove_option() {
 		delete_option('galink_options');
 		delete_option('galink_google_publisher_profile');
+		delete_option('galink_exclude_post_categories');
+		delete_option('galink_exclude_custom_post_type');
+		delete_option('galink_remove_authorship_from_all_pages');
+		delete_option('galink_exclude_pages');
 		
 		return;
 	}
@@ -98,10 +109,24 @@ class GoogleAuthorLink {
 		register_setting( 'galink-settings', 'galink_options' );
 		register_setting( 'galink-settings', 'galink_google_publisher_profile' );
 		register_setting( 'galink-settings', 'galink_exclude_post_categories' );
-		register_setting( 'galink-settings', 'galink_exclude_custom_post_type' );		
+		register_setting( 'galink-settings', 'galink_exclude_custom_post_type' );
+		register_setting( 'galink-settings', 'galink_remove_authorship_from_all_pages' );				
+		register_setting( 'galink-settings', 'galink_exclude_pages' );		
 	}
 	
-	function galink_head_output(){
+	function galink_head_output_authorship(){
+		global $post;
+		
+		//check if exclude all pages
+		$remove_all_pages = get_option('galink_remove_authorship_from_all_pages', 0);
+		if( $remove_all_pages ){
+			return;
+		}
+		//check if is exclude page
+		$exclude_pages = get_option('galink_exclude_pages', '');
+		if( $exclude_pages && is_array($exclude_pages) && count($exclude_pages) > 0 && in_array($post->ID, $exclude_pages) ){
+			return;
+		}
 		//check if is exclude category
 		$exclude_category = get_option('galink_exclude_post_categories', ''); 
 		if( $exclude_category && is_array($exclude_category) && count($exclude_category) > 0 && in_category( $exclude_category ) ){
@@ -115,21 +140,21 @@ class GoogleAuthorLink {
 		}
 		
 		//check if home page
-		if (is_home() || is_front_page()){
+		if ( is_home() || is_front_page() ){
 			$galink_home_user = get_option('galink_options', 0);
 			if ($galink_home_user < 1) return;
 			
 			$galink_author_id = $galink_home_user;
 		}else if ( is_single() || is_page() ){
-			global $post;
-			
 			$galink_author_id = $post->post_author;
 		}
 		$galink_google_profile = get_user_meta($galink_author_id, 'galink_profile', true);
 		if ( $galink_google_profile ){
 			echo '<link rel="author" href="'.$galink_google_profile.'"/>'."\n";
 		}
-		
+	}
+	
+	function galink_head_output_publisher(){
 		$galink_google_publisher_profile = get_option('galink_google_publisher_profile', '');
 		if ( $galink_google_publisher_profile ){
 			echo '<link rel="publisher" href="'.$galink_google_publisher_profile.'"/>'."\n";
@@ -139,6 +164,3 @@ class GoogleAuthorLink {
 
 
 $google_author_link = new GoogleAuthorLink();
-//hooks
-add_action("admin_menu", array(&$google_author_link, 'galink_add_admin_option_page') );
-add_action('wp_head', array(&$google_author_link, 'galink_head_output') );

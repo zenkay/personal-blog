@@ -1,9 +1,9 @@
 === Google Author Link ===
 Contributors: PeterShilling 
 Donate Link: http://helpforwp.com/donate/
-Tags: Google,author,authorship,seo
+Tags: Google,author,authorship,seo,google plus
 Requires at least: 3.0
-Tested up to: 3.6.1
+Tested up to: 3.7.1
 Stable tag: trunk
 
 Manage your Google Authorship Links with this simple plugin. Works for single author and multi-author WordPress sites.
@@ -17,6 +17,10 @@ This plugin works for single user WordPress sites and multi-author sites. Each u
 There is also an option to set the author for your WordPress home page.
 
 All you then have to do is add your WordPress site to your Google Profile.
+
+** New in version 1.4.1 and above **
+
+Controls to allow you to hide authorship from some or all of your WordPress pages.
 
 ** New in version 1.3 and above **
 
@@ -49,6 +53,7 @@ http://helpforwp.com/tag/google-author-link/
 2. Google profile URL in the user profile
 
 == Changelog ==
+1.4.1 Update to allow users to select pages that should not contain authorship code, minor bug fix
 1.4 Minor update to make instructions more clear for the plugin settings page
 1.3 Update to allow users to select categories to not show authorship on, as well as support to also hide authorship on custom post types.
 1.2 Update to support Google Publisher Profile in additional to Google Authorship. Update if you have a Google Profile for a business that you would like to connect your site with.

@@ -75,9 +75,6 @@
 		box-shadow: 0px 0px 3px -1px #333;
 	}
 </style>
-</head>
-
-<body>
 
 <div class="wrap center">
 	

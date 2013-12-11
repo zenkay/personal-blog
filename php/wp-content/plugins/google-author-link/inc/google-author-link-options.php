@@ -25,7 +25,7 @@ function galink_options_show() {
         <h2>Google Author Link</h2>
         
         <a href="http://helpforwp.com/donate/?utm_source=PluginSettings&utm_medium=WP&utm_campaign=GoogleAuthorLink" target="_blank"><img src="<?PHP echo plugins_url(); ?>/google-author-link/images/paypal-donate.png" align="right" style="padding:10px;"/></a>
-  <h3>Plugin configuration</h3>
+  <h2>Quick start guide</h2>
         <p>This plugin allows you to easily manage your Google Authorship and Google Publisher Profile.</p>
 		<h3>Google Authorship</h3>
         <p>Each user that is contributing to the WordPress site now has a new field on their <a href='<?PHP echo get_admin_url() . "users.php"; ?>'>user profile</a> - 'Google Profile URL'. 
@@ -40,7 +40,8 @@ function galink_options_show() {
 		<p>Finally, ensure that you add your WordPress site to your Google Profle.<p>
         <p>Once you have completed the above, take one of your website URLs and test your page in the Google <a href="http://www.google.com/webmasters/tools/richsnippets" target="_blank">Rich Snippets Testing Tool</a>, this will confirm that all is setup correctly. 
         </p>
-			
+		<hr style="border:0;border-bottom: 1px dashed #ccc;background: #999;">
+		<h2>Settings</h2>	
         <h3>Home page user profile</h3>
     	<form action="options.php" method="POST" id="wpls_settings">
     	<?php settings_fields( 'galink-settings' ); ?>
@@ -60,15 +61,22 @@ function galink_options_show() {
                 <td>If you have a Google Publisher Profile for this site, enter it here.</td>
             </tr>
         </table>
-        <h3>Remove authorship from these categories</h3>
-        <p>Select the categories below that you don't want to show Authorship code on.</p>
-	        <p>Why remove Authorship code from certain content in your site - get more information <a href="http://helpforwp.com/why-remove-google-authorship-code?utm_source=AuthorLink&utm_medium=SettingPage&utm_campaign=GoogleAuthorLink" target="_blank">here</a>.</p>
+        
+        
+        <hr style="border:0;border-bottom: 1px dashed #ccc;background: #999;">
+        <h2>Advanced authorship controls</h2>
+        <p>By default your Google Authorship code will be added to all pages in your site.</p>
+        <p>There are situations where this is not ideal, use the controls below to specify certain areas of your site that will not contain authorship markup code.</p>
+        <p>Why remove Authorship code from certain content in your site? Get more information <a href="http://helpforwp.com/why-remove-google-authorship-code?utm_source=AuthorLink&utm_medium=SettingPage&utm_campaign=GoogleAuthorLink" target="_blank">here</a>.</p>
 	        <p>
+        <h3>Remove authorship from these categories</h3>
+        <p>Select the categories below that will not have authorship code added.</p>
+	        
 			<?php
 				$selected = get_option('galink_exclude_post_categories', ''); 
 				$args = array( 'hide_empty' => 0, 'depth' => 0, 'hierarchical' => 1, 'name' => 'galink_exclude_post_categories[]', 'id' => 'galink_exclude_post_categories_id', 'echo' => 0,  );
 				$categories_list = wp_dropdown_categories( $args );
-				$categories_list_multiple = str_replace('<select', '<select multiple="multiple" style="width:250px; height:200px;" ', $categories_list);
+				$categories_list_multiple = str_replace('<select', '<select multiple="multiple" style="width:350px; height:200px;" ', $categories_list);
 
 				//check selected
 				if( $selected && is_array($selected) && count($selected) > 0 ){
@@ -88,7 +96,7 @@ function galink_options_show() {
 		</p>
         <p>Hold down Control or Command(Mac) for multiple selection</p>
         <h3>Remove authorship from these custom post types</h3>
-<p>Each custom post type you choose here will no longer show your Authorship code</p>
+<p>Each custom post type you choose here will no longer show your authorship code.</p>
         <p>
         	<?php
 				$selected = get_option('galink_exclude_custom_post_type', ''); 
@@ -97,7 +105,7 @@ function galink_options_show() {
 				$operator = 'and'; // 'and' or 'or'
 				$post_types = get_post_types( $args, $output, $operator ); 
 			?>
-            <select multiple="multiple" style="width:250px; height:50px;" name="galink_exclude_custom_post_type[]" id="galink_exclude_custom_post_type_id">
+            <select multiple="multiple" style="width:350px; height:50px;" name="galink_exclude_custom_post_type[]" id="galink_exclude_custom_post_type_id">
             <?php 
 				if( count($post_types) > 0 ){ 
 					foreach( $post_types as $post_type_name ){
@@ -112,10 +120,54 @@ function galink_options_show() {
             </select>
         </p>
         <p>Hold down Control or Command(Mac) for multiple selection</p>
+        <h3>Remove authorship from some or all of your pages</h3>
+		<p>Remove Authorship from all pages:&nbsp;
+        	<?php
+			$remove_all_pages = get_option('galink_remove_authorship_from_all_pages', 0);
+			?>
+        	<input type="radio" name="galink_remove_authorship_from_all_pages" id="galink_remove_authorship_from_all_pages_yes_id" value="1" <?php if($remove_all_pages == 1) echo ' checked="checked"'; ?>/> Yes&nbsp;&nbsp;
+        	<input type="radio" name="galink_remove_authorship_from_all_pages" id="galink_remove_authorship_from_all_pages_no_id" value="0" <?php if($remove_all_pages == 0) echo ' checked="checked"'; ?>/> No
+        </p>
+        <div id="galink_remove_authorship_from_pages_select_id" style="display:<?php if($remove_all_pages == 0){ echo 'block'; }else{ echo 'none'; } ?>;">
+        	<p>Select which specific pages to remove authorship code.</p>
+        
+            <?php 
+                $all_pages_drop_down = wp_dropdown_pages( array('echo' => 0, 'name' => 'page_id') );
+                $all_pages_drop_down = str_replace("<select name='page_id' id='page_id'>", '', $all_pages_drop_down);
+                $all_pages_drop_down = str_replace("</select>", '', $all_pages_drop_down);
+                $all_pages_drop_down_options_array = explode('</option>', $all_pages_drop_down);
+                
+                $all_pages_option_with_page_id = array();
+                foreach($all_pages_drop_down_options_array as $page_option){
+                    if( strlen($page_option) < 1 ){
+                        continue;
+                    }
+                    $regex = '/value="([^"]*)"/';
+                    $matches = array();
+                    if(preg_match($regex, $page_option, $matches)){
+                        $all_pages_option_with_page_id[$matches[1]] = $page_option;
+                    }
+                }
+            ?>
+            <select multiple="multiple" style="width:350px; height:200px;" name="galink_exclude_pages[]" id="galink_exclude_pages_id">
+            <?php
+            $selected_pages = get_option('galink_exclude_pages', '');
+            if( count($all_pages_option_with_page_id) > 0 ){
+                foreach( $all_pages_option_with_page_id as $key => $option ){
+                    if ( $selected_pages && is_array($selected_pages) && count($selected_pages) > 0 && in_array($key, $selected_pages) ){
+                        $option = str_replace('>', ' selected="selected">', $option);
+                    }
+                    echo $option.'</option>';
+                }
+            }
+            ?>
+            </select>
+            <p>Hold down Control or Command(Mac) for multiple selection</p>
+        </div>
         <p style="margin-top: 20px"><button class="button-primary" type="submit" id="wpls_admin_submit">Save Settings</button></p>
         </form>
-        
-        <h3>Love this plugin?</h3>
+         <hr style="border:0;border-bottom: 1px dashed #ccc;background: #999;">
+        <h2>Love this plugin?</h2>
         <p>Why not donate a few dollars to help maintain it.</p><p>We have a quick donation tool that uses PayPal <a href="http://helpforwp.com/donate/" target="_blank">right here!</a></p>
         
 		<h3>Documenation and tutorials</h3>
