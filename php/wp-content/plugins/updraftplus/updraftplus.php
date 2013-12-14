@@ -4,7 +4,7 @@ Plugin Name: UpdraftPlus - Backup/Restore
 Plugin URI: http://updraftplus.com
 Description: Backup and restore: take backups locally, or backup to Amazon S3, Dropbox, Google Drive, Rackspace, (S)FTP, WebDAV & email, on automatic schedules.
 Author: UpdraftPlus.Com, DavidAnderson
-Version: 1.8.1
+Version: 1.8.2
 Donate link: htpt://david.dw-perspective.org.uk/donate
 License: GPLv3 or later
 Text Domain: updraftplus
@@ -14,6 +14,10 @@ Author URI: http://updraftplus.com
 /*
 TODO - some of these are out of date/done, needs pruning
 // On plugins restore, don't let UD over-write itself
+// Post restore, check if active theme is present (if not, reset and alert user)
+// Schedule a task to report on failure
+// Plugin causing modal problem to check out: The Events Calendar by Modern Tribe
+// Recognise known huge non-core tables on restore, and postpone them to the end (AJAX method?)
 // Add a link on the restore page to the log file
 // Exclude backwpup stuff from backup (in wp-content/uploads/backwpup*)
 // Pre-schedule resumptions that we know will be scheduled later
@@ -23,6 +27,7 @@ TODO - some of these are out of date/done, needs pruning
 // Place in maintenance mode during restore - ?
 // Log all output of restore; include Migrator
 // Free/premium comparison page
+// Limited auto-rescan... on settings page load, if we have no known files, and if some exist, then add them
 // Complete the tweak to bring the delete-old-dirs within a dialog (just needed to deal wtih case of needing credentials more elegantly).
 // Add note to support page requesting that non-English be translated
 // More locking: lock the resumptions too (will need to manage keys to make sure junk data is not left behind)
@@ -204,8 +209,12 @@ $updraftplus_have_addons = 0;
 if (is_dir(UPDRAFTPLUS_DIR.'/addons') && $dir_handle = opendir(UPDRAFTPLUS_DIR.'/addons')) {
 	while (false !== ($e = readdir($dir_handle))) {
 		if (is_file(UPDRAFTPLUS_DIR.'/addons/'.$e) && preg_match('/\.php$/', $e)) {
-			$updraftplus_have_addons++;
-			include_once(UPDRAFTPLUS_DIR.'/addons/'.$e);
+			$header = file_get_contents(UPDRAFTPLUS_DIR.'/addons/'.$e, false, null, -1, 1024);
+			$phprequires = (preg_match("/RequiresPHP: (\d[\d\.]+)/", $header, $matches)) ? $matches[1] : false;
+			if (false === $phprequires || version_compare(PHP_VERSION, $phprequires, '>=')) {
+				$updraftplus_have_addons++;
+				include_once(UPDRAFTPLUS_DIR.'/addons/'.$e);
+			}
 		}
 	}
 	@closedir($dir_handle);
@@ -317,7 +326,7 @@ class UpdraftPlus {
 
 		$exec = "UPDRAFTPLUSKEY=updraftplus $perl ".UPDRAFTPLUS_DIR."/includes/get-cpanel-quota-usage.pl";
 
-		$handle = popen($exec, 'r');
+		$handle = @popen($exec, 'r');
 		if (false === $handle) return false;
 
 		$found = false;
@@ -690,6 +699,27 @@ class UpdraftPlus {
 		}
 	}
 
+	public function get_max_packet_size() {
+		global $wpdb, $updraftplus;
+		$mp = (int)$wpdb->get_var("SELECT @@session.max_allowed_packet");
+		# Default to 1Mb
+		$mp = (is_numeric($mp) && $mp > 0) ? $mp : 1048576;
+		# 32Mb
+		if ($mp < 33554432) {
+			$save = $wpdb->show_errors(false);
+			$req = $wpdb->query("SET GLOBAL max_allowed_packet=33554432");
+			$wpdb->show_errors($save);
+			if (!$req) $updraftplus->log("Tried to raise max_allowed_packet from ".round($mp/1048576,1)." Mb to 32 Mb, but failed (".$wpdb->last_error.", ".serialize($req).")");
+			$mp = (int)$wpdb->get_var("SELECT @@session.max_allowed_packet");
+			# Default to 1Mb
+			$mp = (is_numeric($mp) && $mp > 0) ? $mp : 1048576;
+		}
+		$updraftplus->log("Max packet size: ".round($mp/1048576, 1)." Mb");
+		return $mp;
+	}
+
+
+
 	# Q. Why is this abstracted into a separate function? A. To allow poedit and other parsers to pick up the need to translate strings passed to it (and not pick up all of those passed to log()).
 	# 1st argument = the line to be logged (obligatory)
 	# Further arguments = parameters for sprintf()
@@ -698,9 +728,13 @@ class UpdraftPlus {
 		# Get first argument
 		$pre_line = array_shift($args);
 		# Log it whilst still in English
-		$this->log(vsprintf($pre_line, $args));
-		# Now run (v)sprintf on it, using any remaining arguments. vsprintf = sprintf but takes an array instead of individual arguments
-		echo vsprintf(__($pre_line, 'updraftplus'), $args).'<br>';
+		if (is_wp_error($pre_line)) {
+			$this->log_wp_error($pre_line);
+		} else {
+			# Now run (v)sprintf on it, using any remaining arguments. vsprintf = sprintf but takes an array instead of individual arguments
+			$this->log(vsprintf($pre_line, $args));
+			echo vsprintf(__($pre_line, 'updraftplus'), $args).'<br>';
+		}
 	}
 
 	// This function is used by cloud methods to provide standardised logging, but more importantly to help us detect that meaningful activity took place during a resumption run, so that we can schedule further resumptions if it is worthwhile
@@ -1104,6 +1138,13 @@ class UpdraftPlus {
 		}
 	}
 
+	public function option_filter_get($which) {
+		global $wpdb;
+		$row = $wpdb->get_row($wpdb->prepare("SELECT option_value FROM $wpdb->options WHERE option_name = %s LIMIT 1", $which));
+		// Has to be get_row instead of get_var because of funkiness with 0, false, null values
+		return (is_object($row)) ? $row->option_value : false;
+	}
+
 	// This important function returns a list of file entities that can potentially be backed up (subject to users settings), and optionally further meta-data about them
 	function get_backupable_file_entities($include_others = true, $full_info = false) {
 
@@ -1320,7 +1361,7 @@ class UpdraftPlus {
 
 		// Sanity check
 		if (empty($this->backup_time)) {
-			$this->log('Abort this run: the backup_time parameter appears to be empty (this is either a one-time error caused by upgrading from a version earlier than 1.7.18 whilst a backup was in progress (which you can ignore), or caused by resuming an already-complete backup.');
+			$this->log('The backup_time parameter appears to be empty (usually caused by resuming an already-complete backup).');
 			return false;
 		}
 

@@ -20,8 +20,10 @@ function twiget_get_tweets(){
 			);
 	$options = array_intersect_key( array_merge( $defaults, $_POST ), $defaults );
 	
-	$cache_period = ceil( ( ( 15 * 60 ) / 180 ) * twiget_count_instances() );
-	$tweets = get_transient( 'tweets-' . $options['widget_id'] );
+	$cache_period = ( $twiget_options['cache_period'] ) ? $twiget_options['cache_period'] : ceil( ( ( 15 * 60 ) / 180 ) * twiget_count_instances() );
+	$cache_disabled = ( $cache_period == 0 ) ? true : false;
+	
+	if ( ! $cache_disabled ) $tweets = get_transient( 'tweets-' . $options['widget_id'] ); else $tweets = false;
 	
 	if ( $tweets === false ) {
 		$consumerkey = $twiget_options['consumer_key'];
@@ -34,7 +36,7 @@ function twiget_get_tweets(){
 		$tweets = $connection->get( 'https://api.twitter.com/1.1/statuses/user_timeline.json?' . http_build_query( $options ) );
 		
 		$tweets = json_encode( $tweets );
-		set_transient( 'tweets-' . $options['widget_id'], $tweets, $cache_period );
+		if ( ! $cache_disabled ) set_transient( 'tweets-' . $options['widget_id'], $tweets, $cache_period );
 	}
 	echo $tweets;
 	exit();

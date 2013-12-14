@@ -36,11 +36,46 @@ class Updraft_Restorer extends WP_Upgrader {
 		$this->strings['multisite_error'] = __('You are running on WordPress multisite - but your backup is not of a multisite site.', 'updraftplus');
 	}
 
-	function get_max_packet_size() {
-		global $wpdb;
-		$mp = (int)$wpdb->get_var("SELECT @@session.max_allowed_packet");
-		# Default to 1Mb
-		return (is_numeric($mp) && $mp > 0) ? $mp : 1048576;
+	# This function is copied from class WP_Upgrader (WP 3.8 - no significant changes since 3.2 at least); we only had to fork it because it hard-codes using the basename of the zip file as its unpack directory; which can be long; and then combining that with long pathnames in the zip being unpacked can overflow a 256-character path limit (yes, they apparently still exist - amazing!)
+	function unpack_package_zip($package, $delete_package = true) {
+		global $wp_filesystem;
+
+		$this->skin->feedback('unpack_package');
+
+		$upgrade_folder = $wp_filesystem->wp_content_dir() . 'upgrade/';
+
+		//Clean up contents of upgrade directory beforehand.
+		$upgrade_files = $wp_filesystem->dirlist($upgrade_folder);
+		if ( !empty($upgrade_files) ) {
+			foreach ( $upgrade_files as $file )
+				$wp_filesystem->delete($upgrade_folder . $file['name'], true);
+		}
+
+		//We need a working directory
+		#This is the only change from the WP core version - minimise path length
+		#$working_dir = $upgrade_folder . basename($package, '.zip');
+		$working_dir = $upgrade_folder . substr(md5($package), 0, 8);
+
+		// Clean up working directory
+		if ( $wp_filesystem->is_dir($working_dir) )
+			$wp_filesystem->delete($working_dir, true);
+
+		// Unzip package to working directory
+		$result = unzip_file( $package, $working_dir );
+
+		// Once extracted, delete the package if required.
+		if ( $delete_package )
+			unlink($package);
+
+		if ( is_wp_error($result) ) {
+			$wp_filesystem->delete($working_dir, true);
+			if ( 'incompatible_archive' == $result->get_error_code() ) {
+				return new WP_Error( 'incompatible_archive', $this->strings['incompatible_archive'], $result->get_error_data() );
+			}
+			return $result;
+		}
+
+		return $working_dir;
 	}
 
 	// This returns a wp_filesystem location (and we musn't change that, as we must retain compatibility with the class parent)
@@ -51,7 +86,8 @@ class Updraft_Restorer extends WP_Upgrader {
 		$updraft_dir = $updraftplus->backups_dir_location();
 
 		// If not database, then it is a zip - unpack in the usual way
-		if (!preg_match('/db\.gz(\.crypt)?$/i', $package)) return parent::unpack_package($updraft_dir.'/'.$package, $delete_package);
+		#if (!preg_match('/db\.gz(\.crypt)?$/i', $package)) return parent::unpack_package($updraft_dir.'/'.$package, $delete_package);
+		if (!preg_match('/db\.gz(\.crypt)?$/i', $package)) return $this->unpack_package_zip($updraft_dir.'/'.$package, $delete_package);
 
 		$backup_dir = $wp_filesystem->find_folder($updraft_dir);
 
@@ -62,7 +98,7 @@ class Updraft_Restorer extends WP_Upgrader {
 		$this->skin->feedback('unpack_package');
 
 		$upgrade_folder = $wp_filesystem->wp_content_dir() . 'upgrade/';
-		@$wp_filesystem->mkdir($upgrade_folder, 0775);
+		@$wp_filesystem->mkdir($upgrade_folder, octdec($this->calculate_additive_chmod_oct(FS_CHMOD_DIR, 0775)));
 
 		//Clean up contents of upgrade directory beforehand.
 		$upgrade_files = $wp_filesystem->dirlist($upgrade_folder);
@@ -78,7 +114,7 @@ class Updraft_Restorer extends WP_Upgrader {
 		// Clean up working directory
 		if ($wp_filesystem->is_dir($working_dir)) $wp_filesystem->delete($working_dir, true);
 
-		if (!$wp_filesystem->mkdir($working_dir, 0775)) return new WP_Error('mkdir_failed', __('Failed to create a temporary directory','updraftplus').' ('.$working_dir.')');
+		if (!$wp_filesystem->mkdir($working_dir, octdec($this->calculate_additive_chmod_oct(FS_CHMOD_DIR, 0775)))) return new WP_Error('mkdir_failed', __('Failed to create a temporary directory','updraftplus').' ('.$working_dir.')');
 
 		// Unpack package to working directory
 		if ($updraftplus->is_db_encrypted($package)) {
@@ -136,6 +172,15 @@ class Updraft_Restorer extends WP_Upgrader {
 
 		if (empty($upgrade_files)) return true;
 
+		if (!$wpfs->is_dir($dest_dir)) {
+			return new WP_Error('no_such_dir', __('The directory does not exist', 'updraftplus')." ($dest_dir)");
+// 			$updraftplus->log_e("The directory does not exist, so will be created (%s).", $dest_dir);
+// 			# Attempts to create the directory fail, as due to a core bug, $dest_dir will be the wrong value if it did not already exist (at least for themes - the value of it depends on an is_dir() check wrongly used to detect a relative path)
+// 			if (!$wpfs->mkdir($dest_dir)) {
+// 				return new WP_Error('create_failed', __('Failed to create directory', 'updraftplus')." ($dest_dir)");
+// 			}
+		}
+
 		$wpcore_config_moved = false;
 
 		foreach ( $upgrade_files as $file => $filestruc ) {
@@ -175,6 +220,17 @@ class Updraft_Restorer extends WP_Upgrader {
 			# Sanity check (should not be possible as these were excluded at backup time)
 			if (in_array($file, $do_not_overwrite)) continue;
 
+			if (('object-cache.php' == $file || 'advanced-cache.php' == $file) && 'others' == $type) {
+				if (false == apply_filters('updraftplus_restorecachefiles', true, $file)) {
+					$nfile = preg_replace('/\.php$/', '-backup.php', $file);
+					$wpfs->move($working_dir . "/$file", $working_dir . "/".$nfile, true);
+					$file=$nfile;
+				}
+			} elseif (('object-cache-backup.php' == $file || 'advanced-cache-backup.php' == $file) && 'others' == $type) {
+				$wpfs->delete($working_dir."/".$file);
+				continue;
+			} 
+
 			# First, move the existing one, if necessary (may not be present)
 			if ($wpfs->exists($dest_dir.$file)) {
 				if ($preserve_existing == 1) {
@@ -195,8 +251,14 @@ class Updraft_Restorer extends WP_Upgrader {
 				# Something exists - no move. Remove it from the temporary directory - so that it will be clean later
 				@$wpfs->delete($working_dir.'/'.$file, true);
 			} elseif (3 != $preserve_existing || !$wpfs->exists($dest_dir.$file)) {
+				$is_dir = $wpfs->is_dir($working_dir."/".$file);
+				# This method is broken due to https://core.trac.wordpress.org/ticket/26598
+				#if (empty($chmod)) $chmod = $wpfs->getnumchmodfromh($wpfs->gethchmod($dest_dir));
+				if (empty($chmod)) $chmod = octdec(sprintf("%04d", $this->get_current_chmod($dest_dir, $wpfs)));
 				if ($wpfs->move($working_dir."/".$file, $dest_dir.$file, true) ) {
 					if ($send_actions) do_action('updraftplus_restored_'.$type.'_one', $file);
+					# Make sure permissions are at least as great as those of the parent
+					if ($is_dir && !empty($chmod)) $this->chmod_if_needed($dest_dir.$file, $chmod, false, $wpfs);
 				} else {
 					return new WP_Error('move_failed', $this->strings['move_failed']);
 				}
@@ -206,10 +268,14 @@ class Updraft_Restorer extends WP_Upgrader {
 				# First pass: create directory structure
 				# Get chmod value for the parent directory, and re-use it (instead of passing false)
 
-				$chmod = $wpfs->getnumchmodfromh($wpfs->gethchmod($dest_dir));
+				# This method is broken due to https://core.trac.wordpress.org/ticket/26598
+				#if (empty($chmod)) $chmod = $wpfs->getnumchmodfromh($wpfs->gethchmod($dest_dir));
+				if (empty($chmod)) $chmod = octdec(sprintf("%04d", $this->get_current_chmod($dest_dir, $wpfs)));
 				# Copy in the files. This also needs to make sure the directories exist, in case the zip file lacks entries
 				$delete_root = ('others' == $type || 'wpcore' == $type) ? false : true;
+
 				$copy_in = $this->copy_files_in($working_dir.'/'.$file, $dest_dir.$file, $filestruc['files'], $chmod, $delete_root);
+				if (!empty($chmod)) $this->chmod_if_needed($dest_dir.$file, $chmod, false, $wpfs);
 
 				if (is_wp_error($copy_in)) return $copy_in;
 				if (!$copy_in) return new WP_Error('move_failed', $this->strings['move_failed']);
@@ -289,7 +355,7 @@ class Updraft_Restorer extends WP_Upgrader {
 
 		if (empty($this->pre_restore_updatedir_writable)) {
 			$upgrade_folder = $wp_filesystem->wp_content_dir() . 'upgrade/';
-			@$wp_filesystem->mkdir($upgrade_folder, 0775);
+			@$wp_filesystem->mkdir($upgrade_folder, octdec($this->calculate_additive_chmod_oct(FS_CHMOD_DIR, 0775)));
 			if (!$wp_filesystem->is_dir($upgrade_folder)) {
 				return new WP_Error('no_dir', sprintf(__('UpdraftPlus needed to create a %s in your content directory, but failed - please check your file permissions and enable the access (%s)', 'updraftplus'), __('folder', 'updraftplus'), $upgrade_folder));
 			}
@@ -339,7 +405,7 @@ class Updraft_Restorer extends WP_Upgrader {
 	function get_wp_filesystem_dir($path) {
 		global $wp_filesystem;
 		// Get the wp_filesystem location for the folder on the local install
-		switch ( $path ) {
+		switch ($path) {
 			case ABSPATH:
 			case '';
 				$wp_filesystem_dir = $wp_filesystem->abspath();
@@ -383,6 +449,7 @@ class Updraft_Restorer extends WP_Upgrader {
 
 		// This returns the wp_filesystem path
 		$working_dir = $this->unpack_package($backup_file, $this->delete);
+
 		if (is_wp_error($working_dir)) return $working_dir;
 
 		$working_dir_localpath = WP_CONTENT_DIR.'/upgrade/'.basename($working_dir);
@@ -593,25 +660,87 @@ class Updraft_Restorer extends WP_Upgrader {
 			}
 		}
 
+		# Permissions changes (at the top level - i.e. this does not reply if using recursion) are now *additive* - i.e. there's no danger of permissions being removed from what's on-disk
 		switch($type) {
 			case 'wpcore':
-				@$wp_filesystem->chmod($wp_filesystem_dir, FS_CHMOD_DIR);
+				$this->chmod_if_needed($wp_filesystem_dir, FS_CHMOD_DIR, false, $wp_filesystem);
 				// In case we restored a .htaccess which is incorrect for the local setup
 				$this->flush_rewrite_rules();
 			break;
 			case 'uploads':
-				@$wp_filesystem->chmod($wp_filesystem_dir, 0775, true);
+				$this->chmod_if_needed($wp_filesystem_dir, FS_CHMOD_DIR, false, $wp_filesystem);
 			break;
 			case 'db':
 				do_action('updraftplus_restored_db', array('expected_oldsiteurl' => $this->old_siteurl, 'expected_oldhome' => $this->old_home, 'expected_oldcontent' => $this->old_content), $import_table_prefix);
 				$this->flush_rewrite_rules();
 			break;
 			default:
-				@$wp_filesystem->chmod($wp_filesystem_dir, FS_CHMOD_DIR);
+				$this->chmod_if_needed($wp_filesystem_dir, FS_CHMOD_DIR, false, $wp_filesystem);
 		}
+		# db was already done
+		if ('db' != $type) do_action('updraftplus_restored_'.$type);
 
 		return true;
 
+	}
+
+	# Returns an octal string (but not an octal number)
+	function get_current_chmod($file, $wpfs = false) {
+		if (false == $wpfs) {
+			global $wp_filesystem;
+			$wpfs = $wp_filesystem;
+		}
+		# getchmod() is broken at least as recently as WP3.8 - see: https://core.trac.wordpress.org/ticket/26598
+		return (is_a($wpfs, 'WP_Filesystem_Direct')) ? substr(sprintf("%06d", decoct(@fileperms($file))),3) : $wpfs->getchmod($file);
+	}
+
+	# Returns a string in octal format
+	# $new_chmod should be an octal, i.e. what you'd pass to chmod()
+	function calculate_additive_chmod_oct($old_chmod, $new_chmod) {
+		# chmod() expects octal form, which means a preceding zero - see http://php.net/chmod
+		$old_chmod = sprintf("%04d", $old_chmod);
+		$new_chmod = sprintf("%04d", decoct($new_chmod));
+
+		for ($i=1; $i<=3; $i++) {
+			$oldbit = substr($old_chmod, $i, 1);
+			$newbit = substr($new_chmod, $i, 1);
+			for ($j=0; $j<=2; $j++) {
+				if (($oldbit & (1<<$j)) && !($newbit & (1<<$j))) {
+					$newbit = (string)($newbit | 1<<$j);
+					$new_chmod = sprintf("%04d", substr($new_chmod, 0, $i).$newbit.substr($new_chmod, $i+1));
+				}
+			}
+		}
+
+		return $new_chmod;
+	}
+
+	# "If needed" means, "If the permissions are not already more permissive than this". i.e. This will not tighten permissions from what the user had before (we trust them)
+	# $chmod should be an octal - i.e. the same as you'd pass to chmod()
+	function chmod_if_needed($dir, $chmod, $recursive = false, $wpfs = false, $suppress = true) {
+
+		if (false == $wpfs) {
+			global $wp_filesystem;
+			$wpfs = $wp_filesystem;
+		}
+
+		$old_chmod = $this->get_current_chmod($dir, $wpfs);
+
+		# Sanity fcheck
+		if (strlen($old_chmod) < 3) return;
+
+		$new_chmod = $this->calculate_additive_chmod_oct($old_chmod, $chmod);
+
+		# Don't fix what isn't broken
+		if (!$recursive && $new_chmod == $old_chmod) return true;
+
+		$new_chmod = octdec($new_chmod);
+
+		if ($suppress) {
+			return @$wpfs->chmod($dir, $new_chmod, $recursive);
+		} else {
+			return $wpfs->chmod($dir, $new_chmod, $recursive);
+		}
 	}
 
 	// $dirnames: an array of preferred names
@@ -661,23 +790,19 @@ class Updraft_Restorer extends WP_Upgrader {
 
 	}
 
-	function option_filter_get($which) {
-		global $wpdb;
-		$row = $wpdb->get_row($wpdb->prepare("SELECT option_value FROM $wpdb->options WHERE option_name = %s LIMIT 1", $which));
-		// Has to be get_row instead of get_var because of funkiness with 0, false, null values
-		return (is_object($row)) ? $row->option_value : false;
-	}
-
 	function option_filter_permalink_structure($val) {
-		return $this->option_filter_get('permalink_structure');
+		global $updraftplus;
+		return $updraftplus->option_filter_get('permalink_structure');
 	}
 
 	function option_filter_page_on_front($val) {
-		return $this->option_filter_get('page_on_front');
+		global $updraftplus;
+		return $updraftplus->option_filter_get('page_on_front');
 	}
 
 	function option_filter_rewrite_rules($val) {
-		return $this->option_filter_get('rewrite_rules');
+		global $updraftplus;
+		return $updraftplus->option_filter_get('rewrite_rules');
 	}
 
 	// The pass-by-reference on $import_table_prefix is due to historical refactoring
@@ -796,7 +921,7 @@ class Updraft_Restorer extends WP_Upgrader {
 
 		$restoring_table = '';
 		
-		$max_allowed_packet = $this->get_max_packet_size();
+		$max_allowed_packet = $updraftplus->get_max_packet_size();
 
 		while (!gzeof($dbhandle)) {
 			// Up to 1Mb
@@ -858,26 +983,39 @@ class Updraft_Restorer extends WP_Upgrader {
 			}
 
 			# Deal with case where adding this line will take us over the MySQL max_allowed_packet limit - must split, if we can (if it looks like consecutive rows)
-			if (3 == $sql_type && $sql_line && strlen($sql_line.$buffer) > $max_allowed_packet && preg_match('/,\s*$/', $sql_line) && preg_match('/^\s*\(/', $buffer)) {
+			# ALlow a 100-byte margin for error (including searching/replacing table prefix)
+			if (3 == $sql_type && $sql_line && strlen($sql_line.$buffer) > ($max_allowed_packet - 100) && preg_match('/,\s*$/', $sql_line) && preg_match('/^\s*\(/', $buffer)) {
 				// Remove the final comma; replace with semi-colon
 				$sql_line = substr(rtrim($sql_line), 0, strlen($sql_line)-1).';';
 				if ('' != $old_table_prefix && $import_table_prefix != $old_table_prefix) $sql_line = $updraftplus->str_replace_once($old_table_prefix, $import_table_prefix, $sql_line);
 				# Run the SQL command; then set up for the next one.
 				$this->line++;
-				echo __("Split line to avoid exceeding maximum packet size", 'updraftplus')." (".strlen($sql_line)." + ".strlen($buffer)." > $max_allowed_packet)";
-				$updraftplus->log("Split line to avoid exceeding maximum packet size (".strlen($sql_line)." + ".strlen($buffer)." > $max_allowed_packet)");
+				echo __("Split line to avoid exceeding maximum packet size", 'updraftplus')." (".strlen($sql_line)." + ".strlen($buffer)." : $max_allowed_packet)<br>";
+				$updraftplus->log("Split line to avoid exceeding maximum packet size (".strlen($sql_line)." + ".strlen($buffer)." : $max_allowed_packet)");
 				$do_exec = $this->sql_exec($sql_line, $sql_type);
-				if (is_wp_error($do_exec)) return $do_exec;
 				# Reset, then carry on
 				$sql_line = $insert_prefix." ";
+				if (is_wp_error($do_exec)) return $do_exec;
 			}
 
 			$sql_line .= $buffer;
-
 			# Do we have a complete line yet?
 			if (';' != substr($sql_line, -1, 1)) continue;
 
 			$this->line++;
+
+			# We now have a complete line - process it
+
+			if (3 == $sql_type && $sql_line && strlen($sql_line.$buffer) > $max_allowed_packet) {
+				$logit = substr($sql_line.$buffer, 0, 100);
+				$updraftplus->log(sprintf("An SQL line that is larger than the maximum packet size and cannot be split was found: %s", '('.strlen($sql_line).', '.strlen($buffer).', '.$logit.' ...)'));
+
+				echo '<strong>'.__('Warning:', 'updraftplus').'</strong> '.sprintf(__("An SQL line that is larger than the maximum packet size and cannot be split was found; this line will not be processed, but will be dropped: %s", 'updraftplus'), '('.strlen($sql_line).', '.strlen($buffer).', '.$logit.' ...)')."<br>";
+				# Reset
+				$sql_line = '';
+				$sql_type = -1;
+				continue;
+			}
 
 			# The timed overhead of this is negligible
 			if (preg_match('/^\s*drop table if exists \`?([^\`]*)\`?\s*;/i', $sql_line, $matches)) {
@@ -1021,8 +1159,7 @@ class Updraft_Restorer extends WP_Upgrader {
 // 		echo "Memory usage (Mb): ".round(memory_get_usage(false)/1048576, 1)." : ".round(memory_get_usage(true)/1048576, 1)."<br>";
 
 		global $wpdb, $updraftplus;
-			$ignore_errors = false;
-
+		$ignore_errors = false;
 		if ($sql_type == 2 && $this->create_forbidden) {
 			$updraftplus->log_e('Cannot create new tables, so skipping this command (%s)', htmlspecialchars($sql_line));
 			$req = true;
@@ -1033,6 +1170,7 @@ class Updraft_Restorer extends WP_Upgrader {
 				$ignore_errors = true;
 			}
 // 				echo substr($sql_line, 0, 50)." (".strlen($sql_line).")<br>";
+
 			if ($this->use_wpdb) {
 				$req = $wpdb->query($sql_line);
 				if (!$req) $this->last_error = $wpdb->last_error;
@@ -1045,7 +1183,8 @@ class Updraft_Restorer extends WP_Upgrader {
 
 		if (!$req) {
 			if (!$ignore_errors) $this->errors++;
-			echo sprintf(_x('An error (%s) occurred:', 'The user is being told the number of times an error has happened, e.g. An error (27) occurred', 'updraftplus'), $this->errors)." - ".htmlspecialchars($this->last_error)." - ".__('the database query being run was:','updraftplus').' '.htmlspecialchars($sql_line).'<br>';
+			$print_err = (strlen($sql_line) > 100) ? substr($sql_line, 0, 100).' ...' : $sql_line;
+			echo sprintf(_x('An error (%s) occurred:', 'The user is being told the number of times an error has happened, e.g. An error (27) occurred', 'updraftplus'), $this->errors)." - ".htmlspecialchars($this->last_error)." - ".__('the database query being run was:','updraftplus').' '.htmlspecialchars($print_err).'<br>';
 			$updraftplus->log("An error (".$this->errors.") occurred: ".$this->last_error." - SQL query was: ".$sql_line);
 			// First command is expected to be DROP TABLE
 			if (1 == $this->errors && 2 == $sql_type && 0 == $this->tables_created) {
@@ -1064,7 +1203,6 @@ class Updraft_Restorer extends WP_Upgrader {
 			}
 		}
 	}
-
 
 // 	function option_filter($which) {
 // 		if (strpos($which, 'pre_option') !== false) { echo "OPT_FILT: $which<br>\n"; }

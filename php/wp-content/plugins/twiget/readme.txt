@@ -3,8 +3,8 @@ Contributors: prasannasp, silverks
 Donate link: http://www.prasannasp.net/donate/
 Tags: twitter, widget, tweets, twitter widget, sidebar
 Requires at least: 2.5
-Tested up to: 3.6
-Stable tag: 1.1.2
+Tested up to: 3.8
+Stable tag: 1.1.3
 License: GPLv3
 License URI: http://www.gnu.org/copyleft/gpl.html
 
@@ -61,6 +61,12 @@ Post your questions or report issue in the [support forum](http://forum.prasanna
 4. Twiget Twitter Widget configuration
 
 == Changelog ==
+
+= 1.1.3 =
+
+* Added option to override automatic requests cache period
+* Fixed invalid CSS media type.
+* Fixed links being displayed in next line with some themes.
 
 = 1.1.2 =
 

@@ -4,7 +4,7 @@ Plugin Name: Twiget Twitter Widget
 Plugin URI: http://www.prasannasp.net/wordpress-plugins/twiget/
 Description: A widget to display the latest Twitter status updates.
 Author: Prasanna SP
-Version: 1.1.2
+Version: 1.1.3
 Author URI: http://www.prasannasp.net/
 */
 

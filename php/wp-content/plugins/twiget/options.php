@@ -26,6 +26,8 @@ function twiget_validate_options( $input){
 	$input['consumer_secret'] =  wp_filter_nohtml_kses( $input['consumer_secret']);
 	$input['access_token'] =  wp_filter_nohtml_kses( $input['access_token']);
 	$input['access_token_secret'] =  wp_filter_nohtml_kses( $input['access_token_secret']);
+	$input['cache_period'] = trim( $input['cache_period'] );
+	$input['cache_period'] = ( is_numeric( $input['cache_period'] ) ) ? $input['cache_period'] : '';
 	return $input;
 }
 
@@ -71,6 +73,16 @@ function twiget_render_form() {
 				</tr>
             </table>
             <p><?php _e( '<strong>NOTE:</strong> Twiget caches requests to Twitter to make full use of but never exceeds the Twitter API\'s limit of 180 requests per 15 minutes.<br /> Therefore, it is recommended to use the API credentials you entered above for just this website, especially so if it has a high amount of traffic.', 'twiget' ); ?></p>
+            <table class="form-table">
+				<tr>
+					<th scope="row"><label for="cache_period"><?php _e( 'Override cache period', 'twiget' ); ?></label></th>
+					<td>
+                        <input name="twiget_options[cache_period]" id="cache_period" type="text" value="<?php if ( isset( $options['cache_period'] ) ) echo $options['cache_period']; ?>" size="3" /> <?php _e( 'seconds', 'twiget' ); ?><br />
+                        <span class="description"><?php _e( 'Enter manual cache period to override the plugin\'s automatic cache period calculation. Enter 0 to disable caching.', 'twiget' ); ?></span>
+					</td>
+				</tr>
+			</table>
+            
             
             <table style="margin-top: 10px;" class="form-table">
 				<tr valign="top" style="border-top:#dddddd 1px solid;">

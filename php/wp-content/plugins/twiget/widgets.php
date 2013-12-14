@@ -21,7 +21,7 @@ class Twiget_Twitter_Widget extends WP_Widget{
 		if ( is_active_widget( false, false, $this->id_base, true ) && ! is_admin() ) {
 			wp_enqueue_script( 'jquery' );
 			wp_enqueue_script( 'twiget-widget-js', TWIGET_PLUGIN_URL . '/js/twiget.js', array(), '', false );
-			wp_enqueue_style( 'twiget-widget-css', TWIGET_PLUGIN_URL . '/css/twiget.css', array(), '', false );
+			wp_enqueue_style( 'twiget-widget-css', TWIGET_PLUGIN_URL . '/css/twiget.css' );
 		}
 	}
 	
