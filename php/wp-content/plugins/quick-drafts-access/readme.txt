@@ -1,20 +1,17 @@
 === Quick Drafts Access ===
 Contributors: coffee2code
-Donate link: http://coffee2code.com/donate
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6ARCFJ9TX3522
 Tags: draft, drafts, admin, menu, post, page, post_type, shortcut, coffee2code
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.1
-Tested up to: 3.5
-Stable tag: 1.1.3
-Version: 1.1.3
+Tested up to: 3.8
+Stable tag: 1.1.4
 
 Adds a link to Drafts under the Posts, Pages, and other custom post type sections in the admin menu.
 
 
 == Description ==
-
-Adds a link to Drafts under the Posts, Pages, and other custom post type sections in the admin menu.
 
 By default in WordPress, in order to access the drafts of any given post type (including posts and pages) in the admin, you'd have to:
 
@@ -35,7 +32,7 @@ The plugin hides the "Drafts" link when no drafts for that post type are present
 
 Also, the menu item only appears for users who have the capability to edit posts of that post type.
 
-Links: [Plugin Homepage](http://coffee2code.com/wp-plugins/quick-drafts-access/) | [Author Homepage](http://coffee2code.com)
+Links: [Plugin Homepage](http://coffee2code.com/wp-plugins/quick-drafts-access/) |  [Plugin Directory Page](http://wordpress.org/plugins/quick-drafts-access/) | [Author Homepage](http://coffee2code.com)
 
 
 == Installation ==
@@ -46,8 +43,7 @@ Links: [Plugin Homepage](http://coffee2code.com/wp-plugins/quick-drafts-access/)
 
 == Screenshots ==
 
-1. A screenshot of the main admin menu (with the menu expanded) showing the Drafts link (with pending draft counts for both posts and pages).
-2. A screenshot of the main admin menu (collapsed) showing the Drafts link (with count) when hovering over "Posts"
+1. A screenshot of the main admin menu (with the menu expanded) showing the Drafts link (with pending draft counts) for both posts (in the sidebar menu popup) and pages (in the expanded sidebar menu).
 
 
 == Frequently Asked Questions ==
@@ -108,6 +104,14 @@ add_filter( 'c2c_quick_drafts_access_show_if_empty', '__return_true' );
 
 == Changelog ==
 
+= 1.1.4 (2013-12-19) =
+* Minor documentation tweaks
+* Note compatibility through WP 3.8+
+* Update copyright date (2014)
+* Change donate link
+* Update banner image to reflect WP 3.8 admin refresh
+* Update screenshots to reflect WP 3.8 admin refresh
+
 = 1.1.3 =
 * Add check to prevent execution of code if file is directly accessed
 * Note compatibility through WP 3.5+
@@ -146,6 +150,9 @@ add_filter( 'c2c_quick_drafts_access_show_if_empty', '__return_true' );
 
 
 == Upgrade Notice ==
+
+= 1.1.4 =
+Trivial update: noted compatibility through WP 3.8+
 
 = 1.1.3 =
 Trivial update: noted compatibility through WP 3.5+

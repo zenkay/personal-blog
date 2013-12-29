@@ -3,7 +3,7 @@ Contributors: jmlapam
 Tags: twitter, cards, semantic markup, metabox, meta
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=tweetpressfr%40gmail%2ecom&item_name=JM%20Twitter%20Cards&no_shipping=0&no_note=1&tax=0&currency_code=EUR&bn=PP%2dDonationsBF&charset=UTF%2d8
 Requires at least: 3.1.0
-Tested up to: 3.7
+Tested up to: 3.8
 License: GPLv2 or later
 Stable tag: trunk
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -15,10 +15,10 @@ A plugin meant to simplify Twitter cards integration on WordPress. You can custo
 Once activated the plugin adds Twitter cards on your posts according to your settings. Enjoy !
 Compatible with : WP SEO by Yoast (do not check cards option in this plugin if activated) and All in One SEO
 
-The plugin allows you to customize your cards per each post. But do not activate cards in SEO by Yoast plugin. Otherwise markup will be added twice.
+The plugin allows you to customize your cards per each post. If you use SEO by Yoast plugin do not activate the Twitter card's option. Otherwise markup will be added twice.
 If you choose full customization you will see a metabox in your post edit.
 
-**The plugin has now its own <a href="http://support.tweetpress.fr/forums/forum/jm-twitter-cards">support you can find here</a>**
+**The plugin has its own <a href="http://support.tweetpress.fr/forums/forum/jm-twitter-cards">support you can find here</a>**
 
 <a href="http://twitter.com/intent/user?screen_name=tweetpressfr">Follow me on Twitter</a>
 
@@ -34,7 +34,7 @@ Compatible avec WP SEO by Yoast(ne pas ajouter l'option cards dans ce plugin si 
 Le plugin vous permet de personnaliser les cards pour chaque post. Attention malgré tout à ne pas activer l'option card de Yoast ou sinon le markup sera ajouté 2 fois.
 En mode full custom une metabox apparaît dans vos edit de post.
 
-**Le plugin a maintenant <a href="http://support.tweetpress.fr/forums/forum/jm-twitter-cards">son propre support</a>** (la langue est l'Anglais mais vous pouvez poster en Français)
+**Le plugin a <a href="http://support.tweetpress.fr/forums/forum/jm-twitter-cards">son propre support</a>** (la langue est l'Anglais mais vous pouvez poster en Français)
 
 <a href="http://twitter.com/intent/user?screen_name=tweetpressfr">Me suivre sur Twitter</a>
 
@@ -74,7 +74,7 @@ If it still doesn't work please open a thread on support or at this URL: <a href
 Just activate meta box, select **card type product** and save draft. 4 new fields will appear and you'll be able to set your product card.
 
 = The plugin generates a lot of images (different sizes) = 
-I can be a problem when you work with HD and/or a lot of images. So you can use plugins that just delete unused image, e.g <a href="http://wordpress.org/plugins/dnui-delete-not-used-image-wordpress/">DNUI</a>
+I can be a problem when you work with HD and/or a lot of images.
 
 = How do I use the custom fields option? = 
 Basically you provide your custom field keys in plugin option page and then it will grab datas.
@@ -83,8 +83,7 @@ Basically you provide your custom field keys in plugin option page and then it w
 Just use the WordPress media manager to set a WordPress Gallery and the plugin will grab the first 4 images to set the gallery card.
 You have to use the shortcode [gallery] to enjoy this feature ( that's what the WordPress media manager does, it inserts the shortcode [gallery]).
 
-Please avoid using images heavier than 1 MB.
-
+**Please avoid using images heavier than 1 MB.**
 
 See live example: http://support.tweetpress.fr/demo-twitter-cards-gallery/
 (sometimes you have to wait a minute for images to appear in validator)
@@ -109,7 +108,7 @@ Si cela ne marche toujours pas SVP ouvrez un topic sur le support du plugin ou �
 Activez la meta box et sélectionnez **le type product** pour la card. Sauvez le brouillon et 4 champs apparaîtront pour mettre en place la card product.
 
 = Le plugin génère beaucoup trop de fichiers images = 
-Cela peut poser problème si vous travaillez avec de la HD et/ou beaucoup d'images. Vous pouvez donc utiliser un plugin qui va effacer les fichiers images non utilisés comme par exmple <a href="http://wordpress.org/plugins/dnui-delete-not-used-image-wordpress/">DNUI</a>
+Cela peut poser problème si vous travaillez avec de la HD et/ou beaucoup d'images. Vous pouvez donc utiliser un plugin qui va effacer les fichiers images non utilisés.
 
 = Comment utiliser l'option custom fields? = 
 Il suffit de renseigner les clés de vos custom fields en page d'option et le plugin s'occupera de récupérer les datas correspondantes.
@@ -118,7 +117,7 @@ Il suffit de renseigner les clés de vos custom fields en page d'option et le pl
 Utiliser le gestionnaire de médias WordPress pour créer une galerie WordPress et le plugin prendra les 4 premières pour constituer la card galerie.
 Vous devez utiliser le shortcode [gallery] pour obtenir une card galerie (c'est ce que fait le gestionnaire de médias, il insère le shortcode [gallery]).
 
-SVP évitez d'utliser des images plus grande qu'1 MB
+**SVP évitez d'utliser des images de plus d'1 MB**.
 
 Voir une démo : http://support.tweetpress.fr/demo-twitter-cards-gallery/
 (parfois vous devez patientez un peu pour que les images apparaissent au validateur.)
@@ -126,9 +125,13 @@ Voir une démo : http://support.tweetpress.fr/demo-twitter-cards-gallery/
 == Screenshots ==
 1. admin
 2. confirmation mail
-3. metabox
+3. meta box
 
 == Changelog ==
+
+=  3.3.8 =
+* 17 Dec 2013
+* Delete JetPack Notice
 
 =  3.3.7.1 =
 * 30 Oct 2013

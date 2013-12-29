@@ -5,7 +5,7 @@ Plugin URI: http://tweetpress.fr
 Description: Meant to help users to implement and customize Twitter Cards easily
 Author: Julien Maury
 Author URI: http://tweetpress.fr
-Version: 3.3.7.1
+Version: 3.3.8
 License: GPL2++
 */
 
@@ -16,7 +16,6 @@ License: GPL2++
 *			  - http://codex.wordpress.org/Function_Reference/wp_get_attachment_image_src
 *			  - http://codex.wordpress.org/Function_Reference/get_user_meta
 *			  - http://codex.wordpress.org/Function_Reference/get_posts
-*			  - JM Twitter Cards 3.1.0 (gallery cards are back !)
 *			  - https://codex.wordpress.org/Function_Reference/has_shortcode
 *			  - http://codex.wordpress.org/AJAX_in_Plugins	
 *			  - http://codex.wordpress.org/Plugin_API/Action_Reference/wp_ajax_(action)
@@ -660,12 +659,8 @@ if(!function_exists( 'jm_tc_admin_notice' )) {
 			echo "</p></div>";
 		}
 		
-		//Jetpack Open Graph
-		if ( !get_user_meta($user_id, 'jm_tc_ignore_notice') && current_user_can( 'install_plugins' ) && function_exists('wpcom_twitter_cards_output') ) {
-			echo '<div class="error"><p>';
-			printf(__('JetPack is on, developer have been recently integrated Twitter Cards and Open Graph in the same function, if JM Twitter Cards is activated, this function is disabled to avoid double markup, you can use the <a href="http://wordpress.org/plugins/wp-open-graph/">WP Open Graph</a> plugin to fix this | <a href="%1$s">Hide Notice</a>'), '?jm_tc_ignore_this=0','jm-tc');
-			echo "</p></div>";
-		}
+		//Jetpack Open Graph - Jet pack has been updated yeah ! Thanks guys.
+
 	}
 }
 add_action('admin_init', 'jm_tc_ignore_this' );
