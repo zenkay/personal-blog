@@ -4,7 +4,7 @@
 Plugin Name: Google Author Link
 Plugin URI: http://HelpForWP.com
 Description: Manage your Google Authorship with this simple plugin. Works for single author and multi-author WordPress sites.
-Version: 1.4.2
+Version: 1.4.3
 Author: HelpForWP
 Author URI: http://HelpForWP.com
 

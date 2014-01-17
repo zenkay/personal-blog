@@ -398,3 +398,11 @@ msgstr ""
 #: jm-twitter-cards.php:210
 msgid "yes please, deactivate it"
 msgstr ""
+
+#: jm-twitter-cards.php:
+msgid "Welcome to"
+msgstr ""
+
+#: jm-twitter-cards.php
+msgid "see blog posts"
+msgstr ""

@@ -3,8 +3,8 @@ Contributors: DavidoffNeal
 Donate link: http://www.simplesharebuttons.com/donate/
 Tags: share buttons, facebook, twitter, google+, share, share links, stumble upon, linkedin, pinterest
 Requires at least: 3.5.1
-Tested up to: 3.6.1
-Stable tag: 3.2
+Tested up to: 3.8
+Stable tag: 3.3
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,11 +20,15 @@ No hotlinking to another website to slow downloading or for tracking use, it's s
 
 You can even upload and use your own custom images if you wish!
 
+Visit <a href="http://make.simplesharebuttons.com" target="_blank" rel="nofollow">make.simplesharebuttons.com</a> to make your own custom-coloured share buttons!
+
 The Simple Share Buttons Adder utilises features that, as a WordPress user, you will be familiar with. A self-explanatory administration screen will have you showing your Share Buttons on your posts and pages in no time!
 
 == Installation ==
 
 For full configuration instructions<a href="http://www.simplesharebuttons.com/wordpress/wordpress-configuration/" target="_blank" rel="nofollow"> visit this page</a>
+
+Visit <a href="http://make.simplesharebuttons.com" target="_blank" rel="nofollow">make.simplesharebuttons.com</a> to make your own custom-coloured share buttons!
 
 1. Upload the 'simple-share-buttons-adder' folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
@@ -37,6 +41,8 @@ For full configuration instructions<a href="http://www.simplesharebuttons.com/wo
 == Frequently Asked Questions ==
 
 This plugin has a dedicated website! Check out the<a href="www.simplesharebuttons.com/wordpress-faq/" target="_blank" rel="nofollow"> FAQs page</a>
+
+Visit <a href="http://make.simplesharebuttons.com" target="_blank" rel="nofollow">make.simplesharebuttons.com</a> to make your own custom-coloured share buttons!
 
 Please visit the <a href="http://www.simplesharebuttons.com/forums/forum/wordpress-forum/">WordPress Support Forum</a> for any assistance you may need.
 
@@ -55,6 +61,10 @@ A step by step guide on how to configure this plugin can be found <a href="http:
 9. Use the widget option to add share buttons!
 
 == Changelog ==
+
+= 3.3 =
+* You can now make your own custom-coloured share icons here for free - http://make.simplesharebuttons.com/ !!
+* Many apologies for the lack of support recently, I shall try to get better!
 
 = 3.2 =
 * Tweet text reordered to read: Page Title, Custom Twitter Text, URL

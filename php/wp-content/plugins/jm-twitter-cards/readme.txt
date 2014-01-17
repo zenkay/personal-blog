@@ -1,24 +1,29 @@
 === JM Twitter Cards ===
 Contributors: jmlapam
-Tags: twitter, cards, semantic markup, metabox, meta
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=tweetpressfr%40gmail%2ecom&item_name=JM%20Twitter%20Cards&no_shipping=0&no_note=1&tax=0&currency_code=EUR&bn=PP%2dDonationsBF&charset=UTF%2d8
+Tags: twitter, cards, semantic markup, metabox, meta, photo, product, gallery
 Requires at least: 3.1.0
 Tested up to: 3.8
 License: GPLv2 or later
 Stable tag: trunk
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-A plugin meant to simplify Twitter cards integration on WordPress. You can customize your Twitter cards per each post.
+Easy integration of Twitter cards in WordPress. Most useful card types provided.
 
 == Description ==
 
-Once activated the plugin adds Twitter cards on your posts according to your settings. Enjoy !
-Compatible with : WP SEO by Yoast (do not check cards option in this plugin if activated) and All in One SEO
+Once activated the plugin adds appropriate meta on your WordPress website allowing you to get Twitter cards for your posts according to your settings. Enjoy !
+
+
+Compatible with : WP SEO by Yoast (do not check cards option in this plugin if activated) and All in One SEO.
 
 The plugin allows you to customize your cards per each post. If you use SEO by Yoast plugin do not activate the Twitter card's option. Otherwise markup will be added twice.
 If you choose full customization you will see a metabox in your post edit.
 
 **The plugin has its own <a href="http://support.tweetpress.fr/forums/forum/jm-twitter-cards">support you can find here</a>**
+
+
+Please help me to translate it in other languages: : contact@tweetpress.fr
+
 
 <a href="http://twitter.com/intent/user?screen_name=tweetpressfr">Follow me on Twitter</a>
 
@@ -27,14 +32,16 @@ If you choose full customization you will see a metabox in your post edit.
 En Français 
 –––––––––––––––––––––––––––––––––––
 
-Une fois activé le plugin s'occupe d'ajouter une card Twitter sur vos posts selon vos réglages. Profitez-en bien !
+Une fois activé le plugin s'occupe d'ajouter les métas nécessaires vous permettant d'obtenir des cards Twitter sur vos posts selon vos réglages. Profitez-en bien !
 
-Compatible avec WP SEO by Yoast(ne pas ajouter l'option cards dans ce plugin si activé) et All in One SEO
+Compatible avec WP SEO by Yoast(ne pas ajouter l'option cards dans ce plugin si activé) et All in One SEO.
 
 Le plugin vous permet de personnaliser les cards pour chaque post. Attention malgré tout à ne pas activer l'option card de Yoast ou sinon le markup sera ajouté 2 fois.
 En mode full custom une metabox apparaît dans vos edit de post.
 
-**Le plugin a <a href="http://support.tweetpress.fr/forums/forum/jm-twitter-cards">son propre support</a>** (la langue est l'Anglais mais vous pouvez poster en Français)
+**Le plugin a <a href="http://support.tweetpress.fr/forums/forum/jm-twitter-cards">son propre support</a>** (la langue est l'Anglais mais vous pouvez poster en Français).
+
+Appel aux traducteurs pour d'autres langages : contact@tweetpress.fr
 
 <a href="http://twitter.com/intent/user?screen_name=tweetpressfr">Me suivre sur Twitter</a>
 
@@ -128,6 +135,25 @@ Voir une démo : http://support.tweetpress.fr/demo-twitter-cards-gallery/
 3. meta box
 
 == Changelog ==
+
+= 3.5.0 =
+* 15 Jan 2014
+* fix notice on 404 and pages not concerned by the plugin (undefined var)
+* fix links to documentation in option page
+* fix missing translated strings 
+
+=  3.4.0 =
+* 04 Jan 2014
+* Fix the missing closing meta for description that triggers minor HTML error
+* Make card type in meta box the same as option page by default to save your time
+* Quit paypal - if you want to thank me, just use the wishlist <3
+
+=  3.3.9 =
+* 03 Jan 2014
+* check closing meta to make it clean (thanks @Dan_Silber for the report)
+* add support for Open Graph
+* add filter for developers => 'jmtc_markup'
+* fix documentation
 
 =  3.3.8 =
 * 17 Dec 2013

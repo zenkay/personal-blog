@@ -447,3 +447,11 @@ msgstr "Sauvegarder les changements"
 #: jm-twitter-cards.php
 msgid "Options have been saved."
 msgstr "Les options ont été sauvegardées."
+
+#: jm-twitter-cards.php
+msgid "Welcome to"
+msgstr "Bienvenue sur"
+
+#: jm-twitter-cards.php
+msgid "see blog posts"
+msgstr "voir les articles"

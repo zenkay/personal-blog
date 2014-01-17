@@ -90,8 +90,8 @@ function ssba_admin_panel($arrSettings, $htmlSettingsSaved) {
 						$htmlShareButtonsForm .= '<option ' . ($arrSettings['ssba_image_set'] == 'simple' 		? 'selected="selected"' : NULL) . ' value="simple">Simple</option>';
 						$htmlShareButtonsForm .= '<option ' . ($arrSettings['ssba_image_set'] == 'somacro' 		? 'selected="selected"' : NULL) . ' value="somacro">Somacro</option>';
 						$htmlShareButtonsForm .= '</select>';
-						$htmlShareButtonsForm .= '<p class="description"><a href="http://www.simplesharebuttons.com/button-sets/" target="_blank">Click here</a> to preview the button sets</br>';
-						$htmlShareButtonsForm .= "Choose your favourite set of buttons, or set to 'Custom' to choose your own.</br>You can order your own <a href='http://www.simplesharebuttons.com/custom-share-buttons/' target='blank'><strong>custom-coloured share buttons from here</strong></a>!</p></td>";
+						$htmlShareButtonsForm .= '<p class="description">You can make your own <a href="http://make.simplesharebuttons.com" target="blank"><strong>custom-coloured share buttons here</strong></a>! Choose your favourite set of buttons, or set to &#39;Custom&#39; to choose your own. <a href="http://www.simplesharebuttons.com/button-sets/" target="_blank">Click here</a> to preview the button sets</br>';
+						$htmlShareButtonsForm .= "</p></td>";
 					$htmlShareButtonsForm .= '</tr>';
 				$htmlShareButtonsForm .= '</table>';
 				
@@ -568,14 +568,8 @@ CODE;
 									</table>
 									<div class="et-box et-bio">
 										<div class="et-box-content">
-										<h2>Order your custom&#45;coloured buttons now for just £2!</h2>
-										<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-										<input type="hidden" name="cmd" value="_s-xclick">
-										<input type="hidden" name="hosted_button_id" value="T3LP29GX5CGZW">
-										<input type="image" src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online.">
-										<img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1">
-										</form>
-										<p class="description"><a href="http://www.simplesharebuttons.com/custom-share-buttons/" target="blank">Find out more here</a>!</p>
+										<h2>Make your own custom&#45;coloured buttons for free!</h2>
+										<h3>Visit <a href="http://make.simplesharebuttons.com" target="blank">make.simplesharebuttons.com</a></h3>
 									</center></div></div>
 								</div>';
 

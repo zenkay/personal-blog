@@ -97,7 +97,7 @@
 	display:block;
 }
 
-.jm-tc .submit,.jm-tc .docu {
+.jm-tc .submit {
 	display:inline-block;
 	cursor:pointer;
 	border-top: 1px solid #5dade2;
@@ -118,22 +118,6 @@
 	vertical-align: middle;
 	text-transform:uppercase;
 	border:none;
-}
-
-.jm-tc .docu {
-	float:right;
-    margin-top:2em;
-	width:136px;
-	text-align:center;
-	border:1px solid #ccc;
-	color: #000000;
-	background: #ffffff;
-	background: -moz-linear-gradient(top,  #ffffff 0%, #f6f6f6 47%, #ededed 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(47%,#f6f6f6), color-stop(100%,#ededed));
-	background: -webkit-linear-gradient(top,  #ffffff 0%,#f6f6f6 47%,#ededed 100%);
-	background: -o-linear-gradient(top,  #ffffff 0%,#f6f6f6 47%,#ededed 100%);
-	background: -ms-linear-gradient(top,  #ffffff 0%,#f6f6f6 47%,#ededed 100%);
-	background: linear-gradient(to bottom,  #ffffff 0%,#f6f6f6 47%,#ededed 100%);	 
 }
 
 .jm-tc .submit:hover,
