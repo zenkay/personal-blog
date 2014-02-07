@@ -136,6 +136,29 @@ Voir une démo : http://support.tweetpress.fr/demo-twitter-cards-gallery/
 
 == Changelog ==
 
+= 3.8.1 =
+* 02 Feb 2014
+* Fix jQuery in meta box => no more hide for additional fields when saving
+* Fix conflicts between product and photo cards with meta width and height
+* Update uninstall.php
+* Sorry for the too many updates today. Bugdfixes have been made quickly ^^.
+
+= 3.7 & 3.8 =
+* 02 Feb 2014
+* fix capability error
+
+= 3.6 =
+* 02 Feb 2014
+* Bugfix : capability and role => add field in profile only if user can publish posts
+* Add some icons in option page ^^
+
+= 3.5.1 =
+* 28 Jan 2014
+* Change priority for Twitter cards Markup (put at the very end of wp_head() )
+* Add some documentation for Analytics which is an amazing new feature (not available for some countries such as France, be patient ^^)
+* Fix links to documentation
+* Regenerate blank po file
+
 = 3.5.0 =
 * 15 Jan 2014
 * fix notice on 404 and pages not concerned by the plugin (undefined var)

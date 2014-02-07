@@ -58,10 +58,24 @@
 	color: #000;
 }
 
-.jm-tc .link a {
+.jm-tc h1 i{
+  font-size:1em;
+  margin-right:.8em;
+}
+
+.jm-tc .va-bottom{
+ vertical-align:bottom;
+}
+
+.jm-tc .link a,
+.jm-tc .link-like {
 	text-decoration:none;
 	font-weight:600;
 	color: #00bbf0;
+}
+
+.jm-tc .link-like {
+	margin-right:.3em;
 }
 
 .jm-tc .link a:hover, .jm-tc .link a:focus {

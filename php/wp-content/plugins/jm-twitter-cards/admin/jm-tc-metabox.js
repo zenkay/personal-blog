@@ -6,13 +6,14 @@
 
 jQuery(document).ready(function($) {
 
-	// By default hide this
-	$('.further-photo').hide()
-	$('.further-product').hide();
-	$('.further-gallery').hide();
+	//by default hide this
+	
+	if ($("#twitterCardType").val() == 'photo') { $('.further-photo').show();  } else { $('.further-photo').hide(); }
+	if ($("#twitterCardType").val() == 'product') {  $('.further-product').show(); } else { $('.further-product').hide(); }
+	if ($("#twitterCardType").val() == 'gallery') { $('.further-gallery').show();  } else { $('.further-gallery').hide(); }
 	
 	//just hide if cancel
-	$('#twitterCardCancel').change(function(){
+	$('#twitterCardCancel').bind("change",function(){
 		if ($(this).val() == 'yes') {
 		   $('.further').hide(400);
 		} else {
@@ -22,10 +23,10 @@ jQuery(document).ready(function($) {
 
 	
 	//hide an show if gallery
-	$('#twitterCardType').change(function(){
+	$('#twitterCardType').bind("change",function(){
 		if ($(this).val() == 'gallery') {
 		   $('.furthermore-non-gallery').hide(400);
-		   $('.further-gallery').show(400);
+		   $('.further-gallery').show(400);   
 		} else {
 		   $('.furthermore-non-gallery').show(400);
 		   $('.further-gallery').hide(400);
@@ -46,7 +47,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	//hide if cardImage is fulfilled
-	$('#twitterCardImage').change(function(){	
+	$('#twitterCardImage').bind("change",function(){	
 		if ( $.trim( $(this).val() ) !== "" ) {
 		   $('.resizer').hide(400);
 		} else {

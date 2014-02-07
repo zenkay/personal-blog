@@ -8,7 +8,8 @@ msgstr ""
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.6.3\n"
+"Language: fr_FR\n"
 
 #. Text in function
 #: jm-twitter-cards.php:143
@@ -296,7 +297,7 @@ msgstr "Définir une autre source pour la twitter image (entrez une URL)"
 msgid "Set description according to excerpt length (words count)"
 msgstr ""
 "Fixer le nombre de mots à prendre en compte par le plugin pour établir une "
-"description par défaut :"
+"description par défaut "
 
 #. Text in echo
 #: jm-twitter-cards.php:246
@@ -455,3 +456,41 @@ msgstr "Bienvenue sur"
 #: jm-twitter-cards.php
 msgid "see blog posts"
 msgstr "voir les articles"
+
+#. Text in echo
+#: jm-twitter-cards.php:899
+msgid "Now you can combine Twitter Cards with"
+msgstr "Vous pouvez maintenant combiner les Twitter cards avec"
+
+#. Text in echo
+#: jm-twitter-cards.php:899
+msgid ""
+"It allows you to make some tests and then you can choose \"top performing "
+"Twitter Cards that drove clicks\"."
+msgstr ""
+"Cela permet de faire des tests et de choisir \"les Twitter Cards le plus "
+"performantes qui génèrent du clic\"."
+
+#. Text in echo
+#: jm-twitter-cards.php:902
+msgid ""
+"You can test sources, links, influencers and devices. It is awesome and you "
+"should enjoy these new tools."
+msgstr ""
+"Vous pouvez tester les sources, les liens, les influenceurs et les "
+"appareils. C'est génial et vous devriez apprécier ces nouveaux outils."
+
+#. Text in echo
+#: jm-twitter-cards.php:905
+msgid ""
+"This will help you to set the best card type experience and it will probably "
+"improve your marketing value."
+msgstr ""
+"Cela vous aidera à mettre en place la meilleure expérience possible avec les "
+"Twitter Cards et peut-être améliorera la valeur marchande de vos contenus si "
+"vous en avez besoin."
+
+#. Text in echo
+#: jm-twitter-cards.php:923
+msgid "Maybe you will like this plugin too: "
+msgstr "Peut-être aimerez-vous aussi ce plugin: "

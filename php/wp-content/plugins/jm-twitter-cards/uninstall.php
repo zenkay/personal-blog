@@ -13,6 +13,8 @@ $keys = array(
 			'cardImage',
 			'cardPhotoWidth',
 			'cardPhotoHeight',
+			'cardProductWidth',
+			'cardProductHeight',
 			'cardData1',
 			'cardLabel1',
 			'cardData2',

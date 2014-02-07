@@ -4,405 +4,423 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #. Text in function
-#: jm-twitter-cards.php:143
+#: jm-twitter-cards.php:146
 msgid " MB"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:213
+#: jm-twitter-cards.php:217
 msgid "(A simple way to opt out meta box on particular posts.)"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:846
+#: jm-twitter-cards.php:908
 msgid "About the developer"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:721
+#: jm-twitter-cards.php:767
 msgid "Add a field Twitter to profiles"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:220
+#: jm-twitter-cards.php:894
+msgid "Analytics"
+msgstr ""
+
+#. Text in echo
+#: jm-twitter-cards.php:230
 msgid "Card types"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:222
-#: jm-twitter-cards.php:697
+#: jm-twitter-cards.php:232
+#: jm-twitter-cards.php:743
 msgid "Choose what type of card you want to use"
 msgstr ""
 
 #. Text in function
-#: jm-twitter-cards.php:258
+#: jm-twitter-cards.php:267
 msgid "Current featured image size is : "
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:245
+#: jm-twitter-cards.php:254
 msgid "Define specific size for twitter:image display"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:205
+#: jm-twitter-cards.php:209
 msgid "Disable metabox ?"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:867
-msgid "Display any timeline you want the Twitter 1.1 way with a simple shortcode"
-msgstr ""
-
-#. Text in echo
-#: jm-twitter-cards.php:207
+#: jm-twitter-cards.php:211
 msgid "Do you want to deactivate twitter cards metabox on this post?"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:786
+#: jm-twitter-cards.php:834
 msgid "Do you want to force crop on card Image?"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:201
-#: jm-twitter-cards.php:693
-#: jm-twitter-cards.php:738
-#: jm-twitter-cards.php:773
-#: jm-twitter-cards.php:811
-#: jm-twitter-cards.php:826
+#: jm-twitter-cards.php:205
+#: jm-twitter-cards.php:372
 msgid "Documentation"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:711
+#: jm-twitter-cards.php:757
 msgid "Enter Twitter account for your Website"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:794
+#: jm-twitter-cards.php:842
 msgid "Enter URL for fallback image (image by default)"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:836
+#: jm-twitter-cards.php:884
 msgid "Enter description for Posts Page (max: 200 words)"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:764
+#: jm-twitter-cards.php:811
 msgid "Enter key for card description"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:759
+#: jm-twitter-cards.php:806
 msgid "Enter key for card title"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:282
+#: jm-twitter-cards.php:285
 msgid "Enter the first key data for product"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:286
+#: jm-twitter-cards.php:289
 msgid "Enter the first key label for product"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:290
+#: jm-twitter-cards.php:293
 msgid "Enter the second key data for product"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:294
+#: jm-twitter-cards.php:297
 msgid "Enter the second key label for product"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:831
+#: jm-twitter-cards.php:879
 msgid "Enter title for Posts Page :"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:706
+#: jm-twitter-cards.php:752
 msgid "Enter your Personal Twitter account"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:373
+#: jm-twitter-cards.php:368
 msgid "Enter your Twitter Account (without @)"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:236
+#: jm-twitter-cards.php:245
 msgid "External URL for twitter:image ?"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:868
-msgid "Fix poor native markup for WordPress gallery with some HTML5 markup and add responsive rules."
-msgstr ""
-
-#. Text in echo
-#: jm-twitter-cards.php:310
+#: jm-twitter-cards.php:311
 msgid "Gallery Cards"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:695
+#: jm-twitter-cards.php:738
 msgid "General"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:816
+#: jm-twitter-cards.php:864
 msgid "Get a <strong>custom metabox</strong> on each post type admin"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:680
+#: jm-twitter-cards.php:723
 msgid "Get more <br />from 140 characters </br> with Twitter Cards"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:741
+#: jm-twitter-cards.php:788
 msgid "Grab datas from SEO plugins"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:855
+#: jm-twitter-cards.php:917
 msgid "Help me keep this free"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:849
+#: jm-twitter-cards.php:911
 msgid "I am a WordPress Developer, I like to make it simple."
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:757
+#: jm-twitter-cards.php:804
 msgid "If you prefer to use your own fields"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:302
-#: jm-twitter-cards.php:804
+#: jm-twitter-cards.php:305
+#: jm-twitter-cards.php:852
 msgid "Image height"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:298
-#: jm-twitter-cards.php:799
+#: jm-twitter-cards.php:301
+#: jm-twitter-cards.php:847
 msgid "Image width"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:679
+#: jm-twitter-cards.php:899
+msgid "It allows you to make some tests and then you can choose \"top performing Twitter Cards that drove clicks\"."
+msgstr ""
+
+#. Text in echo
+#: jm-twitter-cards.php:722
 msgid "JM Twitter Cards"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:312
+#: jm-twitter-cards.php:313
 msgid "Just use shortcode <strong>[gallery]</strong> and include at least 4 images."
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:869
-msgid "Make your comments tweetable"
-msgstr ""
-
-#. Text in echo
-#: jm-twitter-cards.php:248
-#: jm-twitter-cards.php:778
+#: jm-twitter-cards.php:257
+#: jm-twitter-cards.php:826
 msgid "Max mobile non retina (width: 280px - height: 375px)"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:249
-#: jm-twitter-cards.php:779
+#: jm-twitter-cards.php:258
+#: jm-twitter-cards.php:827
 msgid "Max mobile retina (width: 560px - height: 750px)"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:250
-#: jm-twitter-cards.php:780
+#: jm-twitter-cards.php:259
+#: jm-twitter-cards.php:828
 msgid "Max web size(width: 435px - height: 375px)"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:813
+#: jm-twitter-cards.php:859
 msgid "Meta Box"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:730
+#: jm-twitter-cards.php:776
 msgid "Modify user meta key associated with Twitter Account in profiles :"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:789
+#: jm-twitter-cards.php:837
 msgid "No"
 msgstr ""
 
-#. Text in echo
-#: jm-twitter-cards.php:865
-msgid "Other plugins you might dig"
+#. Text in function
+#: jm-twitter-cards.php:372
+msgid "No way :/"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:266
+#: jm-twitter-cards.php:899
+msgid "Now you can combine Twitter Cards with"
+msgstr ""
+
+#. Text in function
+#: jm-twitter-cards.php:372
+msgid "Options have been saved."
+msgstr ""
+
+#. Text in echo
+#: jm-twitter-cards.php:271
 msgid "Photo Cards"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:856
+#: jm-twitter-cards.php:918
 msgid "Please help me keep this plugin free."
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:828
+#: jm-twitter-cards.php:874
 msgid "Posts page"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:280
+#: jm-twitter-cards.php:283
 msgid "Product Cards"
 msgstr ""
 
-#. Text in echo
-#: jm-twitter-cards.php:740
-msgid "SEO"
+#. Text in function
+#: jm-twitter-cards.php:372
+msgid "SAVING..."
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:238
+#: jm-twitter-cards.php:784
+msgid "SEO"
+msgstr ""
+
+#. Text in function
+#: jm-twitter-cards.php:372
+msgid "Save changes"
+msgstr ""
+
+#. Text in echo
+#: jm-twitter-cards.php:247
 msgid "Set another source as twitter image (enter URL)"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:716
+#: jm-twitter-cards.php:762
 msgid "Set description according to excerpt length (words count)"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:246
+#: jm-twitter-cards.php:255
 msgid "Set featured image dimensions"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:776
+#: jm-twitter-cards.php:824
 msgid "Set thumbnail size"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:251
-#: jm-twitter-cards.php:781
+#: jm-twitter-cards.php:260
+#: jm-twitter-cards.php:829
 msgid "Small (width: 280px - height: 150px)"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:774
+#: jm-twitter-cards.php:905
+msgid "This will help you to set the best card type experience and it will probably improve your marketing value."
+msgstr ""
+
+#. Text in echo
+#: jm-twitter-cards.php:819
 msgid "Thumbnails"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:365
+#: jm-twitter-cards.php:360
 msgid "Twitter Card Creator"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:681
+#: jm-twitter-cards.php:724
 msgid "Twitter Cards help you richly represent your content within Tweets across the web and on mobile devices. This gives users greater context and insight into the URLs shared on Twitter, which in turn allows Twitter to send more engaged traffic to your site or app."
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:751
+#: jm-twitter-cards.php:798
 msgid "Use SEO by Yoast or All in ONE SEO meta description for your cards (<strong>default is yes</strong>)"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:743
+#: jm-twitter-cards.php:790
 msgid "Use SEO by Yoast or All in ONE SEO meta title for your cards (<strong>default is yes</strong>)"
 msgstr ""
 
 #. Text in function
-#: jm-twitter-cards.php:377
+#: jm-twitter-cards.php:372
 msgid "Warning : Gallery Card is not set properly ! There is no gallery in this post !"
 msgstr ""
 
 #. Text in function
-#: jm-twitter-cards.php:377
+#: jm-twitter-cards.php:372
 msgid "Warning : Product Card is not set properly ! There is no product datas !"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:682
+#: jm-twitter-cards.php:725
 msgid "With this plugin you can grab summary, summary large image, product, photo and gallery cards."
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:788
+#: jm-twitter-cards.php:836
 msgid "Yes"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:228
+#: jm-twitter-cards.php:902
+msgid "You can test sources, links, influencers and devices. It is awesome and you should enjoy these new tools."
+msgstr ""
+
+#. Text in echo
+#: jm-twitter-cards.php:238
 msgid "gallery"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:724
-#: jm-twitter-cards.php:746
-#: jm-twitter-cards.php:754
-#: jm-twitter-cards.php:819
+#: jm-twitter-cards.php:770
+#: jm-twitter-cards.php:793
+#: jm-twitter-cards.php:801
+#: jm-twitter-cards.php:867
 msgid "no"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:209
+#: jm-twitter-cards.php:213
 msgid "not at all !"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:226
-#: jm-twitter-cards.php:701
+#: jm-twitter-cards.php:236
+#: jm-twitter-cards.php:747
 msgid "photo"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:227
+#: jm-twitter-cards.php:237
 msgid "product"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:224
-#: jm-twitter-cards.php:699
+#: jm-twitter-cards.php:234
+#: jm-twitter-cards.php:745
 msgid "summary"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:225
-#: jm-twitter-cards.php:700
+#: jm-twitter-cards.php:235
+#: jm-twitter-cards.php:746
 msgid "summary_large_image"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:723
-#: jm-twitter-cards.php:745
-#: jm-twitter-cards.php:753
-#: jm-twitter-cards.php:818
+#: jm-twitter-cards.php:769
+#: jm-twitter-cards.php:792
+#: jm-twitter-cards.php:800
+#: jm-twitter-cards.php:866
 msgid "yes"
 msgstr ""
 
 #. Text in echo
-#: jm-twitter-cards.php:210
+#: jm-twitter-cards.php:214
 msgid "yes please, deactivate it"
 msgstr ""
 
-#: jm-twitter-cards.php:
-msgid "Welcome to"
-msgstr ""
-
-#: jm-twitter-cards.php
-msgid "see blog posts"
+#. Text in echo
+#: jm-twitter-cards.php:923
+msgid "Maybe you will like this plugin too: "
 msgstr ""
