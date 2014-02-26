@@ -19,9 +19,6 @@ Compatible with : WP SEO by Yoast (do not check cards option in this plugin if a
 The plugin allows you to customize your cards per each post. If you use SEO by Yoast plugin do not activate the Twitter card's option. Otherwise markup will be added twice.
 If you choose full customization you will see a metabox in your post edit.
 
-**The plugin has its own <a href="http://support.tweetpress.fr/forums/forum/jm-twitter-cards">support you can find here</a>**
-
-
 Please help me to translate it in other languages: : contact@tweetpress.fr
 
 
@@ -38,8 +35,6 @@ Compatible avec WP SEO by Yoast(ne pas ajouter l'option cards dans ce plugin si 
 
 Le plugin vous permet de personnaliser les cards pour chaque post. Attention malgré tout à ne pas activer l'option card de Yoast ou sinon le markup sera ajouté 2 fois.
 En mode full custom une metabox apparaît dans vos edit de post.
-
-**Le plugin a <a href="http://support.tweetpress.fr/forums/forum/jm-twitter-cards">son propre support</a>** (la langue est l'Anglais mais vous pouvez poster en Français).
 
 Appel aux traducteurs pour d'autres langages : contact@tweetpress.fr
 
@@ -133,8 +128,41 @@ Voir une démo : http://support.tweetpress.fr/demo-twitter-cards-gallery/
 1. admin
 2. confirmation mail
 3. meta box
+4. player cards validator ( I did not apply for player cards cause I do not have SSL )
+5. gallery cards validator
 
 == Changelog ==
+
+= 4.1 =
+* 18 Feb 2014
+* Fix unwanted spaces in .pot and .php files for documentation
+* Add appropriate functions for translation e.g __() instead of _e() where it's needed
+* Translate the whole documentation into French
+
+= 4.0 =
+* 16 Feb 2014
+* Improve home and post page settings
+* Add app install and deep linking especially if you want to add some iPhone, iPad and Android IDs (apps)
+* Add documentation as submenu
+* Update translation files and add pot files
+* Make documentation "translation-ready" (if you want to translate it, please keep the same name and add your language slug e.g `jm-tc-doc-es_ES.po`). 
+* Documentation has its own translation file and text-domain. I think it's better than loading everything everywhere on the website.
+
+= 3.9.1 =
+* 13 Feb 2014
+* Make warning message appear as HTML comments only for users that can publish posts (front-end)
+
+= 3.9 =
+* 08 Feb 2014
+* Delete meta domain which is useless now
+* Tidy code 
+* Add support for player cards (Available only with meta box, please read the documentation, this is a tricky card type and approval is not automatic)
+* Update documentation and fix wrong HTML in the file
+* Update uninstall.php
+* Update meta box and meta box js
+* Update language files
+* Fix hook for translation init for admin_init
+* Fix double echo for gallery card meta
 
 = 3.8.1 =
 * 02 Feb 2014

@@ -38,3 +38,10 @@ Author URI: http://tweetpress.fr
 .tc-metabox h1 {
 	font-size:1.2em;
 }
+
+.tc-metabox .card-error{
+	margin-left:1em;
+	color:red;
+	font-size:large;
+	font-weight:600;
+}

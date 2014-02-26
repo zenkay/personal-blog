@@ -22,6 +22,22 @@ jQuery(document).ready(function($) {
 				});
 			}
 			jm_tc_options_ajax();
+			
+//Show further options for app install & deep linking
+	if ($("#twitterCardDeepLinking").val() == 'yes') {
+		$('#further-deep-linking').show();  
+	 } else { 
+		$('#further-deep-linking').hide(); 
+	}
+	
+	$('#twitterCardDeepLinking').bind("change",function(){
+		if ($(this).val() == 'yes') {
+		   $('#further-deep-linking').show(400);
+		} else {
+		   $('#further-deep-linking').hide(400);
+		}
+
+	});
 
 // Display text
 	$('#jm-tc-form').submit(function(e) {

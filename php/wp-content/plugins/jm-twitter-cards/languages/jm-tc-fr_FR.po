@@ -1,15 +1,16 @@
 msgid ""
 msgstr ""
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Project-Id-Version: \n"
+"Project-Id-Version: JM Twitter Cards\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
-"Language-Team: \n"
+"Language-Team: jmlapam <contact@tweetpress.fr>\n"
 "MIME-Version: 1.0\n"
-"X-Generator: Poedit 1.6.3\n"
+"X-Generator: Poedit 1.6.4\n"
 "Language: fr_FR\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #. Text in function
 #: jm-twitter-cards.php:143
@@ -494,3 +495,150 @@ msgstr ""
 #: jm-twitter-cards.php:923
 msgid "Maybe you will like this plugin too: "
 msgstr "Peut-être aimerez-vous aussi ce plugin: "
+
+#. Text in echo
+#: jm-twitter-cards.php:550
+msgid "URL must be https!"
+msgstr "Cette URL doit être https"
+
+#. Text in echo
+#: jm-twitter-cards.php:486
+msgid "URL of iFrame player (MUST BE HTTPS)"
+msgstr "URL du player de cette iFrame (DOIT ÊTRE HTTPS)"
+
+#. Text in echo
+#: jm-twitter-cards.php:521
+msgid "Mandatory for Twitter player card!"
+msgstr "Obligatoire pour les cards player!"
+
+#. Text in echo
+#: jm-twitter-cards.php:543
+msgid "URL to raw stream that will be rendered (MUST BE HTTPS)"
+msgstr "URL du stream brut du player qui sera affiché (DOIT ÊTRE HTTPS)"
+
+#. Text in echo
+#: jm-twitter-cards.php:534
+msgid ""
+"Player card will not render with this combination of width and height. "
+"Please make sure it is not fewer 68,600 pixels (a 262x262 square image, or a "
+"350x196 16:9 image)."
+msgstr ""
+"La card player ne sera pas rendue ca la combinaison largeur/hauteur est en "
+"dehors des recommandations de Twitter. SVP assurez-vous que votre image "
+"fallback (featured image par exemple) ne soit pas inférieure à 68,600 pixels "
+"(une image carrée de 262x262 ou une image 16:9 de 350x196)."
+
+#. Text in echo
+#: jm-twitter-cards.php:537
+msgid ""
+"Image is equal to or greater than 1MB. This will break Twitter Cards. "
+"Optimize it please, this should also improve your page load."
+msgstr ""
+"Votre image a une taille égale ou supérieure à 1 MB. Cela risque de casser "
+"la card Twitter. Optimisez cela SVP, cela devrait également améliorer le "
+"temps de chargement de votre page."
+
+#. Text in function
+#: jm-twitter-cards.php:1585
+msgid ""
+"Warning : Player Card is not set properly ! The URL of iFrame Player MUST BE "
+"https!"
+msgstr ""
+"Attention : la player card est mal condigurée ! Cette URL du player DOIT "
+"ÊTRE https!"
+
+#. Text in function
+#: jm-twitter-cards.php:1585
+msgid ""
+"Warning : Player Card is not set properly ! There is no URL provided for "
+"iFrame player !"
+msgstr ""
+"Attention : la player card est mal condigurée ! Aucune URL pour le player "
+"iFrame!"
+
+#. Text in echo
+#: jm-twitter-cards.php:500
+msgid ""
+"When setting this, make sure player dimension and image dimensions are "
+"exactly the same! Image MUST BE greater than 68,600 pixels (a 262x262 square "
+"image, or a 350x196 16:9 image)"
+msgstr ""
+"Si vous utilisez ce réglage, assurez-vous que le player a les mêmes "
+"dimensions que votre image fallback (ex: image associée)! Cette image DOIT "
+"ÊTRE plus grande que 68,600 pixels (une image carrée de 262x262 ou 16:9 de "
+"350x196)"
+
+#. Text in echo
+#: jm-twitter-cards.php:541
+msgid ""
+"If you do not understand what is the following field then it is probably a "
+"bad idea to fulfill them!"
+msgstr ""
+"Si vous ne comprenez pas à quoi sert le champ suivant, mieux vaut ne pas le "
+"remplir du tout!"
+
+#. Text in echo
+#: jm-twitter-cards.php:1187
+msgid "Player Cards"
+msgstr "Cards vidéo"
+
+#. Text in echo
+#: jm-twitter-cards.php:514
+msgid "Player height"
+msgstr "Hauteur du player"
+
+#. Text in echo
+#: jm-twitter-cards.php:503
+msgid "Player width"
+msgstr "Largeur du player"
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "Enter iPad ID "
+msgstr "Entrez l'ID iPad"
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "Enter iPad Name "
+msgstr "Entrez le nom iPad"
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "Enter iPad URL "
+msgstr "Entrez l'URL iPad"
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "Enter iPhone Name "
+msgstr "Entrez le nom iPhone"
+
+#. Text in echo
+#: jm-twitter-cards.php:1644 jm-twitter-cards.php
+msgid "Enter iPhone URL "
+msgstr "Entrez l'URL iPhone"
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "Enter Google Play ID "
+msgstr "Entrez l'ID Google Play"
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "Enter Google Play Name "
+msgstr "Entrez le nom Google Play"
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid "Enter Google Play URL "
+msgstr "Entrez l'URL Google Play"
+
+#. Text in echo
+#: jm-twitter-cards.php
+msgid ""
+"For all the following fields, if you do not want to use leave it blank but "
+"be careful with the required markup for your app. Read the documentation "
+"please."
+msgstr ""
+"Pour les champs suivants, si vous ne devez pas utiliser certains laissez "
+"vide mais attention au markup requis pour chaque meta app. Lisez la "
+"documentation SVP."

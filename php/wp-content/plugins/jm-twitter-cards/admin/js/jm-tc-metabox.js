@@ -11,6 +11,7 @@ jQuery(document).ready(function($) {
 	if ($("#twitterCardType").val() == 'photo') { $('.further-photo').show();  } else { $('.further-photo').hide(); }
 	if ($("#twitterCardType").val() == 'product') {  $('.further-product').show(); } else { $('.further-product').hide(); }
 	if ($("#twitterCardType").val() == 'gallery') { $('.further-gallery').show();  } else { $('.further-gallery').hide(); }
+	if ($("#twitterCardType").val() == 'player') { $('.further-player').show(); $('.resizer').hide(400); } else { $('.further-player').hide(); }
 	
 	//just hide if cancel
 	$('#twitterCardCancel').bind("change",function(){
@@ -44,6 +45,14 @@ jQuery(document).ready(function($) {
 		} else {
 		   $('.further-product').hide(400);
 		}
+	//player
+		if ($(this).val() == 'player') {
+		   $('.further-player').show(400);
+		   $('.resizer').hide(400);
+		} else {
+		   $('.further-player').hide(400);
+		}	
+		
 	});
 	
 	//hide if cardImage is fulfilled

@@ -31,7 +31,7 @@
 	color:#00bbf0;
 }
 
-.jm-tc, .jm-tc .postbox ul {
+.jm-tc, .jm-tc em, .jm-tc .postbox ul {
 	background-color: #eaeff2;
 	margin: 0;
 	padding: 0;
