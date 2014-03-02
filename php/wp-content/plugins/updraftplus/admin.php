@@ -197,6 +197,22 @@ class UpdraftPlus_Admin {
 		var updraft_downloader_nonce = '<?php wp_create_nonce("updraftplus_download"); ?>'
 		</script>
 		<style type="text/css">
+			.updraftplus-morefiles-row-delete {
+				cursor: pointer;
+				color: red;
+				font-size: 100%;
+				font-weight: bold;
+				border: 0px;
+				border-radius: 3px;
+				padding: 2px;
+				margin: 0 6px;
+			}
+			.updraftplus-morefiles-row-delete:hover {
+				cursor: pointer;
+				color: white;
+				background: red;
+			}
+
 		#updraft-wrap .form-table th {
 			width: 230px;
 		}
@@ -288,7 +304,7 @@ class UpdraftPlus_Admin {
 				$submenu_file = 'themes.php';
 			}
 
-			require_once(ABSPATH . 'wp-admin/admin-header.php');
+			require_once(ABSPATH.'wp-admin/admin-header.php');
 
 			?>
 			<div id="updraft-autobackup" class="updated" style="float:left; padding: 6px; margin:8px 0px;">
@@ -856,15 +872,17 @@ class UpdraftPlus_Admin {
 			if (!$found_it) echo json_encode(array('ok' => 'N', 'm' => __('Could not find that job - perhaps it has already finished?', 'updraftplus')));
 
 		} elseif (isset($_GET['subaction']) && 'diskspaceused' == $_GET['subaction'] && isset($_GET['entity'])) {
-			if ($_GET['entity'] == 'updraft') {
+			if ('updraft' == $_GET['entity']) {
 				echo $this->recursive_directory_size($updraftplus->backups_dir_location());
 			} else {
 				$backupable_entities = $updraftplus->get_backupable_file_entities(true, false);
 				if (!empty($backupable_entities[$_GET['entity']])) {
-					$dirs = apply_filters('updraftplus_dirlist_'.$_GET['entity'], $backupable_entities[$_GET['entity']]);
-					echo $this->recursive_directory_size($dirs);
+					# Might be an array
+					$basedir = $backupable_entities[$_GET['entity']];
+					$dirs = apply_filters('updraftplus_dirlist_'.$_GET['entity'], $basedir);
+					echo $this->recursive_directory_size($dirs, $updraftplus->get_exclude($_GET['entity']), $basedir);
 				} else {
-					_e('Error','updraftplus');
+					_e('Error', 'updraftplus');
 				}
 			}
 		} elseif (isset($_GET['subaction']) && 'historystatus' == $_GET['subaction']) {
@@ -890,7 +908,10 @@ class UpdraftPlus_Admin {
 
 			$this->logged = array();
 			set_error_handler(array($this, 'get_php_errors'), E_ALL & ~E_STRICT);
-			if (method_exists($objname, "credentials_test")) call_user_func(array($objname, 'credentials_test'));
+			if (method_exists($objname, "credentials_test")) {
+				$obj = new $objname;
+				$obj->credentials_test();
+			}
 			if (count($this->logged) >0) {
 				echo "\n\n".__('Messages:', 'updraftplus')."\n";
 				foreach ($this->logged as $err) {
@@ -1465,8 +1486,11 @@ CREATE TABLE $wpdb->signups (
 // 			$updraftplus_backup->backup_db();
 		} elseif (isset($_POST['action']) && $_POST['action'] == 'updraft_wipesettings') {
 			$settings = $this->get_settings_keys();
-
 			foreach ($settings as $s) UpdraftPlus_Options::delete_updraft_option($s);
+
+			# These aren't in get_settings_keys() because they are always in the options table, regardless of context
+			global $wpdb;
+			$wpdb->query("DELETE FROM $wpdb->options WHERE ( option_name LIKE 'updraftplus_unlocked_%' OR option_name LIKE 'updraftplus_locked_%' OR option_name LIKE 'updraftplus_last_lock_time_%' OR option_name LIKE 'updraftplus_semaphore_%')");
 
 			$site_options = array('updraft_oneshotnonce');
 			foreach ($site_options as $s) delete_site_option($s);
@@ -1814,6 +1838,7 @@ CREATE TABLE $wpdb->signups (
 				echo 'ABSPATH: '.htmlspecialchars(ABSPATH).'<br/>';
 				echo 'WP_CONTENT_DIR: '.htmlspecialchars(WP_CONTENT_DIR).'<br/>';
 				echo 'WP_PLUGIN_DIR: '.htmlspecialchars(WP_PLUGIN_DIR).'<br/>';
+				echo 'Table prefix: '.htmlspecialchars($updraftplus->get_table_prefix()).'<br/>';
 				$peak_memory_usage = memory_get_peak_usage(true)/1024/1024;
 				$memory_usage = memory_get_usage(true)/1024/1024;
 				echo __('Peak memory usage','updraftplus').': '.$peak_memory_usage.' MB<br/>';
@@ -1843,6 +1868,8 @@ CREATE TABLE $wpdb->signups (
 				}
 
 				echo '<a href="admin-ajax.php?page=updraftplus&action=updraft_ajax&subaction=backuphistoryraw&nonce='.wp_create_nonce('updraftplus-credentialtest-nonce').'" id="updraftplus-rawbackuphistory">'.__('Show raw backup and file list', 'updraftplus').'</a><br/>';
+
+				echo __('Install plugins for debugging:', 'updraftplus').' <a href="'.wp_nonce_url(self_admin_url('update.php?action=install-plugin&updraftplus_noautobackup=1&plugin=wp-crontrol'), 'install-plugin_wp-crontrol').'">WP Crontrol</a> | <a href="'.wp_nonce_url(self_admin_url('update.php?action=install-plugin&updraftplus_noautobackup=1&plugin=sql-executioner'), 'install-plugin_sql-executioner').'">SQL Executioner</a> | <a href="'.wp_nonce_url(self_admin_url('update.php?action=install-plugin&updraftplus_noautobackup=1&plugin=advanced-code-editor'), 'install-plugin_advanced-code-editor').'">Advanced Code Editor</a> | <a href="'.wp_nonce_url(self_admin_url('update.php?action=install-plugin&updraftplus_noautobackup=1&plugin=wp-filemanager'), 'install-plugin_wp-filemanager').'">WP Filemanager</a><br>';
 
 				echo '<h3>'.__('Total (uncompressed) on-disk data:','updraftplus').'</h3>';
 				echo '<p style="clear: left; max-width: 600px;"><em>'.__('N.B. This count is based upon what was, or was not, excluded the last time you saved the options.', 'updraftplus').'</em></p>';
@@ -2345,7 +2372,7 @@ CREATE TABLE $wpdb->signups (
 
 							echo '<label for="updraft_include_'.$key.'_exclude">'.__('Exclude these:', 'updraftplus').'</label>';
 
-							echo '<input title="'.__('If entering multiple files/directories, then separate them with commas. You can use a * at the start or end of any entry as a wildcard.', 'updraftplus').'" type="text" id="updraft_include_'.$key.'_exclude" name="updraft_include_'.$key.'_exclude" size="54" value="'.htmlspecialchars($include_exclude).'" />';
+							echo '<input title="'.__('If entering multiple files/directories, then separate them with commas. For entities at the top level, you can use a * at the start or end of the entry as a wildcard.', 'updraftplus').'" type="text" id="updraft_include_'.$key.'_exclude" name="updraft_include_'.$key.'_exclude" size="54" value="'.htmlspecialchars($include_exclude).'" />';
 
 							echo '<br>';
 
@@ -2480,11 +2507,13 @@ CREATE TABLE $wpdb->signups (
 					</tr>
 
 					<?php
+						$method_objects = array();
 						foreach ($updraftplus->backup_methods as $method => $description) {
 							do_action('updraftplus_config_print_before_storage', $method);
 							require_once(UPDRAFTPLUS_DIR.'/methods/'.$method.'.php');
 							$call_method = 'UpdraftPlus_BackupModule_'.$method;
-							call_user_func(array($call_method, 'config_print'));
+							$method_objects[$method] = new $call_method;
+							$method_objects[$method]->config_print();
 							do_action('updraftplus_config_print_after_storage', $method);
 						}
 					?>
@@ -2513,7 +2542,9 @@ CREATE TABLE $wpdb->signups (
 						foreach ($updraftplus->backup_methods as $method => $description) {
 							// already done: require_once(UPDRAFTPLUS_DIR.'/methods/'.$method.'.php');
 							$call_method = "UpdraftPlus_BackupModule_$method";
-							if (method_exists($call_method, 'config_print_javascript_onready')) call_user_func(array($call_method, 'config_print_javascript_onready'));
+							if (method_exists($call_method, 'config_print_javascript_onready')) {
+								$method_objects[$method]->config_print_javascript_onready();
+							}
 						}
 					?>
 				});
@@ -2525,7 +2556,7 @@ CREATE TABLE $wpdb->signups (
 			</tr>
 			<tr>
 				<th><?php _e('Debug mode','updraftplus');?>:</th>
-				<td><input type="checkbox" id="updraft_debug_mode" name="updraft_debug_mode" value="1" <?php echo $debug_mode; ?> /> <br><label for="updraft_debug_mode"><?php _e('Check this to receive more information and emails on the backup process - useful if something is going wrong. You <strong>must</strong> send us this log if you are filing a bug report.','updraftplus');?></label></td>
+				<td><input type="checkbox" id="updraft_debug_mode" name="updraft_debug_mode" value="1" <?php echo $debug_mode; ?> /> <br><label for="updraft_debug_mode"><?php _e('Check this to receive more information and emails on the backup process - useful if something is going wrong.','updraftplus');?></label></td>
 			</tr>
 			<tr>
 				<th><?php _e('Expert settings','updraftplus');?>:</th>
@@ -2650,18 +2681,32 @@ CREATE TABLE $wpdb->signups (
 		}
 	}
 
-	function recursive_directory_size($directories) {
-
-		if (is_string($directories)) $directories = array($directories);
+	# If $basedirs is passed as an array, then $directorieses must be too
+	function recursive_directory_size($directorieses, $exclude = array(), $basedirs = '') {
 
 		$size = 0;
 
-		foreach ($directories as $dir) {
-			if (is_file($dir)) {
-				$size += @filesize($dir);
-			} else {
-				$size += $this->recursive_directory_size_raw($dir);
+		if (is_string($directorieses)) {
+			$basedirs = $directorieses;
+			$directorieses = array($directorieses);
+		}
+
+		if (is_string($basedirs)) $basedirs = array($basedirs);
+
+		foreach ($basedirs as $ind => $basedir) {
+
+			$directories = $directorieses[$ind];
+			if (!is_array($directories)) $directories=array($directories);
+
+			foreach ($directories as $dir) {
+				if (is_file($dir)) {
+					$size += @filesize($dir);
+				} else {
+					$suffix = ('' != $basedir) ? ((0 === strpos($dir, $basedir.'/')) ? substr($dir, 1+strlen($basedir)) : '') : '';
+					$size += $this->recursive_directory_size_raw($basedir, $exclude, $suffix);
+				}
 			}
+
 		}
 
 		if ($size > 1073741824) {
@@ -2676,21 +2721,27 @@ CREATE TABLE $wpdb->signups (
 
 	}
 
-	function recursive_directory_size_raw($directory) {
+	function recursive_directory_size_raw($prefix_directory, &$exclude = array(), $suffix_directory = '') {
 
+		$directory = $prefix_directory.('' == $suffix_directory ? '' : '/'.$suffix_directory);
 		$size = 0;
-		if(substr($directory,-1) == '/') $directory = substr($directory,0,-1);
+		if(substr($directory, -1) == '/') $directory = substr($directory,0,-1);
 
 		if(!file_exists($directory) || !is_dir($directory) || !is_readable($directory)) return -1;
 
 		if($handle = opendir($directory)) {
-			while(($file = readdir($handle)) !== false) {
-				$path = $directory.'/'.$file;
-				if($file != '.' && $file != '..') {
+			while (($file = readdir($handle)) !== false) {
+				if ($file != '.' && $file != '..') {
+					$spath = ('' == $suffix_directory) ? $file : $suffix_directory.'/'.$file;
+					if (false !== ($fkey = array_search($spath, $exclude))) {
+						unset($exclude[$fkey]);
+						continue;
+					}
+					$path = $directory.'/'.$file;
 					if(is_file($path)) {
 						$size += filesize($path);
 					} elseif(is_dir($path)) {
-						$handlesize = $this->recursive_directory_size_raw($path);
+						$handlesize = $this->recursive_directory_size_raw($prefix_directory, $exclude, $suffix_directory.('' == $suffix_directory ? '' : '/').$file);
 						if($handlesize >= 0) { $size += $handlesize; }# else { return -1; }
 					}
 				}
@@ -2985,19 +3036,17 @@ ENDHERE;
 
 		$entities_to_restore = array_flip($_POST['updraft_restore']);
 
-		$entities_log = '';
 		foreach ($_POST as $key => $value) {
 			if (strpos($key, 'updraft_restore_') === 0 ) {
 				$nkey = substr($key, 16);
 				if (!isset($entities_to_restore[$nkey])) {
 					$_POST['updraft_restore'][] = $nkey;
 					$entities_to_restore[$nkey] = 1;
-					$entities_log .= ('' == $entities_log) ? $nkey : ",$nkey";
 				}
 			}
 		}
 
-		$updraftplus->log("Restore job started. Entities to restore: $entities_log");
+		$updraftplus->log("Restore job started. Entities to restore: ".implode(', ', array_flip($entities_to_restore)));
 
 		if (0 == count($_POST['updraft_restore'])) {
 			echo '<p>'.__('ABORT: Could not find the information on which entities to restore.', 'updraftplus').'</p>';
@@ -3198,10 +3247,10 @@ ENDHERE;
 		return $input;
 	}
 
-	function get_settings_keys() {
+	private function get_settings_keys() {
 		return array('updraft_autobackup_default', 'updraftplus_tmp_googledrive_access_token', 'updraftplus_dismissedautobackup', 'updraftplus_dismissedexpiry', 'updraft_interval', 'updraft_interval_database', 'updraft_retain', 'updraft_retain_db', 'updraft_encryptionphrase', 'updraft_service', 'updraft_dropbox_appkey', 'updraft_dropbox_secret', 'updraft_googledrive_clientid', 'updraft_googledrive_secret', 'updraft_googledrive_remotepath', 'updraft_ftp_login', 'updraft_ftp_pass', 'updraft_ftp_remote_path', 'updraft_server_address', 'updraft_dir', 'updraft_email', 'updraft_delete_local', 'updraft_debug_mode', 'updraft_include_plugins', 'updraft_include_themes', 'updraft_include_uploads', 'updraft_include_others', 'updraft_include_wpcore', 'updraft_include_wpcore_exclude', 'updraft_include_more', 'updraft_include_blogs', 'updraft_include_mu-plugins', 'updraft_include_others_exclude', 'updraft_include_uploads_exclude', 'updraft_lastmessage', 'updraft_googledrive_token',
 		'updraft_dropboxtk_request_token', 'updraft_dropboxtk_access_token', 'updraft_dropbox_folder',
-		'updraft_last_backup', 'updraft_starttime_files', 'updraft_starttime_db', 'updraft_startday_db', 'updraft_startday_files', 'updraft_sftp_settings', 'updraft_s3generic_login', 'updraft_s3generic_pass', 'updraft_s3generic_remote_path', 'updraft_s3generic_endpoint', 'updraft_webdav_settings', 'updraft_disable_ping', 'updraft_cloudfiles', 'updraft_cloudfiles_user', 'updraft_cloudfiles_apikey', 'updraft_cloudfiles_path', 'updraft_cloudfiles_authurl', 'updraft_ssl_useservercerts', 'updraft_ssl_disableverify', 'updraft_s3_login', 'updraft_s3_pass', 'updraft_s3_remote_path', 'updraft_dreamobjects_login', 'updraft_dreamobjects_pass', 'updraft_dreamobjects_remote_path', 'updraft_report_warningsonly', 'updraft_report_wholebackup');
+		'updraft_last_backup', 'updraft_starttime_files', 'updraft_starttime_db', 'updraft_startday_db', 'updraft_startday_files', 'updraft_sftp_settings', 'updraft_s3', 'updraft_s3generic', 'updraft_dreamhost', 'updraft_s3generic_login', 'updraft_s3generic_pass', 'updraft_s3generic_remote_path', 'updraft_s3generic_endpoint', 'updraft_webdav_settings', 'updraft_disable_ping', 'updraft_cloudfiles', 'updraft_cloudfiles_user', 'updraft_cloudfiles_apikey', 'updraft_cloudfiles_path', 'updraft_cloudfiles_authurl', 'updraft_ssl_useservercerts', 'updraft_ssl_disableverify', 'updraft_s3_login', 'updraft_s3_pass', 'updraft_s3_remote_path', 'updraft_dreamobjects_login', 'updraft_dreamobjects_pass', 'updraft_dreamobjects_remote_path', 'updraft_report_warningsonly', 'updraft_report_wholebackup', 'updraft_log_syslog');
 	}
 
 }

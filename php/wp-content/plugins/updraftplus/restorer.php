@@ -544,6 +544,8 @@ class Updraft_Restorer extends WP_Upgrader {
 			// A filter, to allow add-ons to perform the install of non-standard entities, or to indicate that it's not possible
 			if (false === $movedin) {
 				$this->skin->feedback('not_possible');
+			} elseif (is_wp_error($movedin)) {
+				return $movedin;
 			} elseif (true !== $movedin) {
 
 				# On the first time, create the -old directory in updraft_dir
@@ -762,7 +764,7 @@ class Updraft_Restorer extends WP_Upgrader {
 	}
 
 	// $dirnames: an array of preferred names
-	function get_first_directory($working_dir, $dirnames) {
+	private function get_first_directory($working_dir, $dirnames) {
 		global $wp_filesystem, $updraftplus;
 		$fdirnames = array_flip($dirnames);
 		$dirlist = $wp_filesystem->dirlist($working_dir, true, false);
@@ -784,7 +786,7 @@ class Updraft_Restorer extends WP_Upgrader {
 			}
 		} else {
 			# That shouldn't happen. Fall back to default
-			$move_from = $working_dir."/".$dirname[0];
+			$move_from = $working_dir."/".$dirnames[0];
 		}
 		return $move_from;
 	}
@@ -1283,6 +1285,18 @@ class Updraft_Restorer extends WP_Upgrader {
 					#update_option('upload_path', $this->prior_upload_path);
 				}
 			}
+
+			# Bad plugin that hard-codes path references - https://wordpress.org/plugins/custom-content-type-manager/
+			$cctm_data = $wpdb->get_row($wpdb->prepare("SELECT option_value FROM $wpdb->options WHERE option_name = %s LIMIT 1", 'cctm_data'));
+			if (!empty($cctm_data->option_value)) {
+				$cctm_data = maybe_unserialize($cctm_data->option_value);
+				if (is_array($cctm_data) && !empty($cctm_data['cache']) && is_array($cctm_data['cache'])) {
+					$cctm_data['cache'] = array();
+					$updraftplus->log_e("Custom content type manager plugin data detected: clearing option cache");
+					update_option('cctm_data', $cctm_data);
+				}
+			}
+
 
 		} elseif ($table == $import_table_prefix.'usermeta' && $import_table_prefix != $old_table_prefix) {
 
