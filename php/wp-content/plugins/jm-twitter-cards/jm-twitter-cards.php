@@ -5,7 +5,7 @@ Plugin URI: http://www.tweetpress.fr
 Description: Meant to help users to implement and customize Twitter Cards easily
 Author: Julien Maury
 Author URI: http://www.tweetpress.fr
-Version: 4.1
+Version: 4.4
 License: GPL2++
 */
 /*
@@ -23,7 +23,9 @@ License: GPL2++
 *              - https://dev.twitter.com/docs/cards/markup-reference
 *			   - https://dev.twitter.com/docs/cards/types/player-card
 *			   - https://dev.twitter.com/docs/cards/app-installs-and-deep-linking [GREAT]
-*			   - http://codex.wordpress.org/Filesystem_API
+*			   - http://docs.appthemes.com/tutorials/wordpress-check-user-role-function/
+*			   - http://highlightjs.org/
+*			   - https://dev.twitter.com/discussions/17878
 */
 
 // Add some security, no direct load !
@@ -249,11 +251,30 @@ if ($opts['twitterCardMetabox'] == 'yes')
 <div class="tc-metabox">
 <!-- documentation -->
 <a class="button docu" target="_blank" href="<?php
-		echo admin_url().'admin.php?page=jm_tc_doc';
+		echo esc_url(admin_url().'admin.php?page=jm_tc_doc');
 ?>"><?php
 		_e('Documentation', 'jm-tc');
 ?></a>
+<a class="button docu" target="_blank" href="<?php
+		echo esc_url('https://dev.twitter.com/docs/cards/validation/validator');
+?>"><?php
+		_e('Validator', 'jm-tc');
+?></a>
 
+<!-- Preview -->
+<section class="preview-card feature">
+<h1><?php
+		_e('Preview', 'jm-tc');
+?></h1>
+<pre>
+<code class="html">
+<?php 
+ echo esc_html( _jm_tc_markup() );
+ ?>
+ </code>
+</pre>
+</section>
+<!-- /Preview -->
 
 <section class="feature">
 <h1><?php
@@ -350,15 +371,14 @@ if ($opts['twitterCardMetabox'] == 'yes')
 ?> :</label>
 <input id="twitterCardImage" type="url" name="cardImage" style="padding:.3em;" size="120" class="regular-text" value="<?php
 			echo esc_url( get_post_meta($post->ID, 'cardImage', true) );
-?>" />
+?>" /> 
+<input class="tc-upload-button" type="button" value="<?php _e('Upload', 'jm-tc');?>" />
 </p>
 </section>
 
 
-
-
-
 <!-- set img dimensions -->
+<?php if ( 'attachment' != get_post_type() ) : ?>
 <section class="feature further furthermore-non-gallery resizer nochange">
 <h1><?php
 			_e('Define specific size for twitter:image display', 'jm-tc');
@@ -393,7 +413,7 @@ if ($opts['twitterCardMetabox'] == 'yes')
 	<span class="card-error"><?php  _e('Image is equal to or greater than 1MB. This will break Twitter Cards. Optimize it please, this should also improve your page load.', 'jm-tc');?></span>
 <?php endif;?>
 </section>
-
+<?php endif ;?>
 <section class="feature further further-photo">
 <h1><?php
 			_e('Photo Cards', 'jm-tc');
@@ -565,6 +585,7 @@ if ($opts['twitterCardMetabox'] == 'yes')
 <?php
 	}
 
+	add_action('edit_attachment','jm_tc_meta_box_save');//save also for attachment
 	add_action('save_post', 'jm_tc_meta_box_save');
 	function jm_tc_meta_box_save($post_id)
 	{
@@ -678,66 +699,58 @@ if (!function_exists('get_excerpt_by_id'))
 
 		// SET LENGTH
 
-		$excerpt_length = jm_tc_get_options();
-		$excerpt_length = $excerpt_length['twitterExcerptLength'];
-		$the_excerpt = strip_tags(strip_shortcodes($the_excerpt)); //Strips tags and images
-		$words = explode(' ', $the_excerpt, $excerpt_length + 1);
-		if (count($words) > $excerpt_length):
-			array_pop($words);
-			array_push($words, '…');
-			$the_excerpt = implode(' ', $words);
-		endif;
+		$opts = jm_tc_get_options();
+		$excerpt_length = $opts['twitterExcerptLength'];
+		
+		
+		$the_excerpt = wp_trim_words( $the_excerpt, $excerpt_length, '');// it's better to use wp functions 
+		
 		return esc_attr($the_excerpt); // to prevent meta from being broken by ""
 	}
 }
 
-//check user role before displaying any error message on front end
-function jm_tc_check_user_role( $content, $role = 'publish_posts'){
-	if( current_user_can($role) ) {
-		return '<!-- ' .$content.  '@(-_-)] -->' . "\n";
+// function to add markup in head section of post types
+if (!function_exists('_jm_tc_markup_home'))
+{
+	function _jm_tc_markup_home()
+    {
+	/* get options */
+	$opts = jm_tc_get_options();
+
+		$output  = '<meta name="twitter:card" content="' . $opts['twitterCardType'] . '"/>' . "\n";
+		$output .= '<meta name="twitter:creator" content="@' . $opts['twitterCreator'] . '"/>' . "\n";
+		$output .= '<meta name="twitter:site" content="@' . $opts['twitterSite'] . '"/>' . "\n";
+		$output .= '<meta name="twitter:title" content="' . $opts['twitterPostPageTitle'] . '"/>' . "\n";
+		$output .= '<meta name="twitter:description" content="' . $opts['twitterPostPageDesc'] . '"/>' . "\n";
+		$output .= '<meta name="twitter:image" content="' . $opts['twitterImage'] . '"/>' . "\n";
+		
+			//Deep linking
+			if ($opts['twitterCardDeepLinking'] == 'yes') 
+			{
+				
+				if( $opts['twitteriPhoneName'] != '' ) $output .='<meta name="twitter:app:name:iphone" content="' . $opts['twitteriPhoneName'] . '">'. "\n";
+				if( $opts['twitteriPadName'] != '' ) $output .='<meta name="twitter:app:name:ipad" content="' . $opts['twitteriPadName'] . '">'. "\n";
+				if( $opts['twitterGooglePlayName'] != '' ) $output .='<meta name="twitter:app:name:googleplay" content="' . $opts['twitterGooglePlayName'] . '">'. "\n";
+				if( $opts['twitteriPhoneUrl'] != '' ) $output .='<meta name="twitter:app:url:iphone" content="' . $opts['twitteriPhoneUrl'] .'">'. "\n";
+				if( $opts['twitteriPadUrl'] != '' ) $output .='<meta name="twitter:app:url:ipad" content="' . $opts['twitteriPhoneUrl'] . '">'. "\n";
+				if( $opts['twitterGooglePlayUrl'] != '' ) $output .='<meta name="twitter:app:url:googleplay" content="' . $opts['twitterGooglePlayUrl'] . '">'. "\n";
+				if( $opts['twitteriPhoneId'] != '' ) $output .='<meta name="twitter:app:id:iphone" content="' . $opts['twitteriPhoneId'] . '">'. "\n";
+				if( $opts['twitteriPadId'] != '' ) $output .='<meta name="twitter:app:id:ipad" content="' . $opts['twitteriPadId'] . '">'. "\n";
+				if( $opts['twitterGooglePlayId'] != '' ) $output .='<meta name="twitter:app:id:googleplay" content="' . $opts['twitterGooglePlayId'] . '">'. "\n";
+			}
+		
+		return apply_filters('jmtc_markup_home', $output); // provide filter for developers.
+			
 	}
 }
 
-// function to add markup in head section of post types
-
-if (!function_exists('add_twitter_card_markup'))
+if (!function_exists('_jm_tc_markup'))
 {
-	function add_twitter_card_markup()
+	function _jm_tc_markup()
 	{
 		global $post;
 		/* get options */
 		$opts = jm_tc_get_options();
-		if ( is_home() || is_front_page() ) //detect post page 
-		{
-			$output = "\n" . '<!-- JM Twitter Cards by Julien Maury ' . jm_tc_plugin_get_version() . ' -->' . "\n";
-			$output .= '<meta name="twitter:card" content="' . $opts['twitterCardType'] . '"/>' . "\n";
-			$output .= '<meta name="twitter:creator" content="@' . $opts['twitterCreator'] . '"/>' . "\n";
-			$output .= '<meta name="twitter:site" content="@' . $opts['twitterSite'] . '"/>' . "\n";
-			$output .= '<meta name="twitter:title" content="' . $opts['twitterPostPageTitle'] . '"/>' . "\n";
-			$output .= '<meta name="twitter:description" content="' . $opts['twitterPostPageDesc'] . '"/>' . "\n";
-			$output .= '<meta name="twitter:image" content="' . $opts['twitterImage'] . '"/>' . "\n";
-			
-				//Deep linking
-				if ($opts['twitterCardDeepLinking'] == 'yes') 
-				{
-					
-					if( $opts['twitteriPhoneName'] != '' ) $output .='<meta name="twitter:app:name:iphone" content="' . $opts['twitteriPhoneName'] . '">'. "\n";
-					if( $opts['twitteriPadName'] != '' ) $output .='<meta name="twitter:app:name:ipad" content="' . $opts['twitteriPadName'] . '">'. "\n";
-					if( $opts['twitterGooglePlayName'] != '' ) $output .='<meta name="twitter:app:name:googleplay" content="' . $opts['twitterGooglePlayName'] . '">'. "\n";
-					if( $opts['twitteriPhoneUrl'] != '' ) $output .='<meta name="twitter:app:url:iphone" content="' . $opts['twitteriPhoneUrl'] .'">'. "\n";
-					if( $opts['twitteriPadUrl'] != '' ) $output .='<meta name="twitter:app:url:ipad" content="' . $opts['twitteriPhoneUrl'] . '">'. "\n";
-					if( $opts['twitterGooglePlayUrl'] != '' ) $output .='<meta name="twitter:app:url:googleplay" content="' . $opts['twitterGooglePlayUrl'] . '">'. "\n";
-					if( $opts['twitteriPhoneId'] != '' ) $output .='<meta name="twitter:app:id:iphone" content="' . $opts['twitteriPhoneId'] . '">'. "\n";
-					if( $opts['twitteriPadId'] != '' ) $output .='<meta name="twitter:app:id:ipad" content="' . $opts['twitteriPadId'] . '">'. "\n";
-					if( $opts['twitterGooglePlayId'] != '' ) $output .='<meta name="twitter:app:id:googleplay" content="' . $opts['twitterGooglePlayId'] . '">'. "\n";
-				}
-			
-			
-			$output .= '<!-- /JM Twitter Cards -->' . "\n\n";
-		}
-		elseif ( is_singular() && !is_front_page() && !is_home() && !is_404() && !is_tag() )
-		{
-			$output = "\n" . '<!-- JM Twitter Cards by Julien Maury ' . jm_tc_plugin_get_version() . ' -->' . "\n";
 
 			// get current post meta data
 
@@ -794,7 +807,7 @@ if (!function_exists('add_twitter_card_markup'))
 				}
 				else
 				{
-					$cardDescription = get_excerpt_by_id($post->ID);
+					$cardDescription = apply_filters('jm_tc_get_excerpt', get_excerpt_by_id($post->ID) );
 				}
 			}
 			elseif (class_exists('All_in_One_SEO_Pack'))
@@ -819,7 +832,7 @@ if (!function_exists('add_twitter_card_markup'))
 				}
 				else
 				{
-					$cardDescription = get_excerpt_by_id($post->ID);
+					$cardDescription = apply_filters('jm_tc_get_excerpt', get_excerpt_by_id($post->ID) );
 				}
 			}
 			elseif ($tctitle && $tcdesc && $cardTitleKey != '' && $cardDescKey != '')
@@ -835,16 +848,16 @@ if (!function_exists('add_twitter_card_markup'))
 				$cardTitle = the_title_attribute(array(
 					'echo' => false
 				));
-				$cardDescription = get_excerpt_by_id($post->ID);
+				$cardDescription = apply_filters('jm_tc_get_excerpt', get_excerpt_by_id($post->ID) );
 			}
 
 			if (($opts['twitterCardMetabox'] == 'yes') && $cardType != '' && $twitterCardCancel != 'yes')
 			{
-				$output .= '<meta name="twitter:card" content="' . $cardType . '"/>' . "\n";
+				$output = '<meta name="twitter:card" content="' . apply_filters('jm_tc_card_type', $cardType ). '"/>' . "\n";
 			}
 			else
 			{
-				$output .= '<meta name="twitter:card" content="' . $opts['twitterCardType'] . '"/>' . "\n";
+				$output = '<meta name="twitter:card" content="' . apply_filters('jm_tc_card_type', $opts['twitterCardType'] ). '"/>' . "\n";
 			}
 
 			if ($opts['twitterProfile'] == 'yes' && $creator != '' )
@@ -874,21 +887,29 @@ if (!function_exists('add_twitter_card_markup'))
 				{
 					if ($cardImage != '' && $twitterCardCancel != 'yes')
 					{ // cardImage is set
-						$output .= '<meta name="twitter:image" content="' . $cardImage . '"/>' . "\n";
+						$output .= '<meta name="twitter:image" content="' .  apply_filters( 'jm_tc_image_source', $cardImage ). '"/>' . "\n";
 					}
 					else
 					{
 						$image_attributes = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID) , jm_tc_thumbnail_sizes());
-						$output .= '<meta name="twitter:image" content="' . $image_attributes[0] . '"/>' . "\n";
+						$output .= '<meta name="twitter:image" content="' . apply_filters( 'jm_tc_image_source', $image_attributes[0] ) . '"/>' . "\n";
 					}
 				}
 				elseif (get_the_post_thumbnail($post->ID) == '' && $cardImage != '' && $twitterCardCancel != 'yes')
 				{
-					$output .= '<meta name="twitter:image" content="' . $cardImage . '"/>' . "\n";
+					$output .=  '<meta name="twitter:image" content="' . apply_filters( 'jm_tc_image_source', $cardImage ) . '"/>' . "\n";
 				}
+				
+				elseif ( 'attachment' == get_post_type() ) 
+				{
+				
+					$output .= '<meta name="twitter:image" content="' . apply_filters( 'jm_tc_image_source', wp_get_attachment_url( $post->ID ) ) . '"/>' . "\n";
+				
+				}
+				
 				else
 				{ //fallback
-					$output .= '<meta name="twitter:image" content="' . $opts['twitterImage'] . '"/>' . "\n";
+					$output .= '<meta name="twitter:image" content="' . apply_filters( 'jm_tc_image_source', $opts['twitterImage'] ). '"/>' . "\n";
 				}
 			}
 			else
@@ -918,7 +939,7 @@ if (!function_exists('add_twitter_card_markup'))
 								// get attachment array with the ID from the returned posts
 
 								$pic = wp_get_attachment_url($attachment->ID);
-								$output .= '<meta name="twitter:image' . $i . '" content="' . $pic . '"/>' . "\n";
+								$output .= '<meta name="twitter:image' . $i . '" content="' . apply_filters( 'jm_tc_image_source', $pic ). '"/>' . "\n";
 								$i++;
 								if ($i > 3) break; //in case there are more than 4 images in post, we are not allowed to add more than 4 images in our card by Twitter
 							}
@@ -926,7 +947,7 @@ if (!function_exists('add_twitter_card_markup'))
 					}
 					else
 					{
-						$output .=  jm_tc_check_user_role( __('Warning : Gallery Card is not set properly ! There is no gallery in this post !', 'jm-tc') );
+						$output .=  '<!-- ' . __('Warning : Gallery Card is not set properly ! There is no gallery in this post !', 'jm-tc')  .'@(-_-)] -->' . "\n";
 					}
 				}
 				else
@@ -934,11 +955,11 @@ if (!function_exists('add_twitter_card_markup'))
 					if (has_post_thumbnail())
 					{
 						$image_attributes = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID) , jm_tc_thumbnail_sizes());
-						$output .= '<meta name="twitter:image" content="' . $image_attributes[0] . '"/>' . "\n";
+						$output .= '<meta name="twitter:image" content="' . apply_filters( 'jm_tc_image_source',$image_attributes[0] ). '"/>' . "\n";
 					}
 					else
 					{
-						$output .= '<meta name="twitter:image" content="' . $opts['twitterImage'] . '"/>' . "\n";
+						$output .= '<meta name="twitter:image" content="' .apply_filters( 'jm_tc_image_source', $opts['twitterImage'] ). '"/>' . "\n";
 					}
 				}
 			}
@@ -970,7 +991,7 @@ if (!function_exists('add_twitter_card_markup'))
 				}
 				else
 				{
-					$output .=  __('Warning : Product Card is not set properly ! There is no product datas !', 'jm-tc');
+					$output .=   '<!-- ' .__('Warning : Product Card is not set properly ! There is no product datas !', 'jm-tc').'@(-_-)] -->' . "\n";
 				}
 
 				if ( $cardProductWidth != '' && $cardProductHeight != '' && $cardType == 'product')
@@ -993,16 +1014,14 @@ if (!function_exists('add_twitter_card_markup'))
 				} 
 				else
 				{
-					$output .=  jm_tc_check_user_role( __('Warning : Player Card is not set properly ! There is no URL provided for iFrame player !', 'jm-tc') ) ;					
+					$output .=  '<!-- ' .__('Warning : Player Card is not set properly ! There is no URL provided for iFrame player !', 'jm-tc') .'@(-_-)] -->' . "\n";					
 				}
 				
 				if (  $cardPlayer != '' && !preg_match( $regex,$cardPlayer) )
 				{
-					$output .= jm_tc_check_user_role( __('Warning : Player Card is not set properly ! The URL of iFrame Player MUST BE https!', 'jm-tc') );
+					$output .= '<!-- ' .__('Warning : Player Card is not set properly ! The URL of iFrame Player MUST BE https!', 'jm-tc') .'@(-_-)] -->' . "\n";
 				}
-				
-				
-				
+								
 			
 				if ( $cardPlayerWidth != '' && $cardPlayerHeight != ''  )
 				{
@@ -1024,7 +1043,7 @@ if (!function_exists('add_twitter_card_markup'))
 				
 				if ( $cardPlayerStream != '' && !preg_match( $regex,$cardPlayerStream) )
 				{
-					$output .= jm_tc_check_user_role( __('Warning : Player Card is not set properly ! The URL of raw stream Player MUST BE https!', 'jm-tc') ) ;
+					$output .= '<!-- ' .__('Warning : Player Card is not set properly ! The URL of raw stream Player MUST BE https!', 'jm-tc') . "\n";
 				}
 				
 				
@@ -1043,30 +1062,39 @@ if (!function_exists('add_twitter_card_markup'))
 					if( $opts['twitterGooglePlayId'] != '' ) $output .='<meta name="twitter:app:id:googleplay" content="' . $opts['twitterGooglePlayId'] . '">'. "\n";
 				}
 			}
-			
-			
-
-			$output .= '<!-- /JM Twitter Cards -->' . "\n\n";
-		}
-		else
-		{
-			$output = '<!-- JM Twitter Cards OFF -->' . "\n\n";
-		}
+	
 
 		return apply_filters('jmtc_markup', $output); // provide filter for developers.
 	}
+}	
+
+//Add markup according to which page is displayed
+//add_action('wp_head', '_jm_tc_add_markup', PHP_INT_MAX); // it's actually better to load twitter card meta at the very end (SEO desc is more important)
+
+add_action('wp_head', '_jm_tc_add_markup',2); //the priority level used to be a little bit ^^ lower before according this thread https://dev.twitter.com/discussions/17878
+function _jm_tc_add_markup() {
+
+        $begin =  "\n" . '<!-- JM Twitter Cards by Julien Maury ' . jm_tc_plugin_get_version() . ' -->' . "\n";
+		$end   =  '<!-- /JM Twitter Cards -->' . "\n\n";
+
+
+		if ( is_home() || is_front_page() ) //detect post page or home (could be the same)
+		{
+		  echo $begin;
+		  echo _jm_tc_markup_home();
+		  echo $end;
+		}
+		
+		if( is_singular() && !is_front_page() && !is_home() && !is_404() && !is_tag() ) // avoid pages that do not need cards
+		{
+		  echo $begin;
+		  echo _jm_tc_markup();
+		  echo $end;
+		}
+		
 }
 
-// Function that hooks on wp_head
-if (!function_exists('add_twitter_card_info'))
-{
-	function add_twitter_card_info()
-	{
-		echo add_twitter_card_markup();
-	}
-}
 
-add_action('wp_head', 'add_twitter_card_info', PHP_INT_MAX); // it's actually better to load twitter card meta at the very end (SEO desc is more important)
 /*
 * ADMIN OPTION PAGE
 */
@@ -1159,18 +1187,28 @@ function jm_tc_ajax_saving_process()
 }
 
 // Add styles to post edit the WordPress Way >> http://codex.wordpress.org/Function_Reference/wp_enqueue_style#Load_stylesheet_only_on_a_plugin.27s_options_page
-
 add_action('admin_enqueue_scripts', 'jm_tc_metabox_scripts'); // the right hook to add style in admin area
-
 function jm_tc_metabox_scripts($hook_suffix)
 {
 	$opts = jm_tc_get_options();
 	if (('post.php' == $hook_suffix || 'post-new.php' == $hook_suffix) && $opts['twitterCardMetabox'] == 'yes')
 	{
-		wp_enqueue_style('jm-tc-metabox', plugins_url('admin/css/jm-tc-metabox.css', __FILE__));
-		wp_enqueue_script('jm-tc-metabox', plugins_url('admin/js/jm-tc-metabox.js', __FILE__) , array(
+		wp_enqueue_style('jm-tc-style-metabox', plugins_url('admin/css/jm-tc-metabox.css', __FILE__));
+		wp_enqueue_script('jm-tc-script-metabox', plugins_url('admin/js/jm-tc-metabox.js', __FILE__) , array(
 			'jquery'
-		) , '1.0', true);
+		) ); 
+		
+		global $post_type;
+		if( get_post_type() == $post_type) {
+			if(function_exists('wp_enqueue_media')) {
+				wp_enqueue_media();
+			}
+			else {
+				wp_enqueue_script('media-upload');
+				wp_enqueue_script('thickbox');
+				wp_enqueue_style('thickbox');
+			}
+		}
 	}
 }
 
@@ -1228,7 +1266,8 @@ function jm_tc_docu_links($n = 0)
 		'#analytics'
 
 	);
-	$docu = '<a class="button button-secondary docu" target="_blank" href="' . admin_url().'admin.php?page=jm_tc_doc' . $anchor[$n] . '">' . __('Documentation', 'jm-tc') . '</a>';
+	$docu  = '<a class="button button-secondary docu" target="_blank" href="' . esc_url(admin_url().'admin.php?page=jm_tc_doc') . $anchor[$n] . '">' . __('Documentation', 'jm-tc') . '</a>';
+	$docu .= '&nbsp;<a class="button button-secondary docu" target="_blank" href="' . esc_url('https://dev.twitter.com/docs/cards/validation/validator') . '">' . __('Validator', 'jm-tc') . '</a>';
 	return $docu;
 }
 
@@ -1305,6 +1344,11 @@ function jm_tc_options_page()
 	echo $opts['twitterCardType'] == 'photo' ? 'selected="selected"' : '';
 ?> ><?php
 	_e('photo', 'jm-tc');
+?></option>
+<option value="app" <?php
+	echo $opts['twitterCardType'] == 'app' ? 'selected="selected"' : '';
+?> ><?php
+	_e('app', 'jm-tc');
 ?></option>
 </select>
 </p>
@@ -1637,9 +1681,9 @@ function jm_tc_options_page()
 
 <p>
 <label class="labeltext" for="twitteriPhoneId"><strong><?php
-	_e('Enter iPhone URL ', 'jm-tc');
+	_e('Enter iPhone ID ', 'jm-tc');
 ?> </strong>:</label><br />
-<input id="twitteriPhoneId" type="url" name="jm_tc[twitteriPhoneId]" class="regular-text" value="<?php
+<input id="twitteriPhoneId" type="text" name="jm_tc[twitteriPhoneId]" class="regular-text" value="<?php
 	echo $opts['twitteriPhoneId'];
 ?>" />
 </p>
@@ -1666,7 +1710,7 @@ function jm_tc_options_page()
 <label class="labeltext" for="twitteriPadId"><strong><?php
 	_e('Enter iPad ID ', 'jm-tc');
 ?> </strong>:</label><br />
-<input id="twitteriPadId" type="url" name="jm_tc[twitteriPadId]" class="regular-text" value="<?php
+<input id="twitteriPadId" type="text" name="jm_tc[twitteriPadId]" class="regular-text" value="<?php
 	echo $opts['twitteriPadId'];
 ?>" />
 </p>
@@ -1695,7 +1739,7 @@ function jm_tc_options_page()
 <label class="labeltext" for="twitteriGooglePlayId"><strong><?php
 	_e('Enter Google Play ID ', 'jm-tc');
 ?> </strong>:</label><br />
-<input id="twitteriGooglePlayId" type="url" name="jm_tc[twitterGooglePlayId]" class="regular-text" value="<?php
+<input id="twitteriGooglePlayId" type="text" name="jm_tc[twitterGooglePlayId]" class="regular-text" value="<?php
 	echo $opts['twitterGooglePlayId'];
 ?>" />
 </p>
@@ -1844,7 +1888,7 @@ function jm_tc_get_default_options()
 		'twitterCreator' => 'TweetPressFr',
 		'twitterSite' => 'TweetPressFr',
 		'twitterExcerptLength' => 35,
-		'twitterImage' => '',
+		'twitterImage' => 'https://g.twimg.com/Twitter_logo_blue.png',
 		'twitterImageWidth' => '280',
 		'twitterImageHeight' => '150',
 		'twitterCardMetabox' => 'no',
@@ -1878,4 +1922,3 @@ function jm_tc_get_options()
 	$options = get_option('jm_tc');
 	return array_merge(jm_tc_get_default_options() , jm_tc_sanitize_options($options));
 }
-

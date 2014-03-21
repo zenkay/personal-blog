@@ -131,7 +131,71 @@ Voir une démo : http://support.tweetpress.fr/demo-twitter-cards-gallery/
 4. player cards validator ( I did not apply for player cards cause I do not have SSL )
 5. gallery cards validator
 
+
+== Other notes ==
+
+= 4.3 brings new filter for your convenience if you're a developer =
+* `jm_tc_get_excerpt`
+* `jm_tc_image_source`
+* `jm_tc_card_type`
+
+= Here is a snippet you can use with new filters =
+
+** Get native excerpt, some themes use them **
+
+`add_filter('jm_tc_get_excerpt','_jm_tc_modify_excerpt');
+function _jm_tc_modify_excerpt() {
+    global $post;
+	return get_excerpt_from_far_far_away($post->ID);
+}
+
+function get_excerpt_from_far_far_away( $post_id )
+{
+	global $wpdb;
+	$query = 'SELECT post_excerpt FROM '. $wpdb->posts .' WHERE ID = '. $post_id .' LIMIT 1';
+	$result = $wpdb->get_results($query, ARRAY_A);
+	$post_excerpt = $result[0]['post_excerpt'];
+	return $post_excerpt;
+}`
+
+** Hack source image e.g if you use relative paths **
+`add_filter('jm_tc_image_source', '_jm_tc_relative_paths');
+function _jm_tc_relative_paths($content) {
+	return trailingslashit( home_url() ).$content;
+}`
+
+**BE CAREFUL WITH THIS! DO NOT USE IF YOU DO NOT KNOW WHAT YOU ARE DOING, YOU CAN BREAK YOUR CARDS WITH THIS !!!**
+
+
 == Changelog ==
+
+= 4.4 =
+* 17 Mar 2014
+* replace far-fetched PHP in get_excerpt_by_id() function with a simple WP function called wp_trim_words() 
+* bump the markup up according to this thread https://dev.twitter.com/discussions/17878
+* Actually no big deal if your theme is clean but sometimes a lot of stuffs is added with the hook `wp_head`
+* For details about installation please read the documentation, you can also check this link : https://dev.twitter.com/docs/cards/twitter-cards-for-cms-wordpress-blogger-tumblr#plugin_jm
+
+= 4.3 =
+* 09 Mar 2014
+* Fix a typo that triggered notice with undefined var
+* Provide filters a lot of new filters for developers see Other notes
+* Fix unsaved values on attachment, actually wordpress got its own hook for saving values for meta box
+* By default image source will be grabbed from the attached file URL because most of the time it's about images.
+* If you need to set image for other mime types just use the meta box and set it with external URL section
+* Add upload button for external URL section in meta box
+* Add different hanles for scripts and styles in admin which is actually a better idea
+* Put the entire code on github : https://github.com/TweetPressFr/jm-twitter-cards
+
+= 4.2 =
+* 04 Mar 2014
+* Add preview in meta box for Twitter cards markup so you do not have to load the page and to view source code to check your config, 
+* Please consider preview as a way to check markup and save draft to see the result
+* Then click on the validator button (if your domain is still not approved) to submit your domain to dev.twitter.com 
+* Add new card type "app" (if ou really need to use this card type set it from the option page and combine with app install & deep linking fields)
+* Fix wrong type of input fields for deep linking in option page
+* Fix wrong output for errors
+* Add link to validator almost everywhere
 
 = 4.1 =
 * 18 Feb 2014
