@@ -1,5 +1,7 @@
 <?php
 
+if (!defined('UPDRAFTPLUS_DIR')) die('No direct access allowed.');
+
 # Migrate options to new-style storage - Jan 2014
 if (!is_array(UpdraftPlus_Options::get_updraft_option('updraft_s3')) && '' != UpdraftPlus_Options::get_updraft_option('updraft_s3_login', '')) {
 	$opts = array(
@@ -14,6 +16,8 @@ if (!is_array(UpdraftPlus_Options::get_updraft_option('updraft_s3')) && '' != Up
 }
 
 class UpdraftPlus_BackupModule_s3 {
+
+	private $s3_object;
 
 	protected function get_config() {
 		global $updraftplus;
@@ -31,6 +35,11 @@ class UpdraftPlus_BackupModule_s3 {
 
 	// Get an S3 object, after setting our options
 	protected function getS3($key, $secret, $useservercerts, $disableverify, $nossl) {
+
+		if (!empty($this->s3_object) && !is_wp_error($this->s3_object)) return $this->s3_object;
+
+		if ('' == $key || '' == $secret) return new WP_Error('no_settings', __('No settings were found','updraftplus'));
+
 		global $updraftplus;
 
 		if (!class_exists('UpdraftPlus_S3')) require_once(UPDRAFTPLUS_DIR.'/includes/S3.php');
@@ -39,7 +48,7 @@ class UpdraftPlus_BackupModule_s3 {
 		$proxy = new WP_HTTP_Proxy();
 		$s3 = new UpdraftPlus_S3($key, $secret);
 
-		if ( $proxy->is_enabled()) {
+		if ($proxy->is_enabled()) {
 			# WP_HTTP_Proxy returns empty strings where we want nulls
 			$user = $proxy->username();
 			if (empty($user)) {
@@ -75,7 +84,10 @@ class UpdraftPlus_BackupModule_s3 {
 			$s3->useSSL = false;
 			$updraftplus->log("SSL was disabled via the user's preference. Communications will not be encrypted.");
 		}
-		return $s3;
+
+		$this->s3_object = $s3;
+
+		return $this->s3_object;
 	}
 
 	protected function set_endpoint($obj, $region) {
@@ -121,6 +133,7 @@ class UpdraftPlus_BackupModule_s3 {
 			UpdraftPlus_Options::get_updraft_option('updraft_ssl_useservercerts'), UpdraftPlus_Options::get_updraft_option('updraft_ssl_disableverify'),
 			UpdraftPlus_Options::get_updraft_option('updraft_ssl_nossl')
 		);
+		if (is_wp_error($s3)) return $s3;
 
 		$bucket_name = untrailingslashit($config['path']);
 		$bucket_path = "";
@@ -254,6 +267,68 @@ class UpdraftPlus_BackupModule_s3 {
 			$updraftplus->log("$whoweare Error: Failed to create bucket $bucket_name.");
 			$updraftplus->log(sprintf(__('%s Error: Failed to create bucket %s. Check your permissions and credentials.','updraftplus'),$whoweare, $bucket_name), 'error');
 		}
+	}
+
+	public function listfiles($match = 'backup_') {
+
+		global $updraftplus;
+
+		$config = $this->get_config();
+		$whoweare = $config['whoweare'];
+		$whoweare_key = $config['key'];
+		$whoweare_keys = substr($whoweare_key, 0, 3);
+
+		$s3 = $this->getS3(
+			$config['accesskey'],
+			$config['secretkey'],
+			UpdraftPlus_Options::get_updraft_option('updraft_ssl_useservercerts'), UpdraftPlus_Options::get_updraft_option('updraft_ssl_disableverify'),
+			UpdraftPlus_Options::get_updraft_option('updraft_ssl_nossl')
+		);
+
+		if (is_wp_error($s3)) return $s3;
+		if (!is_a($s3, 'UpdraftPlus_S3')) return new WP_Error('no_s3object', 'Failed to gain acccess to '.$config['whoweare']);
+
+		$bucket_name = untrailingslashit($config['path']);
+		$bucket_path = '';
+
+		if (preg_match("#^([^/]+)/(.*)$#",$bucket_name,$bmatches)) {
+			$bucket_name = $bmatches[1];
+			$bucket_path = trailingslashit($bmatches[2]);
+		}
+
+		$region = ($config['key'] == 'dreamobjects' || $config['key'] == 's3generic') ? 'n/a' : @$s3->getBucketLocation($bucket_name);
+		if (!empty($region)) {
+			$this->set_endpoint($s3, $region);
+		} else {
+			$updraftplus->log("$whoweare Error: Failed to access bucket $bucket_name. Check your permissions and credentials.");
+			return new WP_Error('bucket_not_accessed', sprintf(__('%s Error: Failed to access bucket %s. Check your permissions and credentials.','updraftplus'),$whoweare, $bucket_name));
+		}
+
+		$bucket = $s3->getBucket($bucket_name, $bucket_path.$match);
+
+		if (!is_array($bucket)) return array();
+
+		$results = array();
+
+		foreach ($bucket as $key => $object) {
+			if (!is_array($object) || empty($object['name'])) continue;
+			if (isset($object['size']) && 0 == $object['size']) continue;
+
+			if ($bucket_path) {
+				if (0 !== strpos($object['name'], $bucket_path)) continue;
+				$object['name'] = substr($object['name'], strlen($bucket_path));
+			} else {
+				if (false !== strpos($object['name'], '/')) continue;
+			}
+
+			$result = array('name' => $object['name']);
+			if (isset($object['size'])) $result['size'] = $object['size'];
+			unset($bucket[$key]);
+			$results[] = $result;
+		}
+
+		return $results;
+
 	}
 
 	public function delete($files, $s3arr = false) {
@@ -396,7 +471,7 @@ class UpdraftPlus_BackupModule_s3 {
 	public function config_print() {
 	
 		# White: https://d36cz9buwru1tt.cloudfront.net/Powered-by-Amazon-Web-Services.jpg
-		$this->config_print_engine('s3', 'S3', 'Amazon S3', 'AWS', 'http://aws.amazon.com/console/', '<img src="http://awsmedia.s3.amazonaws.com/AWS_logo_poweredby_black_127px.png" alt="Amazon Web Services">');
+		$this->config_print_engine('s3', 'S3', 'Amazon S3', 'AWS', 'https://aws.amazon.com/console/', '<img src="//awsmedia.s3.amazonaws.com/AWS_logo_poweredby_black_127px.png" alt="Amazon Web Services">');
 		
 	}
 
@@ -443,22 +518,22 @@ class UpdraftPlus_BackupModule_s3 {
 		<?php if ($include_endpoint_chooser) { ?>
 		<tr class="updraftplusmethod <?php echo $key; ?>">
 			<th><?php echo sprintf(__('%s end-point','updraftplus'), $whoweare_short);?>:</th>
-			<td><input type="text" style="width: 336px" id="updraft_<?php echo $key; ?>_endpoint" name="updraft_<?php echo $key; ?>[endpoint]" value="<?php echo htmlspecialchars($opts['endpoint']); ?>" /></td>
+			<td><input type="text" style="width: 360px" id="updraft_<?php echo $key; ?>_endpoint" name="updraft_<?php echo $key; ?>[endpoint]" value="<?php echo htmlspecialchars($opts['endpoint']); ?>" /></td>
 		</tr>
 		<?php } else { ?>
 			<input type="hidden" id="updraft_<?php echo $key; ?>_endpoint" name="updraft_<?php echo $key; ?>_endpoint" value="">
 		<?php } ?>
 		<tr class="updraftplusmethod <?php echo $key; ?>">
 			<th><?php echo sprintf(__('%s access key','updraftplus'), $whoweare_short);?>:</th>
-			<td><input type="text" autocomplete="off" style="width: 336px" id="updraft_<?php echo $key; ?>_apikey" name="updraft_<?php echo $key; ?>[accesskey]" value="<?php echo htmlspecialchars($opts['accesskey']); ?>" /></td>
+			<td><input type="text" autocomplete="off" style="width: 360px" id="updraft_<?php echo $key; ?>_apikey" name="updraft_<?php echo $key; ?>[accesskey]" value="<?php echo htmlspecialchars($opts['accesskey']); ?>" /></td>
 		</tr>
 		<tr class="updraftplusmethod <?php echo $key; ?>">
 			<th><?php echo sprintf(__('%s secret key','updraftplus'), $whoweare_short);?>:</th>
-			<td><input type="<?php echo apply_filters('updraftplus_admin_secret_field_type', 'text'); ?>" autocomplete="off" style="width: 336px" id="updraft_<?php echo $key; ?>_apisecret" name="updraft_<?php echo $key; ?>[secretkey]" value="<?php echo htmlspecialchars($opts['secretkey']); ?>" /></td>
+			<td><input type="<?php echo apply_filters('updraftplus_admin_secret_field_type', 'text'); ?>" autocomplete="off" style="width: 360px" id="updraft_<?php echo $key; ?>_apisecret" name="updraft_<?php echo $key; ?>[secretkey]" value="<?php echo htmlspecialchars($opts['secretkey']); ?>" /></td>
 		</tr>
 		<tr class="updraftplusmethod <?php echo $key; ?>">
 			<th><?php echo sprintf(__('%s location','updraftplus'), $whoweare_short);?>:</th>
-			<td><?php echo $key; ?>://<input title="<?php echo htmlspecialchars(__('Enter only a bucket name or a bucket and path. Examples: mybucket, mybucket/mypath', 'updraftplus')); ?>" type="text" style="width: 336px" name="updraft_<?php echo $key; ?>[path]" id="updraft_<?php echo $key; ?>_path" value="<?php echo htmlspecialchars($opts['path']); ?>" /></td>
+			<td><?php echo $key; ?>://<input title="<?php echo htmlspecialchars(__('Enter only a bucket name or a bucket and path. Examples: mybucket, mybucket/mypath', 'updraftplus')); ?>" type="text" style="width: 360px" name="updraft_<?php echo $key; ?>[path]" id="updraft_<?php echo $key; ?>_path" value="<?php echo htmlspecialchars($opts['path']); ?>" /></td>
 		</tr>
 		<?php do_action('updraft_'.$key.'_extra_storage_options', $opts); ?>
 		<tr class="updraftplusmethod <?php echo $key; ?>">
@@ -562,4 +637,3 @@ class UpdraftPlus_BackupModule_s3 {
 	}
 
 }
-?>

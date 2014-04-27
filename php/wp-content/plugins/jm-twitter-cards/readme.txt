@@ -1,25 +1,30 @@
 === JM Twitter Cards ===
 Contributors: jmlapam
-Tags: twitter, cards, semantic markup, metabox, meta, photo, product, gallery
-Requires at least: 3.1.0
-Tested up to: 3.8
+Tags: twitter, cards, semantic markup, metabox, meta, photo, product, gallery, player
+Donate Link: http://www.amazon.fr/registry/wishlist/1J90JNIHBBXL8
+Tested up to: 3.9
 License: GPLv2 or later
 Stable tag: trunk
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Easy integration of Twitter cards in WordPress. Most useful card types provided.
+Easy integration of Twitter cards in WordPress. All card types provided.
 
 == Description ==
 
 Once activated the plugin adds appropriate meta on your WordPress website allowing you to get Twitter cards for your posts according to your settings. Enjoy !
 
 
-Compatible with : WP SEO by Yoast (do not check cards option in this plugin if activated) and All in One SEO.
+Compatible with : WP SEO by Yoast (uncheck Twitter cards option in this plugin if activated) and All in One SEO.
 
 The plugin allows you to customize your cards per each post. If you use SEO by Yoast plugin do not activate the Twitter card's option. Otherwise markup will be added twice.
 If you choose full customization you will see a metabox in your post edit.
 
-Please help me to translate it in other languages: : contact@tweetpress.fr
+**Please help me to translate it in other languages** : contact@tweetpress.fr
+
+
+I've been rebuilding the plugin for better features and user interface. This is available here : https://github.com/TweetPressFr/jm-twitter-cards
+
+This URL is the place where I improve the plugin according to support requests and stuffs like this. Github is the place !
 
 
 <a href="http://twitter.com/intent/user?screen_name=tweetpressfr">Follow me on Twitter</a>
@@ -47,6 +52,10 @@ Appel aux traducteurs pour d'autres langages : contact@tweetpress.fr
 2. Activate the plugin through the Plugins menu in WordPress
 3. Then go to settings > JM Twitter Cards to configure the plugin
 4. To display the metabox in edit section (posts, pages, attachments), enable option in section called **Custom Twitter Cards**
+
+
+[youtube http://www.youtube.com/watch?v=8l4k3zrD4Z0]
+
 
 ––––
 En Français 
@@ -90,6 +99,11 @@ You have to use the shortcode [gallery] to enjoy this feature ( that's what the 
 See live example: http://support.tweetpress.fr/demo-twitter-cards-gallery/
 (sometimes you have to wait a minute for images to appear in validator)
 
+= I get a fatal error ! = 
+`Call to undefined function cmb_metabox_form()` >> if you get this it's not due to the plugin it comes from another plugin or a theme using the same framework for meta boxes but in a very old version.
+So do not yell at me ^^
+
+
 ––––
 En Français 
 –––––––––––––––––––––––––––––––––––
@@ -124,6 +138,10 @@ Vous devez utiliser le shortcode [gallery] pour obtenir une card galerie (c'est 
 Voir une démo : http://support.tweetpress.fr/demo-twitter-cards-gallery/
 (parfois vous devez patientez un peu pour que les images apparaissent au validateur.)
 
+= Hey j'ai une fatal error ! = 
+`Call to undefined function cmb_metabox_form()` >> ça vient d'un thème ou d'un plugin qui use du même framework pour ses meta boxes mais dans une version très ancienne, donc ne me criez pas dessus ^^
+
+
 == Screenshots ==
 1. admin
 2. confirmation mail
@@ -133,6 +151,7 @@ Voir une démo : http://support.tweetpress.fr/demo-twitter-cards-gallery/
 
 
 == Other notes ==
+
 
 = 4.3 brings new filter for your convenience if you're a developer =
 * `jm_tc_get_excerpt`
@@ -168,6 +187,67 @@ function _jm_tc_relative_paths($content) {
 
 
 == Changelog ==
+
+= 5.1.9 =
+* 21 Apr 2014
+* Fix fallback All In One SEO title
+* Put the card type selected in admin option page as default setting for meta box because it so a pain to select it on each post when meta box is enabled ^^
+* Note that if you want to change card type for a particular post you'll need to use this select
+* Everything that can be default is now set so even you do not have to set it if you do not want to
+* Will save your time !
+* Fix bug with get_post_meta and custom fields
+* Fix escaping quotes and stuffs like this with WP SEO by Yoast desc and title
+* Rebuild French Translation
+* Add tutorial menu with videos explaining how to use the plugin
+
+= 5.1.8 =
+* 16 Apr 2014
+* Fix bug with SEO plugins detection
+* Fix bug with older versions of WorPress where wp_enqueue_media() does not exist (just not use it for those installations)
+* Add src parameter to all meta image, this should make the Twitterbot treat the image as a unique URL and re-fetches the image
+* Fix PHP 5.4++ issue with static method called non statistically
+
+= 5.1.6 =
+* 14 Apr 2014
+* Fix PHP warning when calling static method
+* Make it compatible with older versions of PHP
+* it's a small fix and it can help users running PHP under 5.3 
+* Fix super weird bug with PHP_INT_MAX and jetpack (jetpack menu was hidden)
+* Some users reported errors on update and it was due to the fact they're using old versions of PHP under 5.3
+* The fix can be done in the next update but I encourage you to migrate from PHP 5.2 to 5.3 in any case
+* Improve User interface by splitting admin into pages : only important settings, the plugin does a lot of checking on its own
+* Rebuild the entire code for maintenance
+* Use now a robust framework for metaboxes, this allows some new features such as preview for images and less html markup in PHP files
+* 2 metaboxes in post edit now, one for images and one for other markup
+* Thanks a lot to the beta tester who have tested this new version and reported bugs and so helped me a lot with this new version
+
+= 4.4.4 =
+* 09 Apr 2014
+* Improve function jm_tc_get_post_thumbnail_size() by removing unecessary get_posts()
+* The following regards only users that use the default excerpt :
+* REMOVE excerpt lenght setting : this could seem a little bit weird but in fact Twitter allows us to get 200 chars for meta desc. 
+* It occurred to me that it's better not checking anything for excerpt length than cutting the desc like the plugin does in 4.4.2 & 4.4.3
+* Some users reported that it cuts text in a ugly way
+* Just remember it's 200 characters at most
+* REMOVE temporarily preview feature in meta box cause it's full of bugs and you get sometimes false results if you compare edit screen and real life in source code of the webpage
+
+= 4.4.3 =
+* 08 Apr 2014
+* fix stupid mistake in excerpt function with substr
+
+
+= 4.4.2 =
+* 06 Apr 2014
+* Fix wrong approach for meta desc because it's not 200 words max but 200 characters !!!  https://dev.twitter.com/docs/cards/markup-reference
+* Seems like we have to use PHP to limit excerpt by char, found no WP function for that and it's quite logical
+
+= 4.4.1 =
+* 30 Mar 2014
+* re-add the strip_shortcodes() to get_excerpt_by_id() to avoid shortcode to appear in meta desc
+* Add src extra parameter to meta image so that the Twitterbot treats the image as a unique URL and re-fetches the image
+* There's now a 5.0 version on github, I've rebuild code so it's better organized by far and there some cool new features
+* This is an alpha version so I'm not gonna update it on WordPress.org until I'm sure it's safe
+* I'll probably keep 2 versions, one for wordpress.org and one for github, if you want to test it, fork it and whatever you want feel free to join me: https://github.com/TweetPressFr/jm-twitter-cards
 
 = 4.4 =
 * 17 Mar 2014

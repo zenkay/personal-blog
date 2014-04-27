@@ -12,10 +12,8 @@ $keys = array(
 			'twitterCardType', 
 			'cardImage',
 			'cardPlayer',
-			'cardPhotoWidth',
-			'cardPhotoHeight',
-			'cardProductWidth',
-			'cardProductHeight',
+			'cardImageWidth',
+			'cardImageHeight',
 			'cardPlayerWidth',
 			'cardPlayerHeight',
 			'cardPlayerStream',
@@ -24,7 +22,6 @@ $keys = array(
 			'cardData2',
 			'cardLabel2',
 			'cardImgSize',
-			'twitterCardCancel'
 		);
 		
 		
