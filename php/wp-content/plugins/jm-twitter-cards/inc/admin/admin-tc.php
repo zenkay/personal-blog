@@ -35,9 +35,9 @@ if ( ! class_exists( 'JM_TC_Admin' ) ) {
 			$this->title = __( 'JM Twitter Cards', 'jm-tc');
 			add_action( 'admin_init', array( $this, 'mninit' ) );
 			add_action( 'admin_menu', array( $this, 'add_page' ) );
-			//add_action( 'admin_enqueue_scripts',  array( $this, 'meta_box_scripts' ) );
 			add_action( 'admin_enqueue_scripts',  array( $this, 'admin_styles' ) );
 			add_filter( 'cmb_frontend_form_format', array( $this, 'save_button' ), 10, 3 );
+			add_action( 'cmb_save_options-page_fields', array( $this, 'is_it_saved') );
 		}
 		
 		/**
@@ -133,6 +133,26 @@ if ( ! class_exists( 'JM_TC_Admin' ) ) {
 			{
 				wp_enqueue_style('jm-tc-admin-style', JM_TC_CSS_URL.'jm-tc-admin.css');
 			}
+			
+			global $pagenow;
+			
+			if( $pagenow == 'post.php' || $pagenow == 'post-new.php' ) {
+				
+				wp_enqueue_style('jm-tc-metabox', JM_TC_CSS_URL.'jm-tc-meta-box.css');
+				//wp_enqueue_script('jm-tc-metabox', JM_TC_JS_URL.'jm-tc-meta-box.js', array('jquery'), null, false);
+			}
+			
+		}
+		
+		
+		// Add a confirmation message 
+		public function is_it_saved() 
+		{
+			?>
+			<div id="message" class="updated">
+			<p><strong><?php _e('Settings saved.');?></strong></p>
+			</div>
+			<?php
 		}
 		
 		
@@ -142,18 +162,6 @@ if ( ! class_exists( 'JM_TC_Admin' ) ) {
 			load_plugin_textdomain('jm-tc-doc', false, JM_TC_LANG_DIR);
 		}
 		
-		/*	
-			public function meta_box_scripts( $hook_suffix )
-			{
-			
-				if( $hook_suffix == 'post.php' || $hook_suffix == 'post-new.php' ) 
-				{
-					wp_enqueue_script('angular', JM_TC_JS_URL.'angular.min.js', false, null, false);
-					wp_enqueue_script('jm-tc-metabox', JM_TC_JS_URL.'jm-tc-meta-box.js', array('angular'), null, false);
-				}
-			
-			}
-		*/
 		
 		/**
 		* Admin page markup. Mostly handled by CMB
@@ -164,6 +172,8 @@ if ( ! class_exists( 'JM_TC_Admin' ) ) {
 			<div class="wrap">
 			
 			<h2>JM Twitter Cards : <?php echo esc_html( get_admin_page_title() ); ?></h2>
+			
+			<?php echo JM_TC_Tabs::admin_tabs(); ?>
 
 			<?php cmb_metabox_form( $this->option_fields(), self::$key ); ?>
 			<div class="doc-valid">

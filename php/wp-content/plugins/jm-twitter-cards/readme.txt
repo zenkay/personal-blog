@@ -2,7 +2,8 @@
 Contributors: jmlapam
 Tags: twitter, cards, semantic markup, metabox, meta, photo, product, gallery, player
 Donate Link: http://www.amazon.fr/registry/wishlist/1J90JNIHBBXL8
-Tested up to: 3.9
+Requires at least: 3.6
+Tested up to: 3.9.1
 License: GPLv2 or later
 Stable tag: trunk
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -13,18 +14,20 @@ Easy integration of Twitter cards in WordPress. All card types provided.
 
 Once activated the plugin adds appropriate meta on your WordPress website allowing you to get Twitter cards for your posts according to your settings. Enjoy !
 
-
-Compatible with : WP SEO by Yoast (uncheck Twitter cards option in this plugin if activated) and All in One SEO.
+Compatible with : WP SEO by Yoast and All in One SEO.
 
 The plugin allows you to customize your cards per each post. If you use SEO by Yoast plugin do not activate the Twitter card's option. Otherwise markup will be added twice.
 If you choose full customization you will see a metabox in your post edit.
 
 **Please help me to translate it in other languages** : contact@tweetpress.fr
 
+Plugin available in Spanish thanks to Andrew de <a href="http://www.webhostinghub.com/">WebHostingHub</a>  (thanks dude ^^) 
 
 I've been rebuilding the plugin for better features and user interface. This is available here : https://github.com/TweetPressFr/jm-twitter-cards
-
 This URL is the place where I improve the plugin according to support requests and stuffs like this. Github is the place !
+
+
+**The plugin now includes a visual preview if you use the meta box option. On no account this could replace the Twitter's validator but it rocks.**
 
 
 <a href="http://twitter.com/intent/user?screen_name=tweetpressfr">Follow me on Twitter</a>
@@ -36,12 +39,14 @@ En Français
 
 Une fois activé le plugin s'occupe d'ajouter les métas nécessaires vous permettant d'obtenir des cards Twitter sur vos posts selon vos réglages. Profitez-en bien !
 
-Compatible avec WP SEO by Yoast(ne pas ajouter l'option cards dans ce plugin si activé) et All in One SEO.
+Compatible avec WP SEO by Yoast et All in One SEO.
 
 Le plugin vous permet de personnaliser les cards pour chaque post. Attention malgré tout à ne pas activer l'option card de Yoast ou sinon le markup sera ajouté 2 fois.
 En mode full custom une metabox apparaît dans vos edit de post.
 
 Appel aux traducteurs pour d'autres langages : contact@tweetpress.fr
+
+**Le plugin intègre maintenant une prévisualisation de la card. Cela ne remplacera pas le validateur de Twitter mais c'est cool !**
 
 <a href="http://twitter.com/intent/user?screen_name=tweetpressfr">Me suivre sur Twitter</a>
 
@@ -96,9 +101,6 @@ You have to use the shortcode [gallery] to enjoy this feature ( that's what the 
 
 **Please avoid using images heavier than 1 MB.**
 
-See live example: http://support.tweetpress.fr/demo-twitter-cards-gallery/
-(sometimes you have to wait a minute for images to appear in validator)
-
 = I get a fatal error ! = 
 `Call to undefined function cmb_metabox_form()` >> if you get this it's not due to the plugin it comes from another plugin or a theme using the same framework for meta boxes but in a very old version.
 So do not yell at me ^^
@@ -135,9 +137,6 @@ Vous devez utiliser le shortcode [gallery] pour obtenir une card galerie (c'est 
 
 **SVP évitez d'utliser des images de plus d'1 MB**.
 
-Voir une démo : http://support.tweetpress.fr/demo-twitter-cards-gallery/
-(parfois vous devez patientez un peu pour que les images apparaissent au validateur.)
-
 = Hey j'ai une fatal error ! = 
 `Call to undefined function cmb_metabox_form()` >> ça vient d'un thème ou d'un plugin qui use du même framework pour ses meta boxes mais dans une version très ancienne, donc ne me criez pas dessus ^^
 
@@ -148,6 +147,7 @@ Voir une démo : http://support.tweetpress.fr/demo-twitter-cards-gallery/
 3. meta box
 4. player cards validator ( I did not apply for player cards cause I do not have SSL )
 5. gallery cards validator
+6. preview in meta box
 
 
 == Other notes ==
@@ -186,7 +186,44 @@ function _jm_tc_relative_paths($content) {
 **BE CAREFUL WITH THIS! DO NOT USE IF YOU DO NOT KNOW WHAT YOU ARE DOING, YOU CAN BREAK YOUR CARDS WITH THIS !!!**
 
 
+= There are a lot of new filters =
+
+Meant to help developers only. You'll have to code to use them.
+
 == Changelog ==
+
+= 5.2.3 =
+* 19 May 2014
+* Fix issue when shortcode is at the top of posts thanks to <a href="https://github.com/jrthib">jrthib</a>
+* No more backward compatibility before WP 3.6, plugin won't break but gallery card won't work for these old old versions of WP
+* Rebuild preview because of the bug with overflow and replace it with a visual preview
+* Be careful this is just a hint, this shows how your card could look not the real result with validator
+* To do : add the js to metabox and improve multisite compatibility
+
+= 5.2.2 =
+* 11 May 2014
+* Fix wrong post meta key for player stream
+* Fix robots.txt function 
+* Add tabs to admin pages (menu on top for better UX with admin nav)
+
+= 5.2.1 =
+* 07 May 2014
+* Skip () for classes because we do not need it, actually no argument in constructor
+* Removes notices, just uncheck option cards in WP SEO if enabled on plugins_loaded (soft way)
+* Add app card type to meta box, add country field for meta country application not available on the US app store
+* Add spanish translation for plugin & documentation so now full spanish version, huge thanks to Andrew Kurtis from WebHostingHub (http://www.webhostinghub.com/)
+
+= 5.2.0 =
+* 03 May 2014
+* Add confirmation message for option page when settings are saved
+* Add translation in Spanish for documentation
+* Fix bug with capability name
+* Add 2nd footage, a video for troubleshooting
+* Re-add preview feature, use only PHP for this
+* Fix bug with preview WP SEO
+* Add 3rd footage : multi-author video tutorial
+* Update framework cmb
+* Fix the issue with strip_shortcodes() not working
 
 = 5.1.9 =
 * 21 Apr 2014

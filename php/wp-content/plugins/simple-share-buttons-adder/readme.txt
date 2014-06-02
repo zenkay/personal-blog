@@ -4,7 +4,7 @@ Donate link: http://www.simplesharebuttons.com/donate/
 Tags: share buttons, facebook, twitter, google+, share, share links, stumble upon, linkedin, pinterest
 Requires at least: 3.5.1
 Tested up to: 3.9
-Stable tag: 4.2
+Stable tag: 4.3
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -63,6 +63,13 @@ A step by step guide on how to configure this plugin can be found <a href="http:
 9. Use the widget option to add share buttons!
 
 == Changelog ==
+
+= 4.3 =
+* Improved homepage detection
+* Commas added for share counts in the thousands
+* Images losslessly compressed for improved loadtime
+* Pinterest and font fix for HTTPS
+* Image src attribute moved to the start of all image tags, for improved validation
 
 = 4.2 =
 * Fix for those having trouble, error for centered buttons only

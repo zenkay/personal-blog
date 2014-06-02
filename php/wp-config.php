@@ -118,10 +118,9 @@ define('WPLANG', '');
  */
 define('WP_DEBUG', false);
 
-/**
- * We prefer to be secure by default
- */
 define('FORCE_SSL_ADMIN', false);
+
+define( 'WP_AUTO_UPDATE_CORE', false );
 
 /* That's all, stop editing! Happy blogging. */
 

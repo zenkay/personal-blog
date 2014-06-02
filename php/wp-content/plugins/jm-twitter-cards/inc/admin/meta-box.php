@@ -20,7 +20,7 @@ if ( ! class_exists( 'JM_TC_Metabox' ) ) {
 			add_action( 'cmb_render_text_number', array(&$this, 'render_text_number'), 10, 2 );
 			add_action( 'cmb_render_text_url_https', array(&$this, 'render_text_url_https'), 10, 2 );
 			
-			//alter desc attributes
+			//alter desc and preview attributes
 			add_filter( 'cmb_title_attributes', array($this,'cmb_update_title_description'), 10, 2 );
 			
 			//register meta box
@@ -47,11 +47,16 @@ if ( ! class_exists( 'JM_TC_Metabox' ) ) {
 		function render_title_custom( $field, $meta ) {
 			echo '<input type="url" name="', $field['id'], '" id="', $field['id'], '" value="', $meta, '" style="width:97%" />','<p class="cmb_metabox_description">', $field['desc'], '</p>';
 		}
+
 		
 		//cmb snippet props to jtsternberg 
 		function cmb_update_title_description( $args, $field ) {
 		
-			if( $field->id() == 'twitter_featured_size' ) $args['desc'] = JM_TC_Thumbs::get_post_thumbnail_weight( $field->object_id );
+			if( $field->id() == 'twitter_featured_size' ) 
+				$args['desc'] = JM_TC_Thumbs::get_post_thumbnail_weight( $field->object_id );
+				
+			if( $field->id() == 'preview_title' ) 
+				$args['desc'] = JM_TC_Preview::show_preview($field->object_id);
 		
 			return $args;
 		}
@@ -179,6 +184,12 @@ if ( ! class_exists( 'JM_TC_Metabox' ) ) {
 			'desc' => JM_TC_Admin::docu_links(1),
 			),
 			
+			// title
+			array(
+			'type' => 'title',
+			'name' => __('Preview', 'jm-tc'),
+			'id'   => 'preview_title', // Not used but needed for plugin
+			),
 			
 			// title
 			array(
@@ -201,6 +212,7 @@ if ( ! class_exists( 'JM_TC_Metabox' ) ) {
 			'product'				=> __( 'Product', 'jm-tc' ),
 			'player' 				=> __( 'Player', 'jm-tc' ),
 			'gallery' 				=> __( 'Gallery', 'jm-tc' ),
+			'app' 					=> __( 'Application', 'jm-tc' )
 			),
 			
 			'std'	=> $this->opts['twitterCardType'],
@@ -298,7 +310,7 @@ if ( ! class_exists( 'JM_TC_Metabox' ) ) {
 			'type' => 'text_number',
 			'desc'	   => __('When setting this, make sure player dimension and image dimensions are exactly the same! Image MUST BE greater than 68,600 pixels (a 262x262 square image, or a 350x196 16:9 image)', 'jm-tc'),
 			'min'  => 262,
-			'max'  => PHP_INT_MAX,
+			'max'  => 1000,
 			),	
 			
 			array(
@@ -306,7 +318,7 @@ if ( ! class_exists( 'JM_TC_Metabox' ) ) {
 			'id'   => "cardPlayerHeight",
 			'type' => 'text_number',
 			'min'  => 196,
-			'max'  => PHP_INT_MAX,
+			'max'  => 1000,
 			),
 			
 			array(
@@ -390,7 +402,7 @@ if ( ! class_exists( 'JM_TC_Metabox' ) ) {
 			'id'   => "cardImageWidth",
 			'type' => 'text_number',
 			'min'  => 280,
-			'max'  => PHP_INT_MAX,
+			'max'  => 1000,
 			'std'	=> $this->opts['twitterImageWidth'],
 			),	
 			
@@ -399,7 +411,7 @@ if ( ! class_exists( 'JM_TC_Metabox' ) ) {
 			'id'   => "cardImageHeight",
 			'type' => 'text_number',
 			'min'  => 150,
-			'max'  => PHP_INT_MAX,
+			'max'  => 1000,
 			'std'	=> $this->opts['twitterImageHeight'],
 			),	
 			
