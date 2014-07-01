@@ -4,7 +4,7 @@
 Plugin Name: Google Author Link
 Plugin URI: http://HelpForWP.com
 Description: Manage your Google Authorship with this simple plugin. Works for single author and multi-author WordPress sites.
-Version: 1.4.3
+Version: 1.5.1
 Author: HelpForWP
 Author URI: http://HelpForWP.com
 
@@ -34,12 +34,10 @@ class GoogleAuthorLink {
 
 	public function __construct() {
 		
-		if(is_admin()) {
+		if( is_admin() ) {
 			add_action( 'admin_menu', array($this, 'galink_add_admin_option_page') );
 			add_action( 'admin_init', array($this, 'galink_register_settings') );
-			add_action( 'admin_init', array($this, 'galink_register_styles'));
-			add_action( 'admin_print_styles', array($this, 'galink_enqueue_styles'));
-			add_action( 'wp_print_scripts', array($this, 'galink_enqueue_scripts') );
+			add_action( 'admin_enqueue_scripts', array($this, 'galink_enqueue_scripts_n_styles') );
 	    }else{
 			add_action('wp_head', array($this, 'galink_head_output_authorship') );
 			add_action('wp_head', array($this, 'galink_head_output_publisher') );
@@ -52,16 +50,12 @@ class GoogleAuthorLink {
 		register_uninstall_hook( __FILE__,  'GoogleAuthorLink::galink_remove_option' );
 	}
 	
-	function galink_register_styles(){
-		wp_register_style('google_author_link_admin_css', plugins_url('css/google-author-link-admin.css', __FILE__));
+	function galink_enqueue_scripts_n_styles(){
+		
+		wp_enqueue_style( 'galink-admin', plugins_url('css/google-author-link-admin.css', __FILE__) );
+		wp_enqueue_script( 'galink-admin-js', plugin_dir_url( __FILE__ ) . 'js/google-author-link-admin.js', array( 'jquery' ), '1.5' );
 	}
-	
-	function galink_enqueue_styles(){
-		wp_enqueue_style( 'google_author_link_admin_css' );
-	}
-	function galink_enqueue_scripts(){
-		wp_enqueue_script( 'google-author-link', plugin_dir_url( __FILE__ ) . 'js/google-author-link-admin.js', array( 'jquery' ) );
-	}
+
 	function galink_activate() {
 
 	}
@@ -115,6 +109,9 @@ class GoogleAuthorLink {
 	}
 	
 	function galink_head_output_authorship(){
+		if( is_search() || is_404() ){
+			return;
+		}
 		global $post;
 		
 		//check if exclude all pages

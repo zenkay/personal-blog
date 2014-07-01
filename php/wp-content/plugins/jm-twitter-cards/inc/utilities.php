@@ -33,7 +33,8 @@ if( ! class_exists('JM_TC_Utilities') ) {
 			return implode($nolb);
 		}
 
-
+		// Get excerpt by post ID
+		
 		public static function get_excerpt_by_id($post_id)
 		{
 			$the_post	 = get_post($post_id);
@@ -47,6 +48,27 @@ if( ! class_exists('JM_TC_Utilities') ) {
 
 			return esc_attr(  strip_tags( $the_excerpt )  ); // to prevent meta from being broken by ""
 		}
+		
+		// Tutorial list
+		
+		public static function youtube_urls(){
+		
+			return 	array(
+				__('Start', 'jm-tc') 							=> '8l4k3zrD4Z0',
+				__('Troubleshooting', 'jm-tc')				 	=> 'sNihgEu65L0',
+				__('Multi-author', 'jm-tc')				 		=> 'LpQuIzaHqtk',
+				__('Preview', 'jm-tc')				 			=> 'WniGVE09-IQ',
+			);
+		}
+		
+		// Debug
+		
+		public function showVisible( $className ) {
+		 echo "$className::showVisible:\n";
+			echo'<pre>';
+			print_r($this);
+			echo'</pre>';
+		}	
 
 
 	}

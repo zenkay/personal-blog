@@ -25,7 +25,7 @@ function galink_options_show() {
         <h2>Google Author Link</h2>
         
         <a href="http://helpforwp.com/donate/?utm_source=PluginSettings&utm_medium=WP&utm_campaign=GoogleAuthorLink" target="_blank"><img src="<?PHP echo plugins_url(); ?>/google-author-link/images/paypal-donate.png" align="right" style="padding:10px;"/></a>
-  <h2>Quick start guide</h2>
+  		<h2>Quick start guide</h2>
         <p>This plugin allows you to easily manage your Google Authorship and Google Publisher Profile.</p>
 		<h3>Google Authorship</h3>
         <p>Each user that is contributing to the WordPress site now has a new field on their <a href='<?PHP echo get_admin_url() . "users.php"; ?>'>user profile</a> - 'Google Profile URL'. 
@@ -94,9 +94,10 @@ function galink_options_show() {
 				echo $categories_list_multiple;
 			?>
 		</p>
+        <p><a href="javascript:void(0);" id="galink_reset_galink_exclude_post_categories_id">reset selection</a></p>
         <p>Hold down Control or Command(Mac) for multiple selection</p>
         <h3>Remove authorship from these custom post types</h3>
-<p>Each custom post type you choose here will no longer show your authorship code.</p>
+		<p>Each custom post type you choose here will no longer show your authorship code.</p>
         <p>
         	<?php
 				$selected = get_option('galink_exclude_custom_post_type', ''); 
@@ -105,7 +106,7 @@ function galink_options_show() {
 				$operator = 'and'; // 'and' or 'or'
 				$post_types = get_post_types( $args, $output, $operator ); 
 			?>
-            <select multiple="multiple" style="width:350px; height:50px;" name="galink_exclude_custom_post_type[]" id="galink_exclude_custom_post_type_id">
+            <select multiple="multiple" style="width:350px; height:200px;" name="galink_exclude_custom_post_type[]" id="galink_exclude_custom_post_type_id">
             <?php 
 				if( count($post_types) > 0 ){ 
 					foreach( $post_types as $post_type_name ){
@@ -119,6 +120,7 @@ function galink_options_show() {
 			?>
             </select>
         </p>
+        <p><a href="javascript:void(0);" id="galink_reset_galink_exclude_custom_post_type_id">reset selection</a></p>
         <p>Hold down Control or Command(Mac) for multiple selection</p>
         <h3>Remove authorship from some or all of your pages</h3>
 		<p>Remove Authorship from all pages:&nbsp;
@@ -154,7 +156,7 @@ function galink_options_show() {
             $selected_pages = get_option('galink_exclude_pages', '');
             if( count($all_pages_option_with_page_id) > 0 ){
                 foreach( $all_pages_option_with_page_id as $key => $option ){
-                    if ( $selected_pages && is_array($selected_pages) && count($selected_pages) > 0 && in_array($key, $selected_pages) ){
+					if( $selected_pages && is_array($selected_pages) && count($selected_pages) > 0 && in_array($key, $selected_pages) ){
                         $option = str_replace('>', ' selected="selected">', $option);
                     }
                     echo $option.'</option>';
@@ -162,9 +164,92 @@ function galink_options_show() {
             }
             ?>
             </select>
+            <p><a href="javascript:void(0);" id="galink_reset_galink_exclude_pages_id">reset options</a></p>
             <p>Hold down Control or Command(Mac) for multiple selection</p>
         </div>
-        <p style="margin-top: 20px"><button class="button-primary" type="submit" id="wpls_admin_submit">Save Settings</button></p>
+		
+		<hr style="border:0;border-bottom: 1px dashed #ccc;background: #999;">
+        <h2>Test with Google's Rich Snippet Tool</h2>
+        <h4>Pages</h4>
+        <p>
+        	<?php
+			$all_pages_drop_down_4_snippet_test = wp_dropdown_pages( array('echo' => 0, 'name' => 'page_id') );
+			$all_pages_drop_down_4_snippet_test = str_replace("<select name='page_id' id='page_id'>", '', $all_pages_drop_down_4_snippet_test);
+			$all_pages_drop_down_4_snippet_test = str_replace("</select>", '', $all_pages_drop_down_4_snippet_test);
+			$all_pages_drop_down_options_array = explode('</option>', $all_pages_drop_down_4_snippet_test);
+			
+			$all_pages_option_with_page_id = array();
+			foreach($all_pages_drop_down_options_array as $page_option){
+				if( strlen($page_option) < 1 ){
+					continue;
+				}
+				$regex = '/value="([^"]*)"/';
+				$matches = array();
+				if(preg_match($regex, $page_option, $matches)){
+					$page_option = str_replace('value="'.$matches[1].'"', 'value="'.urlencode(get_permalink($matches[1])).'"', $page_option);
+					$all_pages_option_with_page_id[$matches[1]] = $page_option;
+				}
+			}
+			?>
+        	<select style="width:350px;" name="galink_g_snippet_tool_page_link" id="galink_g_snippet_tool_page_link_id">
+            	<option value="">Please select</option>
+            	<option value="<?php echo site_url(); ?>">Home page</option>
+                <?php
+				if( count($all_pages_option_with_page_id) > 0 ){
+					foreach( $all_pages_option_with_page_id as $key => $option ){
+						echo $option.'</option>';
+					}
+				}
+				?>
+            </select>
+            <a class="button" href="javascript:void(0);" target="_blank" id="galink_g_snippet_tool_page_test_button_id" style="margin-left:20px;" disabled="disabled">Test</a>
+        </p>
+        <h4>Posts</h4>
+        <p>
+			<select style="width:350px;" name="galink_g_snippet_tool_post_link" id="galink_g_snippet_tool_post_link_id">
+            <option value="">Please select</option>
+			<?php
+				$args = array( 'numberposts' => -1);
+				$posts = get_posts( $args );
+				foreach( $posts as $post_obj ){
+					echo '<option value="'.urlencode(get_permalink($post_obj->ID)).'">'.$post_obj->post_title.'</option>';
+				}
+			?>
+            </select>
+            <a class="button" href="javascript:void(0);" target="_blank" id="galink_g_snippet_tool_post_test_button_id" style="margin-left:20px;" disabled="disabled">Test</a>
+        </p>
+        
+        <?php
+			//get custom post type
+			$args = array('public'   => true, '_builtin' => false);
+			$output = 'names'; // names or objects, note names is the default
+			$operator = 'and'; // 'and' or 'or'
+			$post_types = get_post_types( $args, $output, $operator ); 
+			if( count($post_types) > 0 ){
+				foreach( $post_types as $post_type ){
+					$post_type_obj = get_post_type_object( $post_type );
+					if( !$post_type_obj ){
+						continue;
+					}
+					echo '<h4>Custom post type '.$post_type_obj->labels->name.'</h4>';
+					?>
+                    <select style="width:350px;" name="galink_g_snippet_tool_cpost_<?php echo $post_type; ?>_link" id="galink_g_snippet_tool_cpost_<?php echo $post_type; ?>_link_id" rel="<?php echo $post_type; ?>" class="galink-cpost-dropdown">
+					<option value="">Please select</option>
+					<?php
+                        $args = array( 'numberposts' => -1, 'post_type' => $post_type );
+                        $posts = get_posts( $args );
+                        foreach( $posts as $post_obj ){
+                            echo '<option value="'.urlencode(get_permalink($post_obj->ID)).'">'.$post_obj->post_title.'</option>';
+                        }
+                    ?>
+                    </select>
+                    <a class="button" href="javascript:void(0);" target="_blank" id="galink_g_snippet_tool_cpost_<?php echo $post_type; ?>_test_button_id" style="margin-left:20px;" disabled="disabled">Test</a>
+            	<?php
+				}
+			}
+		?>
+        
+        <p style="margin-top: 20px"><button class="button-primary" type="submit" id="galink_admin_submit">Save Settings</button></p>
         </form>
          <hr style="border:0;border-bottom: 1px dashed #ccc;background: #999;">
         <h2>Love this plugin?</h2>

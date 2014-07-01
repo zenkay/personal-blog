@@ -15,6 +15,7 @@ Easy integration of Twitter cards in WordPress. All card types provided.
 Once activated the plugin adds appropriate meta on your WordPress website allowing you to get Twitter cards for your posts according to your settings. Enjoy !
 
 Compatible with : WP SEO by Yoast and All in One SEO.
+Support Open Graph (deactivated by default).
 
 The plugin allows you to customize your cards per each post. If you use SEO by Yoast plugin do not activate the Twitter card's option. Otherwise markup will be added twice.
 If you choose full customization you will see a metabox in your post edit.
@@ -40,6 +41,7 @@ En Français
 Une fois activé le plugin s'occupe d'ajouter les métas nécessaires vous permettant d'obtenir des cards Twitter sur vos posts selon vos réglages. Profitez-en bien !
 
 Compatible avec WP SEO by Yoast et All in One SEO.
+Support pour l'Open Graph (désactivé par défaut).
 
 Le plugin vous permet de personnaliser les cards pour chaque post. Attention malgré tout à ne pas activer l'option card de Yoast ou sinon le markup sera ajouté 2 fois.
 En mode full custom une metabox apparaît dans vos edit de post.
@@ -186,11 +188,36 @@ function _jm_tc_relative_paths($content) {
 **BE CAREFUL WITH THIS! DO NOT USE IF YOU DO NOT KNOW WHAT YOU ARE DOING, YOU CAN BREAK YOUR CARDS WITH THIS !!!**
 
 
-= There are a lot of new filters =
+= There are a lot of new filters since 5.2 =
 
 Meant to help developers only. You'll have to code to use them.
 
 == Changelog ==
+
+= 5.2.7 =
+* 22 June 2014
+* Small fix: HTML meta name og does not exists ! Now the plugin uses meta property
+
+= 5.2.6 =
+* 14 June 2014
+* add option to import/export options quickly, this will let you quickly export/import settings in JSON format
+* could save a lot of time especially in multisite mod
+* I decided to add this feature instead of adding some network-wide options that could be tricky
+* Fix missing translation for yes/no options
+* Fix some bug in preview
+* Remove loop through network in uninstall because it doesn't scale actually 
+
+= 5.2.5 =
+* 7 June 2014
+* Fix preview with undefined index (new option open graph)
+* Add debug method in utilities
+
+= 5.2.4 =
+* 6 June 2014
+* Suppport for Open Graph
+* Improve multisite compatibility (default options, uninstall)
+* Fix some mistakes in spanish
+* Fix notices regarding default options when activating
 
 = 5.2.3 =
 * 19 May 2014

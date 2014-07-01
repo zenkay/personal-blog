@@ -4,7 +4,7 @@ Donate link: http://www.simplesharebuttons.com/donate/
 Tags: share buttons, facebook, twitter, google+, share, share links, stumble upon, linkedin, pinterest
 Requires at least: 3.5.1
 Tested up to: 3.9
-Stable tag: 4.3
+Stable tag: 4.5
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -63,6 +63,16 @@ A step by step guide on how to configure this plugin can be found <a href="http:
 9. Use the widget option to add share buttons!
 
 == Changelog ==
+
+= 4.5 =
+* Hotfix for potential vulnerability
+
+= 4.4 =
+* Tidy up author info and add link to Simple Share Buttons Plus
+* Tidy up author info and add link to Simple Share Buttons Plus
+* New option in settings to only show buttons with excerpts if wanted
+* Port number not added if present
+* Page title pulled more accurately and efficiently, most noticed by those using twitter and/or with shortcode
 
 = 4.3 =
 * Improved homepage detection

@@ -7,18 +7,19 @@ if ( ! defined( 'JM_TC_VERSION' ) ) {
 
 if( class_exists('JM_TC_Utilities') ) {
 
-
 	class JM_TC_Markup extends JM_TC_Options {	
 		
 		private static $_this;
 		var $opts;
+		//var $muti_opts;
 		var $textdomain = 'jm-tc';
 
 		function __construct() {
 			
-			self::$_this = $this;
-			$this->opts = get_option('jm_tc');
-			add_action('wp_head', array(&$this, 'add_markup'), 2 );
+			self::$_this     = $this;
+			$this->opts  	 = get_option('jm_tc');
+			//$this->muti_opts = get_site_option('jm_tc_network'); 
+			add_action('wp_head', array( $this, 'add_markup'), 2 );
 			
 		}
 		
@@ -97,14 +98,26 @@ if( class_exists('JM_TC_Utilities') ) {
 		* Display the different meta
 		*/
 		private function display_markup( $datas ){
+		
 			
 			if ( is_array( $datas ) ) {
 				
 				foreach ( $datas as $name => $value ) {
 					
 					if( $value != '' ) {
+					
+						if ( $this->opts['twitterCardOg'] == 'yes' && in_array(  $name, array('title','description','image','image:width','image:height' ) ) ) {
+							
+							$is_og 		= 'og';
+							$name_tag 	= 'property';
+							
+						} else {
 						
-						echo $meta = '<meta name="twitter:'.$name.'" content="'.$value.'">' . "\n";
+							$is_og 		= 'twitter';
+							$name_tag 	= 'name';
+						}
+						
+						echo $meta = '<meta '.$name_tag.'="'.$is_og.':'.$name.'" content="'.$value.'">' . "\n";
 						
 					} 				
 					
@@ -115,8 +128,6 @@ if( class_exists('JM_TC_Utilities') ) {
 				echo $meta = '<!-- [(-_-)@ '. $datas.' @(-_-)] -->' . "\n";
 				
 			} 
-			
-			//var_dump($datas);
 			
 		}
 		

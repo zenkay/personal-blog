@@ -47,6 +47,7 @@ function ssba_admin_panel($arrSettings, $htmlSettingsSaved) {
 		
 		// hidden field to check for post IMPORTANT
 		$htmlShareButtonsForm .= '<input type="hidden" name="ssba_options" id="ssba_options" value="save" />';
+		$htmlShareButtonsForm .= wp_nonce_field('ssba_save_settings','ssba_save_nonce');
 		
 			//------ BASIC TAB -------//
 			
@@ -56,11 +57,13 @@ function ssba_admin_panel($arrSettings, $htmlSettingsSaved) {
 					$htmlShareButtonsForm .= '<tr><td><h3>Where</h3></td></tr>';
 					$htmlShareButtonsForm .= '<tr valign="top">';
 						$htmlShareButtonsForm .= '<th scope="row" style="width: 120px;"><label>Location:</label></th>';
-						$htmlShareButtonsForm .= '<td>';
+						$htmlShareButtonsForm .= '<td style="font-size: 12px;">';
 						$htmlShareButtonsForm .= 'Homepage&nbsp;<input type="checkbox" name="ssba_homepage" id="ssba_homepage" ' 	 	. ($arrSettings['ssba_homepage'] 	== 'Y'   ? 'checked' : NULL) . ' value="Y" style="margin-right: 10px;" />';
 						$htmlShareButtonsForm .= 'Pages&nbsp;<input type="checkbox" name="ssba_pages" id="ssba_pages" ' 		 		. ($arrSettings['ssba_pages'] 		== 'Y'   ? 'checked' : NULL) . ' value="Y" style="margin-right: 10px;" />';
 						$htmlShareButtonsForm .= 'Posts&nbsp;<input type="checkbox" name="ssba_posts" id="ssba_posts" ' 		 		. ($arrSettings['ssba_posts'] 		== 'Y'   ? 'checked' : NULL) . ' value="Y" style="margin-right: 10px;" />';
 						$htmlShareButtonsForm .= 'Categories&#47;Archives&nbsp;<input type="checkbox" name="ssba_cats_archs" id="ssba_cats_archs" '	. ($arrSettings['ssba_cats_archs']	== 'Y'   ? 'checked' : NULL) . ' value="Y" style="margin-right: 10px;" />';
+						$htmlShareButtonsForm .= 'Excerpts&nbsp;<input type="checkbox" name="ssba_excerpts" id="ssba_excerpts" '	. ($arrSettings['ssba_excerpts']	== 'Y'   ? 'checked' : NULL) . ' value="Y" style="margin-right: 10px;" />';
+
 						$htmlShareButtonsForm .= '<p class="description">Check all those that you wish to show your share buttons</br>Note you can also show&#47;hide your buttons using &#91;ssba&#93; and &#91;ssba&#95;hide&#93;</p></td>';
 					$htmlShareButtonsForm .= '</tr>';
 					$htmlShareButtonsForm .= '<tr valign="top">';
@@ -552,7 +555,7 @@ CODE;
 	
 	// author div
 	$htmlShareButtonsForm .= '	<div class="ssba-box ssba-shadow">
-									<div class="ssba-box-content">Quite a fair amount of time and effort has gone into Simple Share Buttons, any donations would be greatly appreciated, it will help me continue to be able to offer this for free!<p></p>
+									<div class="ssba-box-content">
 										<div class="author-shortcodes">
 											<div class="author-inner">
 												<div class="author-image">
@@ -560,38 +563,50 @@ CODE;
 													<div class="author-overlay"></div>
 												</div> <!-- .author-image --> 
 												<div class="author-info">
-													<a href="http://www.davidsneal.co.uk" target="_blank">David Neal</a> – Married, father of one, with an (sometimes unhealthy) obsession with websites, coding and gaming. This plugin and its website has been funded by myself.
+													<a href="http://www.davidsneal.co.uk" target="_blank">David Neal</a> – Married, father of one (another on the way!), with an obsession with websites, coding and gaming. This plugin and its website has been funded by myself.
 												</div> <!-- .author-info -->
 											</div> <!-- .author-inner -->
 										</div> <!-- .author-shortcodes -->
 									</div></br>
-									<center><table>
+									<table class="centerme">
 										<tr>
-											<td><form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-													<input type="hidden" name="cmd" value="_s-xclick">
-													<input type="hidden" name="hosted_button_id" value="4TLXT69XCP3B8">
-													<input type="image" src="' . plugins_url() . '/simple-share-buttons-adder/images/paypal.png" border="0" name="submit" alt="PayPal – The safer, easier way to pay online.">
-													<img alt="" border="0" src="' . plugins_url() . '/simple-share-buttons-adder/images/paypal.png" width="1" height="1">
-												</form>
-											<td><a href="http://flattr.com/thing/1328301/Simple-Share-Buttons" target="_blank"><img class="ssba-flattr-this" src="' . plugins_url() . '/simple-share-buttons-adder/images/flattr.png" alt="Flattr this" title="Flattr this" border="0" /></a>
-											<td><a href="https://www.freelancer.co.uk/u/davidsneal.html" target="_blank"><img src="' . plugins_url() . '/simple-share-buttons-adder/images/freelancer.png" title="Hire me on Freelancer!" /></a>
+											<td>
+												<a href="http://www.simplesharebuttons.com/plus"><h3>Check out Simple Share Buttons Plus!</h3></a>
+												<h3><a href="#TB_inline?width=600&height=450&inlineId=ssbp-info" class="thickbox">What\'s different?</a></h3>
+												<iframe width="330" height="186" src="//www.youtube.com/embed/SFO9Uss-LuQ?rel=0" frameborder="0" allowfullscreen></iframe>
+											</td>
+										</tr>
+										<tr>
+											<td class="centerme"><form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="75WFUCTYND76Q">
+<input type="image" src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online.">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1">
+</form>
+
+											</td>
 										</tr>
 									</table>
-									<p>You can show your support for <strong>free</strong> too&#33;</p>
 									<table class="centerme">
 										<tr>
 											<td><a href="http://wordpress.org/support/view/plugin-reviews/simple-share-buttons-adder" target="_blank" title="Rate 5 Star">Rate the plugin<br/><img src="' . plugins_url() . '/simple-share-buttons-adder/images/stars.png"></a></br></td>
-										<tr>
-											<td><a href="http://twitter.com/share?url=http://www.simplesharebuttons.com&text=Simple Share Buttons" target="_blank" title="Tweet">Tweet about Simple Share Buttons<br/><img src="' . plugins_url() . '/simple-share-buttons-adder/images/tweet.png"></a></td>
-										<tr>
-											<td><a href="http://www.facebook.com/sharer.php?u=http://www.simplesharebuttons.com" target="_blank" title="Share on Facebook">Share on Facebook<br/><img src="' . plugins_url() . '/simple-share-buttons-adder/images/share.png"></a></td>
 										</tr>
 									</table>
-									<div class="et-box et-bio">
+									<div class="et-box et-bio centerme">
 										<div class="et-box-content">
-										<h2>Make your own custom&#45;coloured buttons for free!</h2>
-										<h3>Visit <a href="http://make.simplesharebuttons.com" target="blank">make.simplesharebuttons.com</a></h3>
-									</center></div></div>
+										<p><strong>Visit <a href="http://make.simplesharebuttons.com" target="blank">make.simplesharebuttons.com</a><br/>to make custom-colour buttons</strong></p>
+									</div></div>
+								</div>
+								<div id="ssbp-info" style="display:none;">
+									<div class="ssbp-info centerme">
+										<h1 class="blueme">Simple Share Buttons Plus</h1>
+										 <p class="description">Find out more at <a class="blueme" href="http://www.simplesharebuttons.com/plus">www.simplesharebuttons.com/plus</a></p>
+									     <p class="ssbp-popup">Popup share windows</p>
+									     <p class="ssbp-retina">Retina-ready CSS Sprite</p>
+									     <p class="ssbp-tracking">Built-in tracking</p>
+									     <p class="ssbp-hover">Hover and click effects</p>
+									     <p class="ssbp-vk">VK button added</p>
+									</div>
 								</div>';
 
 	// close author cell and close table
