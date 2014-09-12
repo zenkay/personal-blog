@@ -57,6 +57,8 @@ http://helpforwp.com/tag/google-author-link/
 2. Google profile URL in the user profile
 
 == Changelog ==
+1.5.2 Fix type in settings page
+
 1.5.1 Added google rich snippet tool in the settings page, fixed but with advanced authorship controls
 
 1.5 Minor fix for 404 and search archive pages

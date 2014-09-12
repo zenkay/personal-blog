@@ -11,8 +11,9 @@ class UpdraftPlus_Backup {
 
 	private $zipfiles_added;
 	private $zipfiles_added_thisrun = 0;
-	private $zipfiles_dirbatched;
-	private $zipfiles_batched;
+	public $zipfiles_dirbatched;
+	public $zipfiles_batched;
+	public $zipfiles_skipped_notaltered;
 	private $zip_split_every = 838860800; # 800Mb
 	private $zip_last_ratio = 1;
 	private $whichone;
@@ -24,15 +25,22 @@ class UpdraftPlus_Backup {
 	private $dbhandle;
 	private $dbhandle_isgz;
 
+	# Array of entities => times
+	private $altered_since = -1;
+	# Time for the current entity
+	private $makezip_if_altered_since = -1;
+
 	private $use_zip_object = 'UpdraftPlus_ZipArchive';
 	public $debug = false;
 
-	private $updraft_dir;
+	public $updraft_dir;
 	private $blog_name;
 	private $wpdb_obj;
 	private $job_file_entities = array();
 
-	public function __construct($backup_files) {
+	private $first_run = 0;
+
+	public function __construct($backup_files, $altered_since = -1) {
 
 		global $updraftplus;
 
@@ -50,6 +58,8 @@ class UpdraftPlus_Backup {
 			$this->use_zip_object = 'UpdraftPlus_PclZip';
 			return;
 		}
+
+		$this->altered_since = $altered_since;
 
 		// false means 'tried + failed'; whereas 0 means 'not yet tried'
 		// Disallow binzip on OpenVZ when we're not sure there's plenty of memory
@@ -117,6 +127,7 @@ class UpdraftPlus_Backup {
 			return false;
 		}
 
+		# TODO: Make compatible with filenames which indicate increments
 		$itext = (empty($index)) ? '' : ($index+1);
 		$base_path = $backup_file_basename.'-'.$whichone.$itext.'.zip';
 		$full_path = $this->updraft_dir.'/'.$base_path;
@@ -133,7 +144,8 @@ class UpdraftPlus_Backup {
 					$updraftplus->terminate_due_to_activity($base_path, $time_now, $time_mod);
 				}
 				$index++;
-				$base_path = $backup_file_basename.'-'.$whichone.$index.'.zip';
+				# TODO: Make compatible with filenames which indicate increments
+				$base_path = $backup_file_basename.'-'.$whichone.($index+1).'.zip';
 				$full_path = $this->updraft_dir.'/'.$base_path;
 			}
 		}
@@ -159,6 +171,7 @@ class UpdraftPlus_Backup {
 		$match = '_'.$updraftplus->nonce."-".$whichone;
 		while (false !== ($e = $d->read())) {
 			if ('.' == $e || '..' == $e || !is_file($this->updraft_dir.'/'.$e)) continue;
+			# TODO: Make compatible with filenames which indicate increments
 			$ziparchive_match = preg_match("/$match([0-9]+)?\.zip\.tmp\.([A-Za-z0-9]){6}?$/i", $e);
 			$binzip_match = preg_match("/^zi([A-Za-z0-9]){6}$/", $e);
 			if ($time_now-filemtime($this->updraft_dir.'/'.$e) < 30 && ($ziparchive_match || (0 != $updraftplus->current_resumption && $binzip_match))) {
@@ -186,6 +199,7 @@ class UpdraftPlus_Backup {
 			return false;
 		} else {
 			$itext = (empty($this->index)) ? '' : ($this->index+1);
+			# TODO: Make compatible with filenames which indicate increments
 			$full_path = $this->updraft_dir.'/'.$backup_file_basename.'-'.$whichone.$itext.'.zip';
 			if (file_exists($full_path.'.tmp')) {
 				if (@filesize($full_path.'.tmp') === 0) {
@@ -211,6 +225,7 @@ class UpdraftPlus_Backup {
 			$updraftplus->clean_temporary_files('_'.$updraftplus->nonce."-$whichone", 0);
 		}
 
+		# TODO: Make compatible with indication of increments in filename
 		# Create the results array to send back (just the new ones, not any prior ones)
 		$files_existing = array();
 		$res_index = 0;
@@ -284,7 +299,7 @@ class UpdraftPlus_Backup {
 					$objname = "UpdraftPlus_BackupModule_${service}";
 					if (class_exists($objname)) {
 						$remote_obj = new $objname;
-						$pass_to_prune = $remote_obj->backup($backup_array);
+						$pass_to_prune = $remote_obj->backup($sarray);
 						$do_prune[$service] = array($remote_obj, $pass_to_prune);
 					} else {
 						$updraftplus->log("Unexpected error: no class '$objname' was found ($method_include)");
@@ -461,7 +476,8 @@ class UpdraftPlus_Backup {
 		if (!is_null($method_object)) $method_object->delete($dofiles, $object_passback);
 	}
 
-	public function send_results_email($final_message) {
+	# The jobdata is passed in instead of fetched, because the live jobdata may now differ from that which should be reported on (e.g. an incremental run was subsequently scheduled)
+	public function send_results_email($final_message, $jobdata) {
 
 		global $updraftplus;
 
@@ -470,19 +486,23 @@ class UpdraftPlus_Backup {
 		$sendmail_to = $updraftplus->just_one_email(UpdraftPlus_Options::get_updraft_option('updraft_email'));
 		if (is_string($sendmail_to)) $sendmail_to = array($sendmail_to);
 
-		$backup_files = $updraftplus->jobdata_get('backup_files');
-		$backup_db = $updraftplus->jobdata_get('backup_database');
+		$backup_files =$jobdata['backup_files'];
+		$backup_db = $jobdata['backup_database'];
 
 		if (is_array($backup_db)) $backup_db = $backup_db['wp'];
 		if (is_array($backup_db)) $backup_db = $backup_db['status'];
 
+		$backup_type = ('backup' == $jobdata['job_type']) ? __('Full backup', 'updraftplus') : __('Incremental', 'updraftplus');
+
 		if ('finished' == $backup_files && ('finished' == $backup_db || 'encrypted' == $backup_db)) {
-			$backup_contains = __("Files and database", 'updraftplus');
+			$backup_contains = __("Files and database", 'updraftplus')." ($backup_type)";
 		} elseif ('finished' == $backup_files) {
 			$backup_contains = ($backup_db == "begun") ? __("Files (database backup has not completed)", 'updraftplus') : __("Files only (database was not part of this particular schedule)", 'updraftplus');
+			$backup_contains .= " ($backup_type)";
 		} elseif ($backup_db == 'finished' || $backup_db == 'encrypted') {
 			$backup_contains = ($backup_files == "begun") ? __("Database (files backup has not completed)", 'updraftplus') : __("Database only (files were not part of this particular schedule)", 'updraftplus');
 		} else {
+			$updraftplus->log('Unknown/unexpected status: '.serialize($backup_files).'/'.serialize($backup_db));
 			$backup_contains = __("Unknown/unexpected error - please raise a support request", 'updraftplus');
 		}
 
@@ -508,7 +528,7 @@ class UpdraftPlus_Backup {
 			}
 			$append_log.="\r\n";
 		}
-		$warnings = $updraftplus->jobdata_get('warnings');
+		$warnings = (isset($jobdata['warnings'])) ? $jobdata['warnings'] : array();
 		if (is_array($warnings) && count($warnings) >0) {
 			$append_log .= __('Warnings encountered:', 'updraftplus')."\r\n";
 			$attachments[0] = $updraftplus->logfile_name;
@@ -529,7 +549,7 @@ class UpdraftPlus_Backup {
 
 		# The class_exists() check here is a micro-optimization to prevent a possible HTTP call whose results may be disregarded by the filter
 		$feed = '';
-		if (!class_exists('UpdraftPlus_Addon_Reporting') && !defined('UPDRAFTPLUS_NOADS_A') && !defined('UPDRAFTPLUS_NONEWSFEED')) {
+		if (!class_exists('UpdraftPlus_Addon_Reporting') && !defined('UPDRAFTPLUS_NOADS_B') && !defined('UPDRAFTPLUS_NONEWSFEED')) {
 			$updraftplus->log('Fetching RSS news feed');
 			$rss = $updraftplus->get_updraftplus_rssfeed();
 			$updraftplus->log('Fetched RSS news feed; result is a: '.get_class($rss));
@@ -546,7 +566,25 @@ class UpdraftPlus_Backup {
 			$feed .= "\r\n\r\n";
 		}
 
-		$body = apply_filters('updraft_report_body', __('Backup of:').' '.site_url()."\r\nUpdraftPlus ".__('WordPress backup is complete','updraftplus').".\r\n".__('Backup contains:','updraftplus').' '.$backup_contains."\r\n".__('Latest status:', 'updraftplus').' '.$final_message."\r\n\r\n".$feed.$updraftplus->wordshell_random_advert(0)."\r\n".$append_log, $final_message, $backup_contains, $updraftplus->errors, $warnings);
+		$extra_messages = apply_filters('updraftplus_report_extramessages', array());
+		$extra_msg = '';
+		if (is_array($extra_messages)) {
+			foreach ($extra_messages as $msg) {
+				$extra_msg .= '<strong>'.$msg['key'].'</strong>: '.$msg['val']."\r\n";
+			}
+		}
+
+		$body = apply_filters('updraft_report_body',
+			__('Backup of:').' '.site_url()."\r\n".
+			"UpdraftPlus ".__('WordPress backup is complete','updraftplus').".\r\n".
+			__('Backup contains:','updraftplus')." $backup_contains\r\n".
+			__('Latest status:', 'updraftplus').' '.$final_message."\r\n".
+			$extra_msg.
+			"\r\n".
+			$feed.
+			$updraftplus->wordshell_random_advert(0)."\r\n".
+			$append_log,
+		$final_message, $backup_contains, $updraftplus->errors, $warnings, $jobdata);
 
 		$this->attachments = apply_filters('updraft_report_attachments', $attachments);
 
@@ -585,7 +623,11 @@ class UpdraftPlus_Backup {
 
 			foreach (explode(',', $mailto) as $sendmail_addr) {
 				$updraftplus->log("Sending email ('$backup_contains') report (attachments: ".count($attachments).", size: ".round($attach_size/1024, 1)." Kb) to: ".substr($sendmail_addr, 0, 5)."...");
-				wp_mail(trim($sendmail_addr), $subject, $body);
+				try {
+					wp_mail(trim($sendmail_addr), $subject, $body);
+				} catch (Exception $e) {
+					$updraftplus->log("Exception occurred when sending mail (".get_class($e)."): ".$e->getMessage());
+				}
 			}
 		}
 
@@ -603,7 +645,7 @@ class UpdraftPlus_Backup {
 
 		global $updraftplus;
 		if ($a == $b) return 0;
-		$our_table_prefix = $this->table_prefix;
+		$our_table_prefix = $this->table_prefix_raw;
 		if ($a == $our_table_prefix.'options') return -1;
 		if ($b ==  $our_table_prefix.'options') return 1;
 		if ($a == $our_table_prefix.'users') return -1;
@@ -690,18 +732,20 @@ class UpdraftPlus_Backup {
 				$index = (int)$this->job_file_entities[$youwhat]['index'];
 				if (empty($index)) $index=0;
 				$indextext = (0 == $index) ? '' : (1+$index);
+				# TODO: Make compatible with filenames which indicate increments
 				$zip_file = $this->updraft_dir.'/'.$backup_file_basename.'-'.$youwhat.$indextext.'.zip';
 
 				# Split needed?
-				$split_every=max((int)$updraftplus->jobdata_get('split_every'), 250);
+				$split_every = max((int)$updraftplus->jobdata_get('split_every'), 250);
 				if (file_exists($zip_file) && filesize($zip_file) > $split_every*1048576) {
 					$index++;
 					$this->job_file_entities[$youwhat]['index'] = $index;
 					$updraftplus->jobdata_set('job_file_entities', $this->job_file_entities);
 				}
 
+				# TODO: Make compatible with filenames which indicate increments
 				// Populate prior parts of array, if we're on a subsequent zip file
-				if ($index >0) {
+				if ($index > 0) {
 					for ($i=0; $i<$index; $i++) {
 						$itext = (0 == $i) ? '' : ($i+1);
 						$backup_array[$youwhat][$i] = $backup_file_basename.'-'.$youwhat.$itext.'.zip';
@@ -714,6 +758,7 @@ class UpdraftPlus_Backup {
 				if ('finished' == $job_status) {
 					// Add the final part of the array
 					if ($index >0) {
+						# TODO: Make compatible with filenames which indicate increments
 						$fbase = $backup_file_basename.'-'.$youwhat.($index+1).'.zip';
 						$z = $this->updraft_dir.'/'.$fbase;
 						if (file_exists($z)) {
@@ -801,7 +846,8 @@ class UpdraftPlus_Backup {
 				foreach ($files as $file) $updraftplus->check_recent_modification($this->updraft_dir.'/'.$file);
 			}
 		} elseif ('begun' == $bfiles_status) {
-			if ($resumption_no>0) {
+			$this->first_run = apply_filters('updraftplus_filerun_firstrun', 0);
+			if ($resumption_no > $this->first_run) {
 				$updraftplus->log("Creation of backups of directories: had begun; will resume");
 			} else {
 				$updraftplus->log("Creation of backups of directories: beginning");
@@ -991,14 +1037,16 @@ class UpdraftPlus_Backup {
 					}
 
 					# If no check-in last time, then we could in future try the other method (but - any point in retrying slow method on large tables??)
-					$bindump = (isset($rows) && $rows>8000 && is_string($binsqldump)) ? $this->backup_table_bindump($binsqldump, $table, $where) : false;
+
+					# New Jul 2014: This attempt to use bindump instead at a lower threshold is quite conservative - only if the last successful run was exactly two resumptions ago - may be useful to expand
+					$bindump_threshold = (!$updraftplus->something_useful_happened && !empty($updraftplus->current_resumption) && ($updraftplus->current_resumption - $updraftplus->last_successful_resumption == 2 )) ? 1000 : 8000;
+
+					$bindump = (isset($rows) && ($rows>$bindump_threshold || (defined('UPDRAFTPLUS_ALWAYS_TRY_MYSQLDUMP') && UPDRAFTPLUS_ALWAYS_TRY_MYSQLDUMP)) && is_string($binsqldump)) ? $this->backup_table_bindump($binsqldump, $table, $where) : false;
 					if (true !== $bindump) $this->backup_table($table, $where);
 
 					if (!empty($manyrows_warning)) $updraftplus->log_removewarning('manyrows_'.$this->whichdb_suffix.$table);
 
-					// Close file
-
-					$this->close($this->dbhandle);
+					$this->close();
 
 					$updraftplus->log("Table $table: finishing file (${table_file_prefix}.gz - ".round(filesize($this->updraft_dir.'/'.$table_file_prefix.'.tmp.gz')/1024,1)." Kb)");
 
@@ -1047,7 +1095,7 @@ class UpdraftPlus_Backup {
 			$updraftplus->log("PHP function is disabled; abort expected: gzopen");
 		}
 
-		if (false === ($opendb = $this->backup_db_open($backup_final_file_name, true))) return false;
+		if (false === $this->backup_db_open($backup_final_file_name, true)) return false;
 
 		$this->backup_db_header();
 
@@ -1074,7 +1122,7 @@ class UpdraftPlus_Backup {
 		}
 
 		$updraftplus->log($file_base.'-db'.$this->whichdb_suffix.'.gz: finished writing out complete database file ('.round(filesize($backup_final_file_name)/1024,1).' Kb)');
-		if (!$this->close($this->dbhandle)) {
+		if (!$this->close()) {
 			$updraftplus->log('An error occurred whilst closing the final database file');
 			$updraftplus->log(__('An error occurred whilst closing the final database file', 'updraftplus'), 'error');
 			$errors++;
@@ -1229,7 +1277,8 @@ class UpdraftPlus_Backup {
 
 			$increment = 1000;
 			if (!$updraftplus->something_useful_happened && !empty($updraftplus->current_resumption) && ($updraftplus->current_resumption - $updraftplus->last_successful_resumption > 1)) {
-				$increment = 500;
+				# This used to be fixed at 500; but we (after a long time) saw a case that looked like an out-of-memory even at this level. We must be careful about going too low, though - otherwise we increase the risks of timeouts.
+				$increment = ( $updraftplus->current_resumption - $updraftplus->last_successful_resumption > 2 ) ? 350 : 500;
 			}
 
 			if($segment == 'none') {
@@ -1311,16 +1360,12 @@ class UpdraftPlus_Backup {
 		}
 	}
 
-	private function close($handle) {
-		if ($this->dbhandle_isgz) {
-			return gzclose($handle);
-		} else {
-			return fclose($handle);
-		}
+	public function close() {
+		return ($this->dbhandle_isgz) ? gzclose($this->dbhandle) : fclose($this->dbhandle);
 	}
 
 	// Open a file, store its filehandle
-	private function backup_db_open($file, $allow_gz = true) {
+	public function backup_db_open($file, $allow_gz = true) {
 		if (function_exists('gzopen') && $allow_gz == true) {
 			$this->dbhandle = @gzopen($file, 'w');
 			$this->dbhandle_isgz = true;
@@ -1336,21 +1381,22 @@ class UpdraftPlus_Backup {
 		return $this->dbhandle;
 	}
 
-	private function stow($query_line) {
+	public function stow($query_line) {
 		if ($this->dbhandle_isgz) {
-			if(! @gzwrite($this->dbhandle, $query_line)) {
+			if(false == ($ret = @gzwrite($this->dbhandle, $query_line))) {
 				//$updraftplus->log(__('There was an error writing a line to the backup script:','wp-db-backup') . '  ' . $query_line . '  ' . $php_errormsg, 'error');
 			}
 		} else {
-			if(false === @fwrite($this->dbhandle, $query_line)) {
+			if(false == ($ret = @fwrite($this->dbhandle, $query_line))) {
 				//$updraftplus->log(__('There was an error writing a line to the backup script:','wp-db-backup') . '  ' . $query_line . '  ' . $php_errormsg, 'error');
 			}
 		}
+		return $ret;
 	}
 
 	private function backup_db_header() {
 
-		@include(ABSPATH.'wp-includes/version.php');
+		@include(ABSPATH.WPINC.'/version.php');
 		global $wp_version, $updraftplus;
 
 		$mysql_version = $this->wpdb_obj->db_version();
@@ -1409,6 +1455,7 @@ class UpdraftPlus_Backup {
 	// $exclude is passed by reference so that we can remove elements as they are matched - saves time checking against already-dealt-with objects
 	private function makezip_recursive_add($fullpath, $use_path_when_storing, $original_fullpath, $startlevels = 1, &$exclude) {
 
+		# TODO: Make compatible with filenames which indicate increments
 		$zipfile = $this->zip_basename.(($this->index == 0) ? '' : ($this->index+1)).'.zip.tmp';
 
 		global $updraftplus;
@@ -1419,7 +1466,7 @@ class UpdraftPlus_Backup {
 
 		// Is the place we've ended up above the original base? That leads to infinite recursion
 		if (($fullpath !== $original_fullpath && strpos($original_fullpath, $fullpath) === 0) || ($original_fullpath == $fullpath && ((1== $startlevels && strpos($use_path_when_storing, '/') !== false) || (2 == $startlevels && substr_count($use_path_when_storing, '/') >1)))) {
-			$updraftplus->log("Infinite recursion: symlink lead us to $fullpath, which is within $original_fullpath");
+			$updraftplus->log("Infinite recursion: symlink led us to $fullpath, which is within $original_fullpath");
 			$updraftplus->log(__("Infinite recursion: consult your log for more information",'updraftplus'), 'error');
 			return false;
 		}
@@ -1432,25 +1479,37 @@ class UpdraftPlus_Backup {
 			return true;
 		}
 
-		if(is_file($fullpath)) {
+		$if_altered_since = $this->makezip_if_altered_since;
+
+		if (is_file($fullpath)) {
 			if (is_readable($fullpath)) {
-				$key = ($fullpath == $original_fullpath) ? ((2 == $startlevels) ? $use_path_when_storing : basename($fullpath)) : $use_path_when_storing.'/'.basename($fullpath);
-				$this->zipfiles_batched[$fullpath] = $key;
-				$this->makezip_recursive_batchedbytes += @filesize($fullpath);
-				#@touch($zipfile);
+				$mtime = filemtime($fullpath);
+				$key = ($fullpath == $original_fullpath) ? ((2 == $startlevels) ? $use_path_when_storing : $this->basename($fullpath)) : $use_path_when_storing.'/'.$this->basename($fullpath);
+				if ($mtime > 0 && $mtime > $if_altered_since) {
+					$this->zipfiles_batched[$fullpath] = $key;
+					$this->makezip_recursive_batchedbytes += @filesize($fullpath);
+					#@touch($zipfile);
+				} else {
+					$this->zipfiles_skipped_notaltered[$fullpath] = $key;
+				}
 			} else {
 				$updraftplus->log("$fullpath: unreadable file");
 				$updraftplus->log(sprintf(__("%s: unreadable file - could not be backed up (check the file permissions)", 'updraftplus'), $fullpath), 'warning');
 			}
 		} elseif (is_dir($fullpath)) {
+			if (file_exists($fullpath.'/.donotbackup')) {
+				$updraftplus->log("Skip directory (.donotbackup file found): $use_path_when_storing");
+				return true;
+			}
 			if (!isset($this->existing_files[$use_path_when_storing])) $this->zipfiles_dirbatched[] = $use_path_when_storing;
 			if (!$dir_handle = @opendir($fullpath)) {
 				$updraftplus->log("Failed to open directory: $fullpath");
 				$updraftplus->log(sprintf(__("Failed to open directory (check the file permissions): %s",'updraftplus'), $fullpath), 'error');
 				return false;
 			}
+
 			while (false !== ($e = readdir($dir_handle))) {
-				if ($e != '.' && $e != '..') {
+				if ('.' != $e && '..' != $e ) {
 					if (is_link($fullpath.'/'.$e)) {
 						$deref = realpath($fullpath.'/'.$e);
 						if (is_file($deref)) {
@@ -1460,9 +1519,14 @@ class UpdraftPlus_Backup {
 									$updraftplus->log("Entity excluded by configuration option: $use_stripped");
 									unset($exclude[$fkey]);
 								} else {
-									$this->zipfiles_batched[$deref] = $use_path_when_storing.'/'.$e;
-									$this->makezip_recursive_batchedbytes += @filesize($deref);
-									#@touch($zipfile);
+									$mtime = filemtime($deref);
+									if ($mtime > 0 && $mtime > $if_altered_since) {
+										$this->zipfiles_batched[$deref] = $use_path_when_storing.'/'.$e;
+										$this->makezip_recursive_batchedbytes += @filesize($deref);
+										#@touch($zipfile);
+									} else {
+										$this->zipfiles_skipped_notaltered[$deref] = $use_path_when_storing.'/'.$e;
+									}
 								}
 							} else {
 								$updraftplus->log("$deref: unreadable file");
@@ -1478,9 +1542,13 @@ class UpdraftPlus_Backup {
 								$updraftplus->log("Entity excluded by configuration option: $use_stripped");
 								unset($exclude[$fkey]);
 							} else {
-								$this->zipfiles_batched[$fullpath.'/'.$e] = $use_path_when_storing.'/'.$e;
-								$this->makezip_recursive_batchedbytes += @filesize($fullpath.'/'.$e);
-								#@touch($zipfile);
+								$mtime = filemtime($fullpath.'/'.$e);
+								if ($mtime > 0 && $mtime > $if_altered_since) {
+									$this->zipfiles_batched[$fullpath.'/'.$e] = $use_path_when_storing.'/'.$e;
+									$this->makezip_recursive_batchedbytes += @filesize($fullpath.'/'.$e);
+								} else {
+									$this->zipfiles_skipped_notaltered[$fullpath.'/'.$e] = $use_path_when_storing.'/'.$e;
+								}
 							}
 						} else {
 							$updraftplus->log("$fullpath/$e: unreadable file");
@@ -1497,19 +1565,7 @@ class UpdraftPlus_Backup {
 			$updraftplus->log("Unexpected: path ($use_path_when_storing) fails both is_file() and is_dir()");
 		}
 
-		// We don't want to tweak the zip file on every single file, so we batch them up
-		// We go every 25 files, because if you wait too much longer, the contents may have changed from under you. Note though that since this fires once-per-directory, the actual number by this stage may be much larger; the most we saw was over 3000; but in that case, makezip_addfiles() will split the write-out up into smaller chunks
-		// And for some redundancy (redundant because of the touches going on anyway), we try to touch the file after 20 seconds, to help with the "recently modified" check on resumption (we saw a case where the file went for 155 seconds without being touched and so the other runner was not detected)
-		if (count($this->zipfiles_batched) > 25 || (file_exists($zipfile) && ((time()-filemtime($zipfile)) > 20) )) {
-			$ret = true;
-			# In fact, this is entirely redundant, and slows things down - the logic in makezip_addfiles() now does this, much better
-			# If adding this back in, then be careful - we now assume that makezip_recursive_add() does *not* touch the zipfile
-// 			$ret = $this->makezip_addfiles();
-		} else {
-			$ret = true;
-		}
-
-		return $ret;
+		return true;
 
 	}
 
@@ -1521,6 +1577,7 @@ class UpdraftPlus_Backup {
 
 		$original_index = $this->index;
 
+		# TODO: Make compatible with filenames which indicate increments
 		$itext = (empty($this->index)) ? '' : ($this->index+1);
 		$destination_base = $backup_file_basename.'-'.$whichone.$itext.'.zip.tmp';
 		$destination = $this->updraft_dir.'/'.$destination_base;
@@ -1547,6 +1604,7 @@ class UpdraftPlus_Backup {
 		// Enumerate existing files
 		for ($j=0; $j<=$this->index; $j++) {
 			$jtext = ($j == 0) ? '' : ($j+1);
+			# TODO: Make compatible with filenames which indicate increments
 			$examine_zip = $this->updraft_dir.'/'.$backup_file_basename.'-'.$whichone.$jtext.'.zip'.(($j == $this->index) ? '.tmp' : '');
 
 			// If the file exists, then we should grab its index of files inside, and sizes
@@ -1598,13 +1656,11 @@ class UpdraftPlus_Backup {
 		$this->zipfiles_added_thisrun = 0;
 		$this->zipfiles_dirbatched = array();
 		$this->zipfiles_batched = array();
+		$this->zipfiles_skipped_notaltered = array();
 		$this->zipfiles_lastwritetime = time();
-
 		$this->zip_basename = $this->updraft_dir.'/'.$backup_file_basename.'-'.$whichone;
 
-		if (!empty($do_bump_index)) {
-			$this->bump_index();
-		}
+		if (!empty($do_bump_index)) $this->bump_index();
 
 		$error_occurred = false;
 
@@ -1616,13 +1672,22 @@ class UpdraftPlus_Backup {
 		if (!is_array($source)) $source=array($source);
 
 		$exclude = $updraftplus->get_exclude($whichone);
+
+		$files_enumerated_at = $updraftplus->jobdata_get('files_enumerated_at');
+		if (!is_array($files_enumerated_at)) $files_enumerated_at = array();
+		$files_enumerated_at[$whichone] = time();
+		$updraftplus->jobdata_set('files_enumerated_at', $files_enumerated_at);
+
+		$this->makezip_if_altered_since = (is_array($this->altered_since)) ? (isset($this->altered_since[$whichone]) ? $this->altered_since[$whichone] : -1) : -1;
+
 		foreach ($source as $element) {
 			#makezip_recursive_add($fullpath, $use_path_when_storing, $original_fullpath, $startlevels = 1, $exclude_array)
 			if ('uploads' == $whichone) {
 				$dirname = dirname($element);
-				$add_them = $this->makezip_recursive_add($element, basename($dirname).'/'.basename($element), $element, 2, $exclude);
+				$basename = $this->basename($element);
+				$add_them = $this->makezip_recursive_add($element, basename($dirname).'/'.$basename, $element, 2, $exclude);
 			} else {
-				$add_them = $this->makezip_recursive_add($element, basename($element), $element, 1, $exclude);
+				$add_them = $this->makezip_recursive_add($element, $this->basename($element), $element, 1, $exclude);
 			}
 			if (is_wp_error($add_them) || false === $add_them) $error_occurred = true;
 		}
@@ -1634,7 +1699,7 @@ class UpdraftPlus_Backup {
 		if (empty($do_bump_index)) @touch($destination);
 
 		if (count($this->zipfiles_dirbatched)>0 || count($this->zipfiles_batched)>0) {
-			$updraftplus->log(sprintf("Total entities for the zip file: %d directories, %d files, %s Mb", count($this->zipfiles_dirbatched), count($this->zipfiles_batched), round($this->makezip_recursive_batchedbytes/1048576,1)));
+			$updraftplus->log(sprintf("Total entities for the zip file: %d directories, %d files (%d skipped as non-modified), %s Mb", count($this->zipfiles_dirbatched), count($this->zipfiles_batched), count($this->zipfiles_skipped_notaltered), round($this->makezip_recursive_batchedbytes/1048576,1)));
 			$add_them = $this->makezip_addfiles();
 			if (is_wp_error($add_them)) {
 				foreach ($add_them->get_error_messages() as $msg) {
@@ -1650,6 +1715,7 @@ class UpdraftPlus_Backup {
 		# Reset these variables because the index may have changed since we began
 
 		$itext = (empty($this->index)) ? '' : ($this->index+1);
+		# TODO: Make compatible with filenames which indicate increments
 		$destination_base = $backup_file_basename.'-'.$whichone.$itext.'.zip.tmp';
 		$destination = $this->updraft_dir.'/'.$destination_base;
 
@@ -1674,6 +1740,23 @@ class UpdraftPlus_Backup {
 
 	}
 
+	private function basename($element) {
+		# This function is an ugly, conservative workaround for https://bugs.php.net/bug.php?id=62119. It does not aim to always work-around, but to ensure that nothing is made worse.
+		$dirname = dirname($element);
+		$basename_manual = preg_replace('#^[\\/]+#', '', substr($element, strlen($dirname)));
+		$basename = basename($element);
+		if ($basename_manual != $basename) {
+			$locale = setlocale(LC_CTYPE, "0");
+			if ('C' == $locale) {
+				setlocale(LC_CTYPE, 'en_US.UTF8');
+				$basename_new = basename($element);
+				if ($basename_new == $basename_manual) $basename = $basename_new;
+				setlocale(LC_CTYPE, $locale);
+			}
+		}
+		return $basename;
+	}
+
 	// Q. Why don't we only open and close the zip file just once?
 	// A. Because apparently PHP doesn't write out until the final close, and it will return an error if anything file has vanished in the meantime. So going directory-by-directory reduces our chances of hitting an error if the filesystem is changing underneath us (which is very possible if dealing with e.g. 1Gb of files)
 
@@ -1685,6 +1768,7 @@ class UpdraftPlus_Backup {
 		# Used to detect requests to bump the size
 		$bump_index = false;
 
+		# TODO: Make compatible with filenames which indicate increments
 		$zipfile = $this->zip_basename.(($this->index == 0) ? '' : ($this->index+1)).'.zip.tmp';
 
 		$maxzipbatch = $updraftplus->jobdata_get('maxzipbatch', 26214400);
@@ -1696,33 +1780,43 @@ class UpdraftPlus_Backup {
 		# If on PclZip, then if possible short-circuit to a quicker method (makes a huge time difference - on a folder of 1500 small files, 2.6s instead of 76.6)
 		# This assumes that makezip_addfiles() is only called once so that we know about all needed files (the new style)
 		# This is rather conservative - because it assumes zero compression. But we can't know that in advance.
-		if (0 == $this->index && 'UpdraftPlus_PclZip' == $this->use_zip_object && $this->makezip_recursive_batchedbytes < $this->zip_split_every && ($this->makezip_recursive_batchedbytes < 512*1024*1024 || (defined('UPDRAFTPLUS_PCLZIP_FORCEALLINONE') && UPDRAFTPLUS_PCLZIP_FORCEALLINONE == true))) {
-			$updraftplus->log("PclZip, and only one archive required - will attempt to do in single operation (data: ".round($this->makezip_recursive_batchedbytes/1024,1)." Kb, split: ".round($this->zip_split_every/1024, 1)." Kb)");
-			if(!class_exists('PclZip')) require_once(ABSPATH.'/wp-admin/includes/class-pclzip.php');
-			$zip = new PclZip($zipfile);
-			$remove_path = ($this->whichone == 'wpcore') ? untrailingslashit(ABSPATH) : WP_CONTENT_DIR;
-			$add_path = false;
-			// Remove prefixes
-			$backupable_entities = $updraftplus->get_backupable_file_entities(true);
-			if (isset($backupable_entities[$this->whichone])) {
-					if ('plugins' == $this->whichone || 'themes' == $this->whichone || 'uploads' == $this->whichone) {
-						$remove_path = dirname($backupable_entities[$this->whichone]);
-						# To normalise instead of removing (which binzip doesn't support, so we don't do it), you'd remove the dirname() in the above line, and uncomment the below one.
-						#$add_path = $this->whichone;
-					} else {
-						$remove_path = $backupable_entities[$this->whichone];
-					}
-			}
-			if ($add_path) {
-					$zipcode = $zip->create($this->source, PCLZIP_OPT_REMOVE_PATH, $remove_path, PCLZIP_OPT_ADD_PATH, $add_path);
-			} else {
-				$zipcode = $zip->create($this->source, PCLZIP_OPT_REMOVE_PATH, $remove_path);
-			}
-			if ($zipcode == 0 ) {
-				$updraftplus->log("PclZip Error: ".$zip->errorInfo(true), 'warning');
-				return $zip->errorCode();
-			} else {
-				return true;
+		$force_allinone = false;
+		if (0 == $this->index && $this->makezip_recursive_batchedbytes < $this->zip_split_every) {
+			# So far, we only have a processor for this for PclZip; but that check can be removed - need to address the below items
+			# TODO: Is this really what we want? Always go all-in-one for < 500Mb???? Should be more conservative? Or, is it always faster to go all-in-one? What about situations where we might want to auto-split because of slowness - check that that is still working.
+			# TODO: Test this new method for PclZip - are we still getting the performance gains? Test for ZipArchive too.
+			# TODO: Test that we get a manifest for PclZip on increments when on all-in-one
+			if ('UpdraftPlus_PclZip' == $this->use_zip_object && ($this->makezip_recursive_batchedbytes < 512*1048576 || (defined('UPDRAFTPLUS_PCLZIP_FORCEALLINONE') && UPDRAFTPLUS_PCLZIP_FORCEALLINONE == true && 'UpdraftPlus_PclZip' == $this->use_zip_object))) {
+				$updraftplus->log("Only one archive required (".$this->use_zip_object.") - will attempt to do in single operation (data: ".round($this->makezip_recursive_batchedbytes/1024,1)." Kb, split: ".round($this->zip_split_every/1024, 1)." Kb)");
+// 				$updraftplus->log("PclZip, and only one archive required - will attempt to do in single operation (data: ".round($this->makezip_recursive_batchedbytes/1024,1)." Kb, split: ".round($this->zip_split_every/1024, 1)." Kb)");
+				$force_allinone = true;
+// 				if(!class_exists('PclZip')) require_once(ABSPATH.'/wp-admin/includes/class-pclzip.php');
+// 				$zip = new PclZip($zipfile);
+// 				$remove_path = ($this->whichone == 'wpcore') ? untrailingslashit(ABSPATH) : WP_CONTENT_DIR;
+// 				$add_path = false;
+// 				// Remove prefixes
+// 				$backupable_entities = $updraftplus->get_backupable_file_entities(true);
+// 				if (isset($backupable_entities[$this->whichone])) {
+// 					if ('plugins' == $this->whichone || 'themes' == $this->whichone || 'uploads' == $this->whichone) {
+// 						$remove_path = dirname($backupable_entities[$this->whichone]);
+// 						# To normalise instead of removing (which binzip doesn't support, so we don't do it), you'd remove the dirname() in the above line, and uncomment the below one.
+// 						#$add_path = $this->whichone;
+// 					} else {
+// 						$remove_path = $backupable_entities[$this->whichone];
+// 					}
+// 				}
+// 				if ($add_path) {
+// 					$zipcode = $zip->create($this->source, PCLZIP_OPT_REMOVE_PATH, $remove_path, PCLZIP_OPT_ADD_PATH, $add_path);
+// 				} else {
+// 					$zipcode = $zip->create($this->source, PCLZIP_OPT_REMOVE_PATH, $remove_path);
+// 				}
+// 				if ($zipcode == 0) {
+// 					$updraftplus->log("PclZip Error: ".$zip->errorInfo(true), 'warning');
+// 					return $zip->errorCode();
+// 				} else {
+// 					$updraftplus->something_useful_happened();
+// 					return true;
+// 				}
 			}
 		}
 
@@ -1744,11 +1838,11 @@ class UpdraftPlus_Backup {
 		}
 
 		if ($opencode !== true) return new WP_Error('no_open', sprintf(__('Failed to open the zip file (%s) - %s', 'updraftplus'),$zipfile, $zip->last_error));
-		// Make sure all directories are created before we start creating files
-		while ($dir = array_pop($this->zipfiles_dirbatched)) {
-			$zip->addEmptyDir($dir);
-		}
+		# TODO: This action isn't being called for the all-in-one case - should be, I think
+		do_action("updraftplus_makezip_addfiles_prepack", $this, $this->whichone);
 
+		// Make sure all directories are created before we start creating files
+		while ($dir = array_pop($this->zipfiles_dirbatched)) $zip->addEmptyDir($dir);
 		$zipfiles_added_thisbatch = 0;
 
 		// Go through all those batched files
@@ -1772,7 +1866,7 @@ class UpdraftPlus_Backup {
 				$data_added_since_reopen += $fsize;
 				/* Conditions for forcing a write-out and re-open:
 				- more than $maxzipbatch bytes have been batched
-				- more than 1.5 seconds have passed since the last time we wrote
+				- more than 2.0 seconds have passed since the last time we wrote
 				- that adding this batch of data is likely already enough to take us over the split limit (and if that happens, then do actually split - to prevent a scenario of progressively tinier writes as we approach but don't actually reach the limit)
 				- more than 500 files batched (should perhaps intelligently lower this as the zip file gets bigger - not yet needed)
 				*/
@@ -1781,7 +1875,7 @@ class UpdraftPlus_Backup {
 				# Since we don't test before the file has been created (so that zip_last_ratio has meaningful data), we rely on max_zip_batch being less than zip_split_every - which should always be the case
 				$reaching_split_limit = ( $this->zip_last_ratio > 0 && $original_size>0 && ($original_size + 1.1*$data_added_since_reopen*$this->zip_last_ratio) > $this->zip_split_every) ? true : false;
 
-				if ($zipfiles_added_thisbatch > UPDRAFTPLUS_MAXBATCHFILES || $reaching_split_limit || $data_added_since_reopen > $maxzipbatch || (time() - $this->zipfiles_lastwritetime) > 1.5) {
+				if (!$force_allinone && ($zipfiles_added_thisbatch > UPDRAFTPLUS_MAXBATCHFILES || $reaching_split_limit || $data_added_since_reopen > $maxzipbatch || (time() - $this->zipfiles_lastwritetime) > 2)) {
 
 					@set_time_limit(900);
 					$something_useful_sizetest = false;
@@ -1792,7 +1886,7 @@ class UpdraftPlus_Backup {
 					} elseif ($zipfiles_added_thisbatch > UPDRAFTPLUS_MAXBATCHFILES) {
 						$updraftplus->log("Adding batch to zip file (".$this->use_zip_object."): over ".UPDRAFTPLUS_MAXBATCHFILES." files added on this batch (".round($data_added_since_reopen/1048576,1)." Mb, ".count($this->zipfiles_batched)." files batched, $zipfiles_added_thisbatch (".$this->zipfiles_added_thisrun.") added so far); re-opening (prior size: ".round($original_size/1024,1).' Kb)');
 					} elseif (!$reaching_split_limit) {
-						$updraftplus->log("Adding batch to zip file (".$this->use_zip_object."): over 1.5 seconds have passed since the last write (".round($data_added_since_reopen/1048576,1)." Mb, $zipfiles_added_thisbatch (".$this->zipfiles_added_thisrun.") files added so far); re-opening (prior size: ".round($original_size/1024,1).' Kb)');
+						$updraftplus->log("Adding batch to zip file (".$this->use_zip_object."): over 2.0 seconds have passed since the last write (".round($data_added_since_reopen/1048576,1)." Mb, $zipfiles_added_thisbatch (".$this->zipfiles_added_thisrun.") files added so far); re-opening (prior size: ".round($original_size/1024,1).' Kb)');
 					} else {
 						$updraftplus->log("Adding batch to zip file (".$this->use_zip_object."): possibly approaching split limit (".round($data_added_since_reopen/1048576,1)." Mb, $zipfiles_added_thisbatch (".$this->zipfiles_added_thisrun.") files added so far); last ratio: ".round($this->zip_last_ratio,4)."; re-opening (prior size: ".round($original_size/1024,1).' Kb)');
 					}
@@ -1811,7 +1905,7 @@ class UpdraftPlus_Backup {
 					// Call here, in case we've got so many big files that we don't complete the whole routine
 					if (filesize($zipfile) > $original_size) {
 
-						# It is essential that this does not go above 1, even though in reality (and this can happen at the start, if just 1 file is added (e.g. due to >1.5s detection) the 'compressed' zip file may be *bigger* than the files stored in it. When that happens, if the ratio is big enough, it can then fire the "approaching split limit" detection (very) prematurely
+						# It is essential that this does not go above 1, even though in reality (and this can happen at the start, if just 1 file is added (e.g. due to >2.0s detection) the 'compressed' zip file may be *bigger* than the files stored in it. When that happens, if the ratio is big enough, it can then fire the "approaching split limit" detection (very) prematurely
 						$this->zip_last_ratio = ($data_added_since_reopen > 0) ? min((filesize($zipfile) - $original_size)/$data_added_since_reopen, 1) : 1;
 
 						# We need a rolling update of this
@@ -1857,7 +1951,7 @@ class UpdraftPlus_Backup {
 							if ($updraftplus->current_resumption >= 1) {
 								$time_passed = $updraftplus->jobdata_get('run_times');
 								if (!is_array($time_passed)) $time_passed = array();
-								list($max_time, $timings_string, $run_times_known) = $updraftplus->max_time_passed($time_passed, $updraftplus->current_resumption-1);
+								list($max_time, $timings_string, $run_times_known) = $updraftplus->max_time_passed($time_passed, $updraftplus->current_resumption-1, $this->first_run);
 							} else {
 								$run_times_known = 0;
 								$max_time = -1;
@@ -1953,7 +2047,7 @@ class UpdraftPlus_Backup {
 					$this->zipfiles_lastwritetime = time();
 				}
 			} elseif (0 == $this->zipfiles_added_thisrun) {
-				// Update lastwritetime, because otherwise the 1.5-second-activity detection can fire prematurely (e.g. if it takes >1.5 seconds to process the previously-written files, then the detector fires after 1 file. This then can have the knock-on effect of having something_useful_happened() called, but then a subsequent attempt to write out a lot of meaningful data fails, and the maximum batch is not then reduced.
+				// Update lastwritetime, because otherwise the 2.0-second-activity detection can fire prematurely (e.g. if it takes >2.0 seconds to process the previously-written files, then the detector fires after 1 file. This then can have the knock-on effect of having something_useful_happened() called, but then a subsequent attempt to write out a lot of meaningful data fails, and the maximum batch is not then reduced.
 				// Testing shows that calling time() 1000 times takes negligible time
 				$this->zipfiles_lastwritetime=time();
 			}
@@ -1965,8 +2059,10 @@ class UpdraftPlus_Backup {
 				$updraftplus->log(sprintf("Zip size is at/near split limit (%s Mb / %s Mb) - bumping index (from: %d)", $bumped_at, round($this->zip_split_every/1048576, 1), $this->index));
 				$bump_index = false;
 				$this->bump_index();
+				# TODO: Make compatible with filenames which indicate increments
 				$zipfile = $this->zip_basename.($this->index+1).'.zip.tmp';
 			}
+
 			if (empty($zip)) {
 				$zip = new $this->use_zip_object;
 
@@ -1980,22 +2076,24 @@ class UpdraftPlus_Backup {
 					$original_size = 0;
 				}
 
-				if ($opencode !== true) return new WP_Error('no_open', sprintf(__('Failed to open the zip file (%s) - %s', 'updraftplus'),$zipfile, $zip->last_error));
+				if ($opencode !== true) return new WP_Error('no_open', sprintf(__('Failed to open the zip file (%s) - %s', 'updraftplus'), $zipfile, $zip->last_error));
 			}
 
 		}
 
 		# Reset array
 		$this->zipfiles_batched = array();
+		$this->zipfiles_skipped_notaltered = array();
 
-		$ret = $zip->close();
-		if (!$ret) {
+		if (false == ($ret = $zip->close())) {
 			$updraftplus->log(__('A zip error occurred - check your log for more details.', 'updraftplus'), 'warning', 'zipcloseerror');
 			$updraftplus->log("Closing the zip file returned an error (".$zip->last_error."). List of files we were trying to add follows (check their permissions).");
 			foreach ($files_zipadded_since_open as $ffile) {
 				$updraftplus->log("File: ".$ffile['addas']." (exists: ".(int)@file_exists($ffile['file']).", size: ".@filesize($ffile['file']).')');
 			}
 		}
+
+		do_action("updraftplus_makezip_addfiles_finished", $this, $this->whichone);
 
 		$this->zipfiles_lastwritetime = time();
 		# May not exist if the last thing we did was bump
@@ -2027,6 +2125,7 @@ class UpdraftPlus_Backup {
 		# We touch the next zip before renaming the temporary file; this indicates that the backup for the entity is not *necessarily* finished
 		touch($next_full_path.'.tmp');
 
+		# TODO: Make compatible with filenames which indicate increments
 		@rename($full_path.'.tmp', $full_path);
 		$kbsize = filesize($full_path)/1024;
 		$rate = round($kbsize/$timetaken, 1);

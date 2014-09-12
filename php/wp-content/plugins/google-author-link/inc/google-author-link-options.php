@@ -255,7 +255,7 @@ function galink_options_show() {
         <h2>Love this plugin?</h2>
         <p>Why not donate a few dollars to help maintain it.</p><p>We have a quick donation tool that uses PayPal <a href="http://helpforwp.com/donate/" target="_blank">right here!</a></p>
         
-		<h3>Documenation and tutorials</h3>
+		<h3>Documentation and tutorials</h3>
 		<p>We have a <a target="_blank" href="http://helpforwp.com/tag/google-author-link/">number of blog posts</a> with some extra information on this plugin, as well visit the <a target="_blank" href="http://helpforwp.com/plugins/google-author-link/">plugin's home page here</a>.</p>
         <h3>Google Author Link Plugin Support</h3>
         <p>We provide support for all of our plugins, if you're having a problem or have a quick question, <a href="http://helpforwp.com/forum/" target="_blank">create a support request here</a></p>

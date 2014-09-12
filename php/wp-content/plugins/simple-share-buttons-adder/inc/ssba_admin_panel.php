@@ -15,7 +15,7 @@ function ssba_admin_panel($arrSettings, $htmlSettingsSaved) {
 		
 		// top nav
 		$htmlShareButtonsForm .= '<div id="ssba-top-nav">';
-			$htmlShareButtonsForm .= '<a href="http://www.simplesharebuttons.com/forums/forum/wordpress-forum/" target="_blank">Support</a>';
+			$htmlShareButtonsForm .= '<a href="http://wordpress.org/support/plugin/simple-share-buttons-adder" target="_blank">Support</a>';
 			$htmlShareButtonsForm .= '<a href="http://www.simplesharebuttons.com/wordpress-faq/" target="_blank">FAQ</a>';
 			$htmlShareButtonsForm .= '<a href="http://www.simplesharebuttons.com/showcase/" target="_blank">Showcase</a>';
 			$htmlShareButtonsForm .= '<a href="http://www.simplesharebuttons.com/donate/" target="_blank">Donate</a>';
