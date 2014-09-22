@@ -726,7 +726,7 @@ class ITSEC_Global_Settings {
 		if ( isset( $this->settings['log_rotation'] ) ) {
 			$log_rotation = absint( $this->settings['log_rotation'] );
 		} else {
-			$log_rotation = 30;
+			$log_rotation = 14;
 		}
 
 		echo '<input class="small-text" name="itsec_global[log_rotation]" id="itsec_global_log_rotation" value="' . $log_rotation . '" type="text">';
@@ -981,7 +981,7 @@ class ITSEC_Global_Settings {
 		$input['blacklist_period']          = isset( $input['blacklist_period'] ) ? absint( $input['blacklist_period'] ) : 7;
 		$input['email_notifications']       = ( isset( $input['email_notifications'] ) && intval( $input['email_notifications'] == 1 ) ? true : false );
 		$input['lockout_period']            = isset( $input['lockout_period'] ) ? absint( $input['lockout_period'] ) : 15;
-		$input['log_rotation']              = isset( $input['log_rotation'] ) ? absint( $input['log_rotation'] ) : 30;
+		$input['log_rotation']              = isset( $input['log_rotation'] ) ? absint( $input['log_rotation'] ) : 14;
 		$input['allow_tracking']            = ( isset( $input['allow_tracking'] ) && intval( $input['allow_tracking'] == 1 ) ? true : false );
 		$input['write_files']               = ( isset( $input['write_files'] ) && intval( $input['write_files'] == 1 ) ? true : false );
 		$input['nginx_file']                = isset( $input['nginx_file'] ) ? sanitize_text_field( $input['nginx_file'] ) : ABSPATH . 'nginx.conf';
@@ -1071,16 +1071,16 @@ class ITSEC_Global_Settings {
 
 		if ( $good_path !== true ) {
 
+			$input['log_location'] = $itsec_globals['ithemes_log_dir'];
+
 			$type              = 'error';
-			$message           = __( 'The file path entered does not appear to be valid. Please ensure it exists and that WordPress can write to it. ',
-			                         'it-l10n-better-wp-security' );
-			$input['log_type'] = 0;
+			$message           = __( 'The file path entered for the log location does not appear to be valid. it has been reset to: ' . $itsec_globals['ithemes_log_dir'], 'it-l10n-better-wp-security' );
 
 			add_settings_error( 'itsec', esc_attr( 'settings_updated' ), $message, $type );
 
-		} else {
-			$input['log_type'] = isset( $input['log_type'] ) ? intval( $input['log_type'] ) : 0;
 		}
+
+		$input['log_type'] = isset( $input['log_type'] ) ? intval( $input['log_type'] ) : 0;
 
 		if ( ! isset( $type ) && $input['write_files'] === true && $this->settings['write_files'] === false ) {
 

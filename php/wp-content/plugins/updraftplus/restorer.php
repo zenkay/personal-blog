@@ -20,6 +20,9 @@ class Updraft_Restorer extends WP_Upgrader {
 	private $ud_backup_info;
 	public $ud_foreign;
 
+	# The default of false means "use the global $wpdb"
+	private $wpdb_obj = false;
+
 	public function __construct($skin = null, $info = null, $shortinit = false) {
 
 		global $wpdb;
@@ -33,6 +36,7 @@ class Updraft_Restorer extends WP_Upgrader {
 			if (!$wpdb_obj->is_mysql || !$wpdb_obj->ready) {
 				$this->use_wpdb = true;
 			} else {
+				$this->wpdb_obj = $wpdb_obj;
 				$this->mysql_dbh = $wpdb_obj->updraftplus_getdbh();
 				$this->use_mysqli = $wpdb_obj->updraftplus_use_mysqli();
 			}
@@ -865,6 +869,7 @@ class Updraft_Restorer extends WP_Upgrader {
 				$this->chmod_if_needed($wp_filesystem_dir, FS_CHMOD_DIR, false, $wp_filesystem);
 			break;
 			case 'db':
+				if (function_exists('wp_cache_flush')) wp_cache_flush();
 				do_action('updraftplus_restored_db', array('expected_oldsiteurl' => $this->old_siteurl, 'expected_oldhome' => $this->old_home, 'expected_oldcontent' => $this->old_content), $import_table_prefix);
 				$this->flush_rewrite_rules();
 
@@ -1325,6 +1330,9 @@ class Updraft_Restorer extends WP_Upgrader {
 				// This CREATE TABLE command may be the de-facto mark for the end of processing a previous table (which is so if this is not the first table in the SQL dump)
 				if ($restoring_table) {
 
+					# Attempt to reconnect if the DB connection dropped (may not succeed, of course - but that will soon become evident)
+					$updraftplus->check_db_connection($this->wpdb_obj);
+
 					// After restoring the options table, we can set old_siteurl if on legacy (i.e. not already set)
 					if ($restoring_table == $import_table_prefix.'options') {
 						if ('' == $this->old_siteurl || '' == $this->old_home || '' == $this->old_content) {
@@ -1509,7 +1517,7 @@ class Updraft_Restorer extends WP_Upgrader {
 		} elseif ($sql_type == 2) {
 			$this->tables_created++;
 		}
-		if (($this->line)%50 == 0) {
+		if ($this->line >0 && ($this->line)%50 == 0) {
 			if (($this->line)%250 == 0 || $this->line<250) {
 				$time_taken = microtime(true) - $this->start_time;
 				$updraftplus->log_e('Database queries processed: %d in %.2f seconds',$this->line, $time_taken);
@@ -1613,6 +1621,9 @@ class Updraft_Restorer extends WP_Upgrader {
 						$updraftplus->log_e("Elegant themes theme builder plugin data detected: resetting temporary folder");
 						update_option('et_images_temp_folder', $edir.'/'.$dbase);
 					}
+					# The gantry menu plugin sometimes uses too-long transient names, causing the timeout option to be missing; and hence the transient becomes permanent.
+					# WP 3.4 onwards has $wpdb->delete(). But we support 3.2 onwards.
+					$wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_gantry-menu%' OR option_name LIKE '_transient_timeout_gantry-menu%'");
 				}
 			}
 

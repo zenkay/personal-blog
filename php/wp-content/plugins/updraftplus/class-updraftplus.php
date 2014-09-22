@@ -10,11 +10,12 @@ class UpdraftPlus {
 
 	// Choices will be shown in the admin menu in the order used here
 	public $backup_methods = array(
-		's3' => 'Amazon S3',
 		'dropbox' => 'Dropbox',
+		's3' => 'Amazon S3',
 		'cloudfiles' => 'Rackspace Cloud Files',
 		'googledrive' => 'Google Drive',
 		'ftp' => 'FTP',
+		'copycom' => 'Copy.Com',
 		'sftp' => 'SFTP / SCP',
 		'webdav' => 'WebDAV',
 		'bitcasa' => 'Bitcasa',
@@ -172,8 +173,16 @@ class UpdraftPlus {
 
 	}
 
-	public function add_curl_capath($handle) {
-		if (!UpdraftPlus_Options::get_updraft_option('updraft_ssl_useservercerts')) curl_setopt($handle, CURLOPT_CAINFO, UPDRAFTPLUS_DIR.'/includes/cacert.pem' );
+	public function modify_http_options($opts) {
+
+		if (!is_array($opts)) return $opts;
+
+		if (!UpdraftPlus_Options::get_updraft_option('updraft_ssl_useservercerts')) $opts['sslcertificates'] = UPDRAFTPLUS_DIR.'/includes/cacert.pem';
+
+		$opts['sslverify'] = (UpdraftPlus_Options::get_updraft_option('updraft_ssl_disableverify')) ? false : true;
+
+		return $opts;
+
 	}
 
 	// Handle actions passed on to method plugins; e.g. Google OAuth 2.0 - ?action=updraftmethod-googledrive-auth&page=updraftplus
@@ -192,7 +201,7 @@ class UpdraftPlus {
 				$call_class = "UpdraftPlus_BackupModule_".$method;
 				$call_method = "action_".$matches[2];
 				$backup_obj = new $call_class;
-				add_action('http_api_curl', array($this, 'add_curl_capath'));
+				add_action('http_request_args', array($this, 'modify_http_options'));
 				try {
 					if (method_exists($backup_obj, $call_method)) {
 						call_user_func(array($backup_obj, $call_method));
@@ -202,7 +211,7 @@ class UpdraftPlus {
 				} catch (Exception $e) {
 					$this->log(sprintf(__("%s error: %s", 'updraftplus'), $method, $e->getMessage().' ('.$e->getCode().')', 'error'));
 				}
-				remove_action('http_api_curl', array($this, 'add_curl_capath'));
+				remove_action('http_request_args', array($this, 'modify_http_options'));
 			} elseif (isset( $_GET['page'] ) && $_GET['page'] == 'updraftplus' && $_GET['action'] == 'downloadlog' && isset($_GET['updraftplus_backup_nonce']) && preg_match("/^[0-9a-f]{12}$/",$_GET['updraftplus_backup_nonce']) && UpdraftPlus_Options::user_can_manage()) {
 				// No WordPress nonce is needed here or for the next, since the backup is already nonce-based
 				$updraft_dir = $this->backups_dir_location();
@@ -589,7 +598,7 @@ class UpdraftPlus {
 
 	}
 
-	public function chunked_upload($caller, $file, $cloudpath, $logname, $chunk_size, $uploaded_size) {
+	public function chunked_upload($caller, $file, $cloudpath, $logname, $chunk_size, $uploaded_size, $singletons=false) {
 
 		$fullpath = $this->backups_dir_location().'/'.$file;
 		$orig_file_size = filesize($fullpath);
@@ -604,11 +613,13 @@ class UpdraftPlus {
 
 		$chunks = floor($orig_file_size / $chunk_size);
 		// There will be a remnant unless the file size was exactly on a 5Mb boundary
-		if ($orig_file_size % $chunk_size > 0 ) $chunks++;
+		if ($orig_file_size % $chunk_size > 0) $chunks++;
 
 		$this->log("$logname upload: $file (chunks: $chunks) -> $cloudpath ($uploaded_size)");
 
-		if ($chunks < 2) {
+		if ($chunks == 0) {
+			return 1;
+		} elseif ($chunks < 2 && !$singletons) {
 			return 1;
 		} else {
 			$errors_so_far = 0;
@@ -646,7 +657,8 @@ class UpdraftPlus {
 			}
 			if ($ret) {
 				$this->log("$logname upload: success");
-				$this->uploaded_file($file);
+				# UpdraftPlus_RemoteStorage_Addons_Base calls this itself
+				if (!is_a($caller, 'UpdraftPlus_RemoteStorage_Addons_Base')) $this->uploaded_file($file);
 			}
 
 			return $ret;
@@ -675,17 +687,31 @@ class UpdraftPlus {
 
 			$last_byte = ($manually_break_up) ? min($remote_size, $start_offset + 1048576) : $remote_size;
 
+			# This only affects logging
+			$expected_bytes_delivered_so_far = true;
+
 			while ($start_offset < $remote_size) {
 				$headers = array();
 				// If resuming, then move to the end of the file
-				$this->log("$file: local file is status: $start_offset/$remote_size bytes; requesting next ".($last_byte-$start_offset)." bytes");
+
+				$requested_bytes = $last_byte-$start_offset;
+
+				if ($expected_bytes_delivered_so_far) {
+					$this->log("$file: local file is status: $start_offset/$remote_size bytes; requesting next $requested_bytes bytes");
+				} else {
+					$this->log("$file: local file is status: $start_offset/$remote_size bytes; requesting next chunk (${start_offset}-)");
+				}
+
 				if ($start_offset >0 || $last_byte<$remote_size) {
 					fseek($fh, $start_offset);
 					$headers['Range'] = "bytes=$start_offset-$last_byte";
 				}
 
+				# The method is free to return as much data as it pleases
 				$ret = $method->chunked_download($file, $headers, $passback);
 				if (false === $ret) return false;
+
+				if (strlen($ret) > $requested_bytes || strlen($ret) < $requested_bytes - 1) $expected_bytes_delivered_so_far = false;
 
 				if (!fwrite($fh, $ret)) throw new Exception('Write failure');
 
@@ -1519,7 +1545,7 @@ class UpdraftPlus {
 		if (!is_string($service) && !is_array($service)) $service = UpdraftPlus_Options::get_updraft_option('updraft_service');
 		$service = $this->just_one($service);
 		if (is_string($service)) $service = array($service);
-		if (!is_array($service)) $service = array();
+		if (!is_array($service)) $service = array('none');
 
 		$option_cache = array();
 		foreach ($service as $serv) {
@@ -1736,26 +1762,64 @@ class UpdraftPlus {
 		UpdraftPlus_Options::update_updraft_option('updraft_last_backup', $last_backup, false);
 	}
 
-	// This should be called whenever a file is successfully uploaded
-	public function uploaded_file($file, $force = false) {
-	
-		global $updraftplus_backup, $wpdb;
+	# $handle must be either false or a WPDB class (or extension thereof). Other options are not yet fully supported.
+	public function check_db_connection($handle = false, $logit = false, $reschedule = false) {
+
+		$type = false;
+		if (false === $handle || is_a($handle, 'wpdb')) {
+			$type='wpdb';
+		} elseif (is_resource($handle)) {
+			# Expected: string(10) "mysql link"
+			$type=get_resource_type($handle);
+		} elseif (is_object($handle) && is_a($handle, 'mysqli')) {
+			$type='mysqli';
+		}
+ 
+		if (false === $type) return -1;
 
 		$db_connected = -1;
 
-		# WP 3.9 onwards - https://core.trac.wordpress.org/browser/trunk/src/wp-includes/wp-db.php?rev=27925 - check_connection() allows us to get the database connection back if it had dropped
-		if (method_exists($wpdb, 'check_connection')) {
-			if (!$wpdb->check_connection(false)) {
-				$updraftplus->reschedule(60);
-				$updraftplus->log("It seems the database went away; scheduling a resumption and terminating for now");
-				$db_connected = false;
-			} else {
-				$db_connected = true;
+		if ('mysql link' == $type || 'mysqli' == $type) {
+			if ('mysql link' == $type && @mysql_ping($handle)) return true;
+			if ('mysqli' == $type && @mysqli_ping($handle)) return true;
+
+			for ( $tries = 1; $tries <= 5; $tries++ ) {
+				# to do, if ever needed
+// 				if ( $this->db_connect( false ) ) return true;
+// 				sleep( 1 );
+			}
+
+		} elseif ('wpdb' == $type) {
+			if (false === $handle || (is_object($handle) && 'wpdb' == get_class($handle))) {
+				global $wpdb;
+				$handle = $wpdb;
+			}
+			if (method_exists($handle, 'check_connection')) {
+				if (!$handle->check_connection(false)) {
+					if ($logit) $this->log("The database went away, and could not be reconnected to");
+					# Almost certainly a no-op
+					if ($reschedule) $this->reschedule(60);
+					$db_connected = false;
+				} else {
+					$db_connected = true;
+				}
 			}
 		}
 
+		return $db_connected;
+
+	}
+
+	// This should be called whenever a file is successfully uploaded
+	public function uploaded_file($file, $force = false) {
+	
+		global $updraftplus_backup;
+
+		$db_connected = $this->check_db_connection(false, true, true);
+
 		$service = (empty($updraftplus_backup->current_service)) ? '' : $updraftplus_backup->current_service;
 		$shash = $service.'-'.md5($file);
+
 		$this->jobdata_set("uploaded_".$shash, 'yes');
 	
 		if ($force || !empty($updraftplus_backup->last_service)) {
@@ -1990,7 +2054,12 @@ class UpdraftPlus {
 						$add_to_list = true;
 						// Now deal with entries in $skip_these_dirs ending in * or starting with *
 						foreach ($skip_these_dirs as $skip => $sind) {
-							if ('*' == substr($skip, -1, 1) && strlen($skip) > 1) {
+							if ('*' == substr($skip, -1, 1) && '*' == substr($skip, 0, 1) && strlen($skip) > 2) {
+								if (strpos($entry, substr($skip, 1, strlen($skip-2))) !== false) {
+									$this->log("finding files: $entry: skipping: excluded by options (glob)");
+									$add_to_list = false;
+								}
+							} elseif ('*' == substr($skip, -1, 1) && strlen($skip) > 1) {
 								if (substr($entry, 0, strlen($skip)-1) == substr($skip, 0, strlen($skip)-1)) {
 									$this->log("finding files: $entry: skipping: excluded by options (glob)");
 									$add_to_list = false;
@@ -2124,9 +2193,9 @@ class UpdraftPlus {
 		$old_client_id = (empty($opts['clientid'])) ? '' : $opts['clientid'];
 		if (!empty($opts['token']) && $old_client_id != $google['clientid']) {
 			require_once(UPDRAFTPLUS_DIR.'/methods/googledrive.php');
-			add_action('http_api_curl', array($this, 'add_curl_capath'));
+			add_action('http_request_args', array($this, 'modify_http_options'));
 			UpdraftPlus_BackupModule_googledrive::gdrive_auth_revoke(false);
-			remove_action('http_api_curl', array($this, 'add_curl_capath'));
+			remove_action('http_request_args', array($this, 'modify_http_options'));
 			$google['token'] = '';
 			unset($opts['ownername']);
 		}
@@ -2156,6 +2225,21 @@ class UpdraftPlus {
 			unset($opts['ownername']);
 		}
 		foreach ($bitcasa as $key => $value) { $opts[$key] = $value; }
+		return $opts;
+	}
+
+	// Acts as a WordPress options filter
+	public function copycom_checkchange($copycom) {
+		$opts = UpdraftPlus_Options::get_updraft_option('updraft_copycom');
+		if (!is_array($opts)) $opts = array();
+		if (!is_array($copycom)) return $opts;
+		$old_client_id = (empty($opts['clientid'])) ? '' : $opts['clientid'];
+		if (!empty($opts['token']) && $old_client_id != $copycom['clientid']) {
+			unset($opts['token']);
+			unset($opts['tokensecret']);
+			unset($opts['ownername']);
+		}
+		foreach ($copycom as $key => $value) { $opts[$key] = $value; }
 		return $opts;
 	}
 

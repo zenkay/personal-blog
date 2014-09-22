@@ -48,24 +48,23 @@ class UpdraftPlus_Admin {
 			if (!empty($clientid) && empty($token)) add_action('all_admin_notices', array($this,'show_admin_warning_googledrive'));
 		}
 
-		if (UpdraftPlus_Options::user_can_manage() && ('dropbox' === $service || is_array($service) && in_array('dropbox', $service))) {
-			$opts = UpdraftPlus_Options::get_updraft_option('updraft_dropbox');
-			if (empty($opts['tk_request_token'])) {
-				add_action('all_admin_notices', array($this,'show_admin_warning_dropbox') );
+		if (UpdraftPlus_Options::user_can_manage()) {
+			if ('dropbox' === $service || is_array($service) && in_array('dropbox', $service)) {
+				$opts = UpdraftPlus_Options::get_updraft_option('updraft_dropbox');
+				if (empty($opts['tk_request_token'])) {
+					add_action('all_admin_notices', array($this,'show_admin_warning_dropbox') );
+				}
 			}
+			if ('bitcasa' === $service || is_array($service) && in_array('bitcasa', $service)) {
+				$opts = UpdraftPlus_Options::get_updraft_option('updraft_bitcasa');
+				if (!empty($opts['clientid']) && !empty($opts['secret']) && empty($opts['token'])) add_action('all_admin_notices', array($this,'show_admin_warning_bitcasa') );
+			}
+			if ('copycom' === $service || is_array($service) && in_array('copycom', $service)) {
+				$opts = UpdraftPlus_Options::get_updraft_option('updraft_copycom');
+				if (!empty($opts['clientid']) && !empty($opts['secret']) && empty($opts['token'])) add_action('all_admin_notices', array($this,'show_admin_warning_copycom') );
+			}
+			if ($this->disk_space_check(1048576*35) === false) add_action('all_admin_notices', array($this, 'show_admin_warning_diskspace'));
 		}
-
-		if (UpdraftPlus_Options::user_can_manage() && ('bitcasa' === $service || is_array($service) && in_array('bitcasa', $service))) {
-			$opts = UpdraftPlus_Options::get_updraft_option('updraft_bitcasa');
-			if (!empty($opts['clientid']) && !empty($opts['secret']) && empty($opts['token'])) add_action('all_admin_notices', array($this,'show_admin_warning_bitcasa') );
-		}
-
-		if (UpdraftPlus_Options::user_can_manage() && ('copycom' === $service || is_array($service) && in_array('copycom', $service))) {
-			$opts = UpdraftPlus_Options::get_updraft_option('updraft_copycom');
-			if (!empty($opts['clientid']) && !empty($opts['secret']) && empty($opts['token'])) add_action('all_admin_notices', array($this,'show_admin_warning_copycom') );
-		}
-
-		if (UpdraftPlus_Options::user_can_manage() && $this->disk_space_check(1048576*35) === false) add_action('all_admin_notices', array($this, 'show_admin_warning_diskspace'));
 
 		// Next, the actions that only come on the UpdraftPlus page
 		if ($pagenow != UpdraftPlus_Options::admin_page() || empty($_REQUEST['page']) || 'updraftplus' != $_REQUEST['page']) return;
@@ -368,7 +367,7 @@ class UpdraftPlus_Admin {
 
 	# Adds the settings link under the plugin on the plugin screen.
 	public function plugin_action_links($links, $file) {
-		if (is_array($links) && $file == 'updraftplus/updraftplus.php'){
+		if ($file == 'updraftplus/updraftplus.php'){
 			$settings_link = '<a href="'.UpdraftPlus_Options::admin_page_url().'?page=updraftplus">'.__("Settings", "updraftplus").'</a>';
 			array_unshift($links, $settings_link);
 // 			$settings_link = '<a href="http://david.dw-perspective.org.uk/donate">'.__("Donate","UpdraftPlus").'</a>';
@@ -577,6 +576,7 @@ class UpdraftPlus_Admin {
 		if ($needs_downloading) {
 			$this->close_browser_connection();
 			$is_downloaded = false;
+			add_action('http_request_args', array($updraftplus, 'modify_http_options'));
 			foreach ($services as $service) {
 				if ($is_downloaded) continue;
 				$download = $this->download_file($file, $service);
@@ -590,6 +590,7 @@ class UpdraftPlus_Admin {
 					$updraftplus->log('Remote fetch failed');
 				}
 			}
+			remove_action('http_request_args', array($updraftplus, 'modify_http_options'));
 		}
 
 		// Now, spool the thing to the browser
@@ -929,6 +930,7 @@ class UpdraftPlus_Admin {
 
 			$local_deleted = 0;
 			$remote_deleted = 0;
+			add_action('http_request_args', array($updraftplus, 'modify_http_options'));
 			foreach ($files_to_delete as $key => $files) {
 				# Local deletion
 				if (is_string($files)) $files=array($files);
@@ -958,6 +960,7 @@ class UpdraftPlus_Admin {
 					}
 				}
 			}
+			remove_action('http_request_args', array($updraftplus, 'modify_http_options'));
 			$message .= __('The backup set has been removed.', 'updraftplus')."\n";
 			$message .= sprintf(__('Local archives deleted: %d', 'updraftplus'),$local_deleted)."\n";
 			$message .= sprintf(__('Remote archives deleted: %d', 'updraftplus'),$remote_deleted)."\n";
@@ -1130,6 +1133,7 @@ class UpdraftPlus_Admin {
 			$objname = "UpdraftPlus_BackupModule_$method";
 
 			$this->logged = array();
+			# TODO: Add action for WP HTTP SSL stuff
 			set_error_handler(array($this, 'get_php_errors'), E_ALL & ~E_STRICT);
 			if (method_exists($objname, "credentials_test")) {
 				$obj = new $objname;
@@ -2160,7 +2164,8 @@ CREATE TABLE $wpdb->signups (
 							echo '</div>';
 						} else {
 							$sdescrip = isset($info['shortdescription']) ? $info['shortdescription'] : $info['description'];
-							echo "<div style=\"margin: 8px 0;\"><em>".htmlspecialchars(sprintf(__('The following entity cannot be restored automatically: "%s".', 'updraftplus'), $sdescrip))." ".__('You will need to restore it manually.', 'updraftplus')."</em><br>".'<input id="updraft_restore_'.$type.'" type="hidden" name="updraft_restore[]" value="'.$type.'"></div>';
+							echo "<div style=\"margin: 8px 0;\"><em>".htmlspecialchars(sprintf(__('The following entity cannot be restored automatically: "%s".', 'updraftplus'), $sdescrip))." ".__('You will need to restore it manually.', 'updraftplus')."</em><br>".'<input id="updraft_restore_'.$type.'" type="hidden" name="updraft_restore[]" value="'.$type.'">';
+							echo '</div>';
 						}
 					}
 				?>
@@ -2275,12 +2280,12 @@ CREATE TABLE $wpdb->signups (
 				<tbody>
 				<tr>
 				<td>
-				<form method="post">
+				<form method="post" action="<?php echo add_query_arg(array('updraft_restore_success' => false, 'action' => false, 'page' => 'updraftplus')); ?>">
 					<input type="hidden" name="action" value="updraft_backup_debug_all" />
 					<p><input type="submit" class="button-primary" <?php echo $backup_disabled ?> value="<?php _e('Debug Full Backup','updraftplus');?>" onclick="return(confirm('<?php echo htmlspecialchars(__('This will cause an immediate backup. The page will stall loading until it finishes (ie, unscheduled).','updraftplus'));?>'))" /></p>
 				</form>
 				</td><td>
-				<form method="post">
+				<form method="post" action="<?php echo add_query_arg(array('updraft_restore_success' => false, 'action' => false, 'page' => 'updraftplus')); ?>">
 					<input type="hidden" name="action" value="updraft_backup_debug_db" />
 					<p><input type="submit" class="button-primary" <?php echo $backup_disabled ?> value="<?php _e('Debug Database Backup','updraftplus');?>" onclick="return(confirm('<?php echo htmlspecialchars(__('This will cause an immediate DB backup. The page will stall loading until it finishes (ie, unscheduled). The backup may well run out of time; really this button is only helpful for checking that the backup is able to get through the initial stages, or for small WordPress sites..','updraftplus'));?>'))" /></p>
 				</form>
@@ -2290,7 +2295,7 @@ CREATE TABLE $wpdb->signups (
 				</table>
 				<h3><?php _e('Wipe Settings','updraftplus');?></h3>
 				<p style="max-width: 600px;"><?php _e('This button will delete all UpdraftPlus settings (but not any of your existing backups from your cloud storage). You will then need to enter all your settings again. You can also do this before deactivating/deinstalling UpdraftPlus if you wish.','updraftplus');?></p>
-				<form method="post">
+				<form method="post" action="<?php echo add_query_arg(array('updraft_restore_success' => false, 'action' => false, 'page' => 'updraftplus')); ?>">
 					<input type="hidden" name="action" value="updraft_wipesettings" />
 					<p><input type="submit" class="button-primary" value="<?php _e('Wipe All Settings','updraftplus'); ?>" onclick="return(confirm('<?php echo htmlspecialchars(__('This will delete all your UpdraftPlus settings - are you sure you want to do this?'));?>'))" /></p>
 				</form>
@@ -2298,7 +2303,7 @@ CREATE TABLE $wpdb->signups (
 		<?php
 	}
 
-	function print_delete_old_dirs_form($include_blurb = true) {
+	private function print_delete_old_dirs_form($include_blurb = true) {
 		?>
 			<?php if ($include_blurb) {
 			?>
@@ -3486,7 +3491,7 @@ ENDHERE;
 					# jQuery('#updraft_restore_label_wpcore').html('".esc_js($wpcore_restore_descrip)."');
 					$ret .= '<button title="'.__('After pressing this button, you will be given the option to choose which components you wish to restore','updraftplus').'" type="button" class="button-primary" style="padding-top:2px;padding-bottom:2px;font-size:16px !important; min-height:26px;" onclick="'."updraft_restore_setoptions('$entities');
 					jQuery('#updraft_restore_timestamp').val('$key'); jQuery('.updraft_restore_date').html('$show_data'); ";
-					$ret .= "updraft_restore_stage = 1; jQuery('#updraft-restore-modal').dialog('open'); jQuery('#updraft-restore-modal-stage1').show();jQuery('#updraft-restore-modal-stage2').hide(); jQuery('#updraft-restore-modal-stage2a').html('');\">".__('Restore','updraftplus').'</button>';
+					$ret .= "updraft_restore_stage = 1; jQuery('#updraft-restore-modal').dialog('open'); jQuery('#updraft-restore-modal-stage1').show();jQuery('#updraft-restore-modal-stage2').hide(); jQuery('#updraft-restore-modal-stage2a').html(''); updraft_activejobs_update(true);\">".__('Restore', 'updraftplus').'</button>';
 				}
 				$ret .= <<<ENDHERE
 				</form>
@@ -3568,6 +3573,7 @@ ENDHERE;
 		# Scan remote storage and get back lists of files and their sizes
 		# TODO: Make compatible with incremental naming
 		if ($remotescan) {
+			add_action('http_request_args', array($updraftplus, 'modify_http_options'));
 			foreach ($updraftplus->backup_methods as $method => $desc) {
 				require_once(UPDRAFTPLUS_DIR.'/methods/'.$method.'.php');
 				$objname = 'UpdraftPlus_BackupModule_'.$method;
@@ -3599,6 +3605,7 @@ ENDHERE;
 					}
 				}
 			}
+			remove_action('http_request_args', array($updraftplus, 'modify_http_options'));
 		}
 
 		if (!$handle = opendir($updraft_dir)) return;
@@ -3926,6 +3933,7 @@ ENDHERE;
 				$fullpath = $updraft_dir.$file;
 				echo sprintf(__("Looking for %s archive: file name: %s", 'updraftplus'), $type, htmlspecialchars($file))."<br>";
 
+				add_action('http_request_args', array($updraftplus, 'modify_http_options'));
 				foreach ($service as $serv) {
 					if(!is_readable($fullpath)) {
 						$sd = (empty($updraftplus->backup_methods[$serv])) ? $serv : $updraftplus->backup_methods[$serv];
@@ -3940,6 +3948,7 @@ ENDHERE;
 						echo '<br>';
 					}
 				}
+				remove_action('http_request_args', array($updraftplus, 'modify_http_options'));
 
 				$index = ($ind == 0) ? '' : $ind;
 				// If a file size is stored in the backup data, then verify correctness of the local file
