@@ -193,6 +193,18 @@ Meant to help developers only. You'll have to code to use them.
 
 == Changelog ==
 
+= 5.3.7 =
+* 12 Oct 2014
+* Better PHP documentation
+* Reorganize code
+* Responsive web design for admin page and menu
+* Update documentation and fix 404 on img
+
+= 5.3.6 =
+* 25 Sep 2014
+* Fix bug with meta desc disapearing when img at the very top of content box
+* Delete useless hook for admin scripts and use $hook_suffix
+
 = 5.3.5 =
 * 06 Sep 2014
 * Add option for users. You'll be able to grab post excerpt as meta desc for Twitter. Be aware that it will override any desc set with SEO plugin. 

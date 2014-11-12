@@ -154,3 +154,22 @@
 1.7.2 - 2014-09-17 - Chris Wiegman
     Enhancement: Default log rotation changed from 30 days to 14 days
     Fixed: All logs page will properly display even with 50,000+ entries in the log
+1.7.3 - 2014-10-09 - Chris Wiegman
+	Fixed: fixed duplicate ID issue from user_id_exists calls.
+	Fixed: Fixed an error in the lockout module that results in an error for users of multisite
+	Fixed: Notification emails will no longer send if not turned on
+	Fixed: Duplicate messages will not be allowed in digest emails
+	Fixed: Duplicate digest emails will have a far lesser chance of sending
+	Fixed: User lockout count in email notifications will now be correct
+1.7.4 - 2014-10-09 - Chris Wiegman
+	Fixed: Error on line 1312 when iThemes API is actived with version 4.4.15
+1.8.0 - 2014-10-13 - Chris Wiegman
+	New Pro Feature: Dashboard widget. Get important information and handle user blocking right from the WordPress Dashboard.
+1.9.0 - 2014-10-21 - Chris Wiegman
+	New Pro Feature: File change scanning will now compare WordPress core files to the WordPress.org repository.
+	Fixed: Make sure php_gid is always defined to prevent error message if the function is not usable.
+	Fixed: Link to BackupBuddy in admin bar will now work correctly.
+1.10.0 - 2014-11-04 - Chris Wiegman
+	New Pro Feature: Temporary privilege escalation
+1.10.1 - 2014-11-05 - Chris Wiegman
+	Security Fix: Fixed possible XSS vulnerability in ITSEC_Lib. - Low priority - Thanks to http://planetzuda.com

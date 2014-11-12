@@ -6,8 +6,9 @@ if ( ! defined( 'JM_TC_VERSION' ) ) {
 }
 
 if ( ! class_exists( 'JM_TC_Admin' ) ) {
-	class JM_TC_Admin{
-		
+
+	class JM_TC_Admin
+	{
 		/**
 		* Option key, and option page slug
 		* @var string
@@ -31,19 +32,18 @@ if ( ! class_exists( 'JM_TC_Admin' ) ) {
 		* @since 0.1.0
 		*/
 		public function __construct() {
-			// Set our title
+
 			$this->title = __( 'JM Twitter Cards', 'jm-tc');
 			add_action( 'admin_init', array( $this, 'mninit' ) );
 			add_action( 'admin_menu', array( $this, 'add_page' ) );
-			add_action( 'admin_enqueue_scripts',  array( $this, 'admin_styles' ) );
+			add_action( 'admin_enqueue_scripts',  array( $this, 'admin_scripts' ) );
 			add_filter( 'cmb_frontend_form_format', array( $this, 'save_button' ), 10, 3 );
 			add_action( 'cmb_save_options-page_fields', array( $this, 'is_it_saved') );
 		}
 		
 		/**
-		*
-		* Alter the submit button with the sumbit_button() function
-		* This is more appropriate and it will display a notice when settings are saved
+		* Alter save_button
+		* @since  0.1.0
 		*/
 		public function save_button( $object_id, $meta_box, $form ){
 		
@@ -61,8 +61,9 @@ if ( ! class_exists( 'JM_TC_Admin' ) ) {
 		}
 		
 		/**
-		*
-		*  Links to doc
+		* Displays confirmation mess for saving settings
+		* @since  5.3.0
+		* @return string
 		*/
 		public static function docu_links($n = 0){
 			$anchor = array(
@@ -77,16 +78,16 @@ if ( ! class_exists( 'JM_TC_Admin' ) ) {
 
 			);
 			$docu  = '<a class="button button-secondary docu" target="_blank" href="' . esc_url(admin_url().'admin.php?page=jm_tc_doc') . $anchor[$n] . '">' . __('Documentation', 'jm-tc') . '</a>';
-			$docu .= '&nbsp;<a class="button button-secondary docu" target="_blank" href="' . esc_url('https://dev.twitter.com/docs/cards/validation/validator') . '">' . __('Validator', 'jm-tc') . '</a>';
+			$docu .= '&nbsp;<a class="button button-secondary docu" target="_blank" href="' . esc_url('https://cards-dev.twitter.com/validator') . '">' . __('Validator', 'jm-tc') . '</a>';
 			$docu .= '&nbsp;<a class="button button-secondary docu" target="_blank" href="' . esc_url('https://dev.twitter.com/docs/cards/troubleshooting') . '">' . __('Troubleshooting', 'jm-tc') . '</a>';
 			
 			return $docu;
 		}
 
 		/**
-		* Call admin pages
-		*
-		* */
+		* Add subpages to admin
+		* @since  5.3.0
+		*/
 		public function subpages()
 		{
 			if ( isset( $_GET['page'] ) ) 
@@ -147,7 +148,7 @@ if ( ! class_exists( 'JM_TC_Admin' ) ) {
 		
 		/**
 		* Add menu options page
-		* @since 0.1.0
+		* @since 5.3.0
 		*/
 		public function add_page() {
 		
@@ -172,40 +173,92 @@ if ( ! class_exists( 'JM_TC_Admin' ) ) {
 			$this->options_subpage_analytics 		= add_submenu_page( 'jm_tc', __( 'Analytics', 'jm-tc' ), __( 'Analytics', 'jm-tc' ) , 'manage_options', 'jm_tc_analytics', array( $this, 'subpages' ));		
 			$this->options_subpage_about 			= add_submenu_page( 'jm_tc', __( 'About' ), __( 'About' ) , 'manage_options', 'jm_tc_about', array( $this, 'subpages' ));
 			
-			add_action( 'load-' . $this->options_subpage_home, array( $this, 'load_admin_page_home_scripts' ) );
-			add_action( 'load-' . $this->options_subpage_doc, array( $this, 'load_admin_doc_scripts' ) );
 		}
-		
 
-		// I prefer this way even if it's not so good^^
-		public function load_admin_page_home_scripts()
+		/**
+		* Enqueue scripts conditionnally in admin
+		* @since  5.3.0
+		*/
+		public function admin_scripts( $hook_suffix )
 		{
-			wp_enqueue_script('jm-tc-admin-script', JM_TC_JS_URL.'jm-tc-admin-home.js'
-			, array('jquery') 
-			, '1.0'
-			, true
-			);
-		}
-		
-		public function admin_styles()
-		{
-			if ( isset( $_GET['page'] ) && in_array( $_GET['page'], array('jm_tc_import_export', 'jm_tc', 'jm_tc_tutorial', 'jm_tc_meta_box', 'jm_tc_doc', 'jm_tc_about', 'jm_tc_cf', 'jm_tc_images', 'jm_tc_multi_author', 'jm_tc_home', 'jm_tc_robots', 'jm_tc_deep_linking', 'jm_tc_analytics') ) ) 
+
+			//var_dump( $hook_suffix );
+
+			switch ( $hook_suffix ) 
 			{
-				wp_enqueue_style('jm-tc-admin-style', JM_TC_CSS_URL.'jm-tc-admin.css');
-			}
-			
-			global $pagenow;
-			
-			if( $pagenow == 'post.php' || $pagenow == 'post-new.php' ) {
+
+				case 'toplevel_page_jm_tc':
+				case 'jm-twitter-cards_page_jm_tc_import_export':
+				case 'jm-twitter-cards_page_jm_tc_tutorial':
+				case 'jm-twitter-cards_page_jm_tc_meta_box':
+				case 'jm-twitter-cards_page_jm_tc_about':
+				case 'jm-twitter-cards_page_jm_tc_cf':
+				case 'jm-twitter-cards_page_jm_tc_images':
+				case 'jm-twitter-cards_page_jm_tc_robots':
+				case 'jm-twitter-cards_page_jm_tc_multi_author':
+				case 'jm-twitter-cards_page_jm_tc_deep_linking':
+				case 'jm-twitter-cards_page_jm_tc_analytics':
+
+					wp_enqueue_style( 'jm-tc-admin-style', JM_TC_CSS_URL.'jm-tc-admin.css' );
+					wp_enqueue_style( 'jm-tc-menu', JM_TC_CSS_URL.'jm-tc-menu.css' );
+					wp_enqueue_script( 'jm-tc-doc-script', JM_TC_JS_URL.'responsivemobilemenu.js'
+						, array('jquery') 
+						, '1.0'
+						, true
+					);
+
+				break;
+
+				case 'post.php':
+				case 'post-new.php':
+					
+					wp_enqueue_style( 'jm-tc-metabox', JM_TC_CSS_URL.'jm-tc-meta-box.css' );
+					wp_enqueue_script( 'jm-tc-metabox', JM_TC_JS_URL.'jm-tc-meta-box.js', array('jquery'), null, false );
+
+				break;
+
+				case 'jm-twitter-cards_page_jm_tc_home':
+					
+					wp_enqueue_style( 'jm-tc-admin-style', JM_TC_CSS_URL.'jm-tc-admin.css' );
+					wp_enqueue_style( 'jm-tc-menu', JM_TC_CSS_URL.'jm-tc-menu.css' );
+					wp_enqueue_script( 'jm-tc-doc-script', JM_TC_JS_URL.'responsivemobilemenu.js'
+						, array('jquery') 
+						, '1.0'
+						, true
+					);
+					wp_enqueue_script( 'jm-tc-admin-script', JM_TC_JS_URL.'jm-tc-admin-home.js'
+						, array('jquery') 
+						, '1.0'
+						, true
+					);
+
+				break;
 				
-				wp_enqueue_style('jm-tc-metabox', JM_TC_CSS_URL.'jm-tc-meta-box.css');
-				wp_enqueue_script('jm-tc-metabox', JM_TC_JS_URL.'jm-tc-meta-box.js', array('jquery'), null, false);
+				case 'jm-twitter-cards_page_jm_tc_doc':
+					
+					wp_enqueue_style( 'jm-tc-admin-style', JM_TC_CSS_URL.'jm-tc-admin.css' );
+					wp_enqueue_style( 'jm-tc-menu', JM_TC_CSS_URL.'jm-tc-menu.css' );
+					wp_enqueue_script( 'jm-tc-doc-script', JM_TC_JS_URL.'responsivemobilemenu.js'
+						, array('jquery') 
+						, '1.0'
+						, true
+					);
+					wp_enqueue_script( 'twitter-widget', '//platform.twitter.com/widgets.js', 
+						false, 
+						null, 
+						true
+					);
+					
+				break;
+
 			}
 			
 		}
 		
-		
-		// Add a confirmation message 
+		/**
+		* Displays confirmation mess for saving settings
+		* @since  5.3.0
+		*/
 		public function is_it_saved() 
 		{
 			?>
@@ -215,13 +268,15 @@ if ( ! class_exists( 'JM_TC_Admin' ) ) {
 			<?php
 		}
 		
-		
+		/**
+		* Translates documentation
+		* @since  5.0
+		*/		
 		public function load_admin_doc_scripts()
 		{
 			
 			load_plugin_textdomain('jm-tc-doc', false, JM_TC_LANG_DIR);
 		}
-		
 		
 		/**
 		* Admin page markup. Mostly handled by CMB
@@ -253,9 +308,9 @@ if ( ! class_exists( 'JM_TC_Admin' ) ) {
 		}
 		
 		/**
-		* Defines the theme option metabox and field configuration
-		* @since  0.1.0
-		* @return array
+		* Add fields to option page
+		* @since  5.0
+		* @return $plugin_options
 		*/
 		public static function option_fields() {
 			

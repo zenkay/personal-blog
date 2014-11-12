@@ -111,7 +111,6 @@ function updraft_activejobs_update(force) {
 				}
 			}
 
-			console.log("updraft_console_focussed_tab: "+updraft_console_focussed_tab+" ("+timenow+" , "+(updraft_activejobs_nextupdate-timenow)+")");
 			//if (repeat) { setTimeout(function(){updraft_activejobs_update(true);}, nexttimer);}
 			lastlog_lastdata = response;
 			if (resp.l != null) { jQuery('#updraft_lastlogcontainer').html(resp.l); }
@@ -141,6 +140,41 @@ function updraft_activejobs_update(force) {
 			console.log(err);
 		}
 	});
+}
+
+//function to display pop-up window containing the log
+function updraft_popuplog(backup_nonce){ 
+		
+		popuplog_sdata = {
+			action: 'updraft_ajax',
+			subaction: 'poplog',
+			nonce: updraft_credentialtest_nonce,
+			backup_nonce: backup_nonce
+		};
+
+		jQuery.get(ajaxurl, popuplog_sdata, function(response){
+
+			var resp = jQuery.parseJSON(response);
+			
+			var download_url = '?page=updraftplus&action=downloadlog&force_download=1&updraftplus_backup_nonce='+resp.nonce;
+			
+			jQuery('#updraft-poplog-content').html('<pre style="white-space: pre-wrap;">'+resp.html+'</pre>'); //content of the log file
+			
+			var log_popup_buttons = {};
+			log_popup_buttons[updraftlion.download] = function() { window.location.href = download_url; };
+			log_popup_buttons[updraftlion.close] = function() { jQuery(this).dialog("close"); };
+			
+			//Set the dialog buttons: Download log, Close log
+			jQuery('#updraft-poplog').dialog("option", "buttons", log_popup_buttons);
+			//[
+				//{ text: "Download", click: function() { window.location.href = download_url } },
+				//{ text: "Close", click: function(){ jQuery( this ).dialog("close");} }
+			//] 
+			
+			jQuery('#updraft-poplog').dialog("option", "title", 'log.'+resp.nonce+'.txt'); //Set dialog title
+			jQuery('#updraft-poplog').dialog("open");
+			
+		});
 }
 
 function updraft_showlastlog(repeat){
@@ -630,7 +664,15 @@ jQuery(document).ready(function($){
 		}, 1700);
 		setTimeout(function() {updraft_activejobs_update(true);}, 1000);
 		setTimeout(function() {jQuery('#updraft_backup_started').fadeOut('slow');}, 75000);
-		jQuery.post(ajaxurl, { action: 'updraft_ajax', subaction: 'backupnow', nonce: updraft_credentialtest_nonce, backupnow_nodb: backupnow_nodb, backupnow_nofiles: backupnow_nofiles, backupnow_nocloud: backupnow_nocloud }, function(response) {
+		jQuery.post(ajaxurl, {
+			action: 'updraft_ajax',
+			subaction: 'backupnow',
+			nonce: updraft_credentialtest_nonce,
+			backupnow_nodb: backupnow_nodb,
+			backupnow_nofiles: backupnow_nofiles,
+			backupnow_nocloud: backupnow_nocloud,
+			backupnow_label: jQuery('#backupnow_label').val()
+		}, function(response) {
 			jQuery('#updraft_backup_started').html(response);
 			// Kick off some activity to get WP to get the scheduled task moving as soon as possible
 // 			setTimeout(function() {jQuery.get(updraft_siteurl);}, 5100);
@@ -640,7 +682,7 @@ jQuery(document).ready(function($){
 	backupnow_modal_buttons[updraftlion.cancel] = function() { jQuery(this).dialog("close"); };
 	
 	jQuery("#updraft-backupnow-modal" ).dialog({
-		autoOpen: false, height: 335, width: 480, modal: true,
+		autoOpen: false, height: 355, width: 480, modal: true,
 		buttons: backupnow_modal_buttons
 	});
 
@@ -650,7 +692,11 @@ jQuery(document).ready(function($){
 		autoOpen: false, height: 295, width: 420, modal: true,
 		buttons: migrate_modal_buttons
 	});
-
+	
+	jQuery( "#updraft-poplog" ).dialog({
+		autoOpen: false, height: 600, width: '75%', modal: true,
+	});
+	
 	jQuery('#enableexpertmode').click(function() {
 		jQuery('.expertmode').fadeIn();
 		jQuery('#enableexpertmode').off('click'); 
@@ -891,14 +937,16 @@ jQuery(document).ready(function($){
 				resp = jQuery.parseJSON(response);
 				if (resp.e) {
 					alert(resp.e);
-				} else if (resp.r) {
-					$('#updraftplus_httpget_results').html(resp.r);
+				}
+				if (resp.r) {
+					$('#updraftplus_httpget_results').html('<pre>'+resp.r+'</pre>');
 				} else {
 					console.log(response);
-					alert(updraftlion.jsonnotunderstood);
+					//alert(updraftlion.jsonnotunderstood);
 				}
 				
 			} catch(err) {
+				console.log(err);
 				console.log(response);
 				alert(updraftlion.jsonnotunderstood);
 			}

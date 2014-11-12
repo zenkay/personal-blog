@@ -23,6 +23,8 @@ class Updraft_Restorer extends WP_Upgrader {
 	# The default of false means "use the global $wpdb"
 	private $wpdb_obj = false;
 
+	private $line_last_logged = 0;
+
 	public function __construct($skin = null, $info = null, $shortinit = false) {
 
 		global $wpdb;
@@ -73,7 +75,7 @@ class Updraft_Restorer extends WP_Upgrader {
 
 	# This function is copied from class WP_Upgrader (WP 3.8 - no significant changes since 3.2 at least); we only had to fork it because it hard-codes using the basename of the zip file as its unpack directory; which can be long; and then combining that with long pathnames in the zip being unpacked can overflow a 256-character path limit (yes, they apparently still exist - amazing!)
 	# Subsequently, we have also added the ability to unpack tarballs
-	private function unpack_package_archive($package, $delete_package = true) {
+	private function unpack_package_archive($package, $delete_package = true, $type = false) {
 
 		if (!empty($this->ud_foreign) && !empty($this->ud_foreign_working_dir)) {
 			if (is_dir($this->ud_foreign_working_dir)) {
@@ -109,17 +111,17 @@ class Updraft_Restorer extends WP_Upgrader {
 			$wp_filesystem->delete($working_dir, true);
 
 		// Unzip package to working directory
-		if ('.zip' == substr($package, -4, 4)) {
+		if ('.zip' == strtolower(substr($package, -4, 4))) {
 			$result = unzip_file( $package, $working_dir );
-		} elseif ('.tar' == substr($package, -4, 4) || '.tar.gz' == substr($package, -7, 7) || '.tar.bz2' == substr($package, -8, 8)) {
+		} elseif ('.tar' == strtolower(substr($package, -4, 4)) || '.tar.gz' == strtolower(substr($package, -7, 7)) || '.tar.bz2' == strtolower(substr($package, -8, 8))) {
 			if (!class_exists('UpdraftPlus_Archive_Tar')) {
 				if (false === strpos(get_include_path(), UPDRAFTPLUS_DIR.'/includes/PEAR')) set_include_path(UPDRAFTPLUS_DIR.'/includes/PEAR'.PATH_SEPARATOR.get_include_path());
 
 				require_once(UPDRAFTPLUS_DIR.'/includes/PEAR/Archive/Tar.php');
 				$p_compress = null;
-				if ('.tar.gz' == substr($package, -7, 7)) {
+				if ('.tar.gz' == strtolower(substr($package, -7, 7))) {
 					$p_compress = 'gz';
-				} elseif ('.tar.bz2' == substr($package, -8, 8)) {
+				} elseif ('.tar.bz2' == strtolower(substr($package, -8, 8))) {
 					$p_compress = 'bz2';
 				}
 
@@ -174,7 +176,17 @@ class Updraft_Restorer extends WP_Upgrader {
 			return $result;
 		}
 
-		if (!empty($this->ud_foreign)) $this->ud_foreign_working_dir = $working_dir;
+		if (!empty($this->ud_foreign)) {
+			$this->ud_foreign_working_dir = $working_dir;
+			# Zip containing an SQL file. We only know of one pattern.
+			if ('db' === $type) {
+				$basepack = basename($package, '.zip');
+				if ($wp_filesystem->exists($working_dir.'/'.$basepack.'.sql')) {
+					$wp_filesystem->move($working_dir.'/'.$basepack.'.sql', $working_dir . "/backup.db", true);
+					$updraftplus->log("Moving database file $basepack.sql to backup.db");
+				}
+			}
+		}
 
 		return $working_dir;
 	}
@@ -218,7 +230,7 @@ class Updraft_Restorer extends WP_Upgrader {
 	}
 
 	// This returns a wp_filesystem location (and we musn't change that, as we must retain compatibility with the class parent)
-	function unpack_package($package, $delete_package = true) {
+	function unpack_package($package, $delete_package = true, $type = false) {
 
 		global $wp_filesystem, $updraftplus;
 
@@ -226,7 +238,7 @@ class Updraft_Restorer extends WP_Upgrader {
 
 		// If not database, then it is a zip - unpack in the usual way
 		#if (!preg_match('/db\.gz(\.crypt)?$/i', $package)) return parent::unpack_package($updraft_dir.'/'.$package, $delete_package);
-		if (!preg_match('/db\.gz(\.crypt)?$/i', $package) && !preg_match('/\.sql(\.gz)?$/i', $package)) return $this->unpack_package_archive($updraft_dir.'/'.$package, $delete_package);
+		if (!preg_match('/db\.gz(\.crypt)?$/i', $package) && !preg_match('/\.sql(\.gz)?$/i', $package)) return $this->unpack_package_archive($updraft_dir.'/'.$package, $delete_package, $type);
 
 		$backup_dir = $wp_filesystem->find_folder($updraft_dir);
 
@@ -342,7 +354,7 @@ class Updraft_Restorer extends WP_Upgrader {
 			}
 
 			// Correctly restore files in 'others' in no directory that were wrongly backed up in versions 1.4.0 - 1.4.48
-			if (('others' == $type || 'wpcore' == $type) && preg_match('/^([\-_A-Za-z0-9]+\.php)$/', $file, $matches) && $wpfs->exists($working_dir . "/$file/$file")) {
+			if (('others' == $type || 'wpcore' == $type) && preg_match('/^([\-_A-Za-z0-9]+\.php)$/i', $file, $matches) && $wpfs->exists($working_dir . "/$file/$file")) {
 				if ('others' == $type) {
 					echo "Found file: $file/$file: presuming this is a backup with a known fault (backup made with versions 1.4.0 - 1.4.48, and sometimes up to 1.6.55 on some Windows servers); will rename to simply $file<br>";
 				} else {
@@ -612,7 +624,7 @@ class Updraft_Restorer extends WP_Upgrader {
 		@set_time_limit(1800);
 
 		// This returns the wp_filesystem path
-		$working_dir = $this->unpack_package($backup_file, $this->delete);
+		$working_dir = $this->unpack_package($backup_file, $this->delete, $type);
 
 		if (is_wp_error($working_dir)) return $working_dir;
 
@@ -1517,8 +1529,10 @@ class Updraft_Restorer extends WP_Upgrader {
 		} elseif ($sql_type == 2) {
 			$this->tables_created++;
 		}
+
 		if ($this->line >0 && ($this->line)%50 == 0) {
-			if (($this->line)%250 == 0 || $this->line<250) {
+			if ($this->line > $this->line_last_logged && (($this->line)%250 == 0 || $this->line<250)) {
+				$this->line_last_logged = $this->line;
 				$time_taken = microtime(true) - $this->start_time;
 				$updraftplus->log_e('Database queries processed: %d in %.2f seconds',$this->line, $time_taken);
 			}

@@ -92,13 +92,16 @@ background-image: linear-gradient(to top,#ececec,#f9f9f9);border: 1px solid #c0b
 .chosen { padding: 10px 20px 10px 10px; border-right: 1px solid #dfdfdf; border-top: 1px solid #dfdfdf; border-bottom: 1px solid #dfdfdf; }
 
 .ssba-box {
--moz-border-radius: 10px; -webkit-border-radius: 10px; -khtml-border-radius: 10px;  border-radius: 10px; -o-border-radius: 10px;
+
 width:345px;
 padding:20px;
 background: #fff;
 margin: 10px 0px 10px;
 font-size: 14px;
 border: 1px solid #dfdfdf;
+-webkit-box-shadow: 7px 7px 5px 0px rgba(50, 50, 50, 0.36);
+-moz-box-shadow:    7px 7px 5px 0px rgba(50, 50, 50, 0.36);
+box-shadow:         7px 7px 5px 0px rgba(50, 50, 50, 0.36);
 }
 
 .centerme {
@@ -108,12 +111,6 @@ width:100%;
 
 .centerme a { text-decoration: none; font-weight: bold; }
 
-.blueme {color:#42a7e2;}
+.blueme {}
 
 .ssbp-info p {font-size:18px;margin:0;}
-
-.ssbp-popup:before {color:#42a7e2;vertical-align:middle;font-size: 40px;font-family: "dashicons";content: "\f242";margin-right:20px;}
-.ssbp-retina:before {color:#42a7e2;vertical-align:middle;font-size: 40px;font-family: "dashicons";content: "\f177";margin-right:20px;}
-.ssbp-tracking:before {color:#42a7e2;vertical-align:middle;font-size: 40px;font-family: "dashicons";content: "\f239";margin-right:20px;}
-.ssbp-hover:before {color:#42a7e2;vertical-align:middle;font-size: 40px;font-family: "dashicons";content: "\f309";margin-right:20px;}
-.ssbp-vk:before {color:#42a7e2;vertical-align:middle;font-size: 40px;font-family: "dashicons";content: "\f132";margin-right:20px;}

@@ -555,29 +555,33 @@ CODE;
 	
 	// author div
 	$htmlShareButtonsForm .= '	<div class="ssba-box ssba-shadow">
-									<div class="ssba-box-content">
-										<div class="author-shortcodes">
-											<div class="author-inner">
-												<div class="author-image">
-													<img src="' . plugins_url() . '/simple-share-buttons-adder/images/david.png" style="float: left; margin-right: 10px;" alt="">
-													<div class="author-overlay"></div>
-												</div> <!-- .author-image --> 
-												<div class="author-info">
-													<a href="http://www.davidsneal.co.uk" target="_blank">David Neal</a> – Married, father of one (another on the way!), with an obsession with websites, coding and gaming. This plugin and its website has been funded by myself.
-												</div> <!-- .author-info -->
-											</div> <!-- .author-inner -->
-										</div> <!-- .author-shortcodes -->
-									</div></br>
 									<table class="centerme">
 										<tr>
 											<td>
-												<a href="http://www.simplesharebuttons.com/plus"><h3>Check out Simple Share Buttons Plus!</h3></a>
-												<h3><a href="#TB_inline?width=600&height=450&inlineId=ssbp-info" class="thickbox">What\'s different?</a></h3>
-												<iframe width="330" height="186" src="//www.youtube.com/embed/SFO9Uss-LuQ?rel=0" frameborder="0" allowfullscreen></iframe>
+												<a href="http://www.simplesharebuttons.com/plus"><h2>Simple Share Buttons Plus</h2></a>
+												<p class="description"><a href="http://www.simplesharebuttons.com/plus">www.simplesharebuttons.com/plus</a></p>
 											</td>
 										</tr>
 										<tr>
-											<td class="centerme"><form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+											<td>
+												<a href="http://www.simplesharebuttons.com/plus" target="_blank"><img src="' . plugins_url() . '/simple-share-buttons-adder/images/simple-share-buttons-mockups.jpg' . '" style="width: 350px;height:189px;"/></a>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												Floating/responsive share bar</br>
+												Developer support</br>
+												Popup share windows</br>
+												Retina-ready CSS Sprites</br>
+												Built-in tracking</br>
+												Hover and click effects</br>
+												Bitly support</br>
+											</td>
+										</tr>
+									</table>
+									<table class="centerme">
+										<tr>
+											<td><form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
 <input type="hidden" name="cmd" value="_s-xclick">
 <input type="hidden" name="hosted_button_id" value="75WFUCTYND76Q">
 <input type="image" src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online.">
@@ -585,28 +589,9 @@ CODE;
 </form>
 
 											</td>
-										</tr>
-									</table>
-									<table class="centerme">
-										<tr>
 											<td><a href="http://wordpress.org/support/view/plugin-reviews/simple-share-buttons-adder" target="_blank" title="Rate 5 Star">Rate the plugin<br/><img src="' . plugins_url() . '/simple-share-buttons-adder/images/stars.png"></a></br></td>
 										</tr>
 									</table>
-									<div class="et-box et-bio centerme">
-										<div class="et-box-content">
-										<p><strong>Visit <a href="http://make.simplesharebuttons.com" target="blank">make.simplesharebuttons.com</a><br/>to make custom-colour buttons</strong></p>
-									</div></div>
-								</div>
-								<div id="ssbp-info" style="display:none;">
-									<div class="ssbp-info centerme">
-										<h1 class="blueme">Simple Share Buttons Plus</h1>
-										 <p class="description">Find out more at <a class="blueme" href="http://www.simplesharebuttons.com/plus">www.simplesharebuttons.com/plus</a></p>
-									     <p class="ssbp-popup">Popup share windows</p>
-									     <p class="ssbp-retina">Retina-ready CSS Sprite</p>
-									     <p class="ssbp-tracking">Built-in tracking</p>
-									     <p class="ssbp-hover">Hover and click effects</p>
-									     <p class="ssbp-vk">VK button added</p>
-									</div>
 								</div>';
 
 	// close author cell and close table

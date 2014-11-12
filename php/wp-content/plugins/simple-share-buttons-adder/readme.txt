@@ -3,8 +3,8 @@ Contributors: DavidoffNeal
 Donate link: http://www.simplesharebuttons.com/donate/
 Tags: share buttons, facebook, twitter, google+, share, share links, stumble upon, linkedin, pinterest
 Requires at least: 3.5.1
-Tested up to: 3.9
-Stable tag: 4.7
+Tested up to: 4.0
+Stable tag: 4.8
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -63,6 +63,10 @@ A step by step guide on how to configure this plugin can be found <a href="http:
 9. Use the widget option to add share buttons!
 
 == Changelog ==
+
+= 4.8 =
+* Fix: Undefined ssba_excerpts
+* Update: Compatible up to tag 4.0
 
 = 4.7 =
 * Fix issue with download pages

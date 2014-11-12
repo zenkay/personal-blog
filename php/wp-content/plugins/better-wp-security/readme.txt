@@ -1,10 +1,10 @@
 === iThemes Security (formerly Better WP Security) ===
 Contributors: ithemes, ChrisWiegman, mattdanner, chrisjean
-Donate link: http://ithemes.com
+Donate link: https://ithemes.com/security
 Tags: security, malware, secure, multi-site, network, mu, login, lockdown, htaccess, hack, header, cleanup, ban, restrict, access, protect, protection, disable, images, image, hotlink, admin, username, database, prefix, wp-content, rename, directory, directories, secure, SSL, iThemes, BackupBuddy, Exchange, iThemes Exchange
 Requires at least: 3.9
 Tested up to: 4.0
-Stable tag: 4.4.13
+Stable tag: 4.4.23
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,7 +37,10 @@ Pro Features:
 * Malware scanning - Automatically check any URL or individual file on a specified schedule and scan your whole site automatically as users browse through it
 * Password Expiration - Set a maximum password age and force users to choose a new password. You can also force all users to choose a new password immediately (if needed)
 * Generate Strong Passwords - Generate strong passwords right from your profile screen
+* Dashboard Widget - manage important tasks such as user banning and system scans right from the WordPress dashboard.
 * GeoIP banning - coming soon
+* Online file comparison - When a file change is detected it will scan the origin of the files to determine if the change was malicious or not. Currently works only in WordPress core but plugins and themes are coming.
+* Temporary privilege escalation - give a contractor or someone else temporary admin or editor access to your site that will automatically reset itself.
 
 = iThemes Sync Integration =
 
@@ -190,6 +193,45 @@ Free support may be available with the help of the community in the <a href="htt
 5. Easy-to-navigate Security dashboard
 
 == Changelog ==
+
+= 4.4.23 =
+* Fixed: App passwords in two-factor authentication will now correctly authenticate themselves.
+
+= 4.4.22 =
+* New Pro Feature: Temporary privilege escalation
+
+= 4.4.21 =
+* Enhancement: More time/date information is now shown in the logs for file change scanning
+* Fixed: Filechange will no longer show false positives with every change in DST (although this will cause run round of such notifications on update).
+* Fixed: Link to malware scanning logs will work.
+
+= 4.4.20 =
+* New Pro Feature: File change scanning will now compare WordPress core files to the WordPress.org repository.
+* Fixed: Make sure php_gid is always defined to prevent error message if the function is not usable.
+* Fixed: Link to BackupBuddy in admin bar will now work correctly.
+
+= 4.4.18 =
+* New Pro Feature: Dashboard widget. Get important information and handle user blocking right from the WordPress Dashboard.
+* Fixed: When using wp-cron for file checking cron check will run daily instead of hourly.
+
+= 4.4.16 =
+* Fixed: Error on line 1312 when iThemes API is actived with version 4.4.15
+
+= 4.4.15 =
+* Enhancement: File change summary emails are more concise and will avoid extra information
+* Fixed: Hide backend will now work with Jetpack's JSON API authorization.
+* Fixed: Option to change user ID 1 will correctly disappear when not present
+* Fixed: Removed empty user agent from default blacklist to avoid issues with external services
+* Fixed: File change folder check will no longer scan directories outside of ABSPATH for any reason
+* Fixed: Adding define( 'ITSEC_FILE_CHANGE_CRON', true ); to wp-config.php will cause the file change scanner to only run once daily via wp-cron.
+* Fixed: Compatibility issue where strong password enforcement could cause an error if passwords are changed outside of the core of WordPress
+* Fixed: Lost password url should now be correct on multisite.
+* Fixed: fixed duplicate ID issue from user_id_exists calls.
+* Fixed: Fixed an error in the lockout module that results in an error for users of multisite
+* Fixed: Notification emails will no longer send if not turned on
+* Fixed: Duplicate messages will not be allowed in digest emails
+* Fixed: Duplicate digest emails will have a far lesser chance of sending
+* Fixed: User lockout count in email notifications will now be correct
 
 = 4.4.13 =
 * Enhancement: Default log rotation changed from 30 days to 14 days
@@ -1280,6 +1322,24 @@ This release is a complete rewrite from the ground up. Special thanks to Cory Mi
 * First alpha release including simple feature set.
 
 == Upgrade Notice ==
+
+= 4.4.23 =
+Version 4.4.23 contains a security update and is recommended for all users.
+
+= 4.4.21 =
+Version 4.4.21 contains a fix to an issue that affects daylight savings time as well as other minor bug fixes. It is recommended for all users.
+
+= 4.4.20 =
+Version 4.4.20 contains a minor bugfix and is recommended for all users.
+
+= 4.4.18 =
+Version 4.4.18 contains a minor bugfix and is recommended for all users.
+
+= 4.4.16 =
+Version 4.4.16 is a bug-fix release addressing numerous minor bugs affecting some users. It is recommended for all users.
+
+= 4.4.15 =
+Version 4.4.15 is a bug-fix release addressing numerous minor bugs affecting some users. It is recommended for all users.
 
 = 4.4.13 =
 Version 4.4.13 is a bug-fix release addressing numerous minor bugs affecting some users. It is recommended for all users.
