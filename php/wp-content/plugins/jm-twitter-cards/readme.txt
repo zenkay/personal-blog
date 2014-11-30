@@ -3,7 +3,7 @@ Contributors: jmlapam
 Tags: twitter, cards, semantic markup, metabox, meta, photo, product, gallery, player
 Donate Link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7BJYYT486HEH6
 Requires at least: 3.6
-Tested up to: 4.0
+Tested up to: 4.0.1
 License: GPLv2 or later
 Stable tag: trunk
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -153,36 +153,7 @@ Vous devez utiliser le shortcode [gallery] pour obtenir une card galerie (c'est 
 
 == Other notes ==
 
-= 4.3 brings new filter for your convenience if you're a developer =
-* `jm_tc_get_excerpt`
-* `jm_tc_image_source`
-* `jm_tc_card_type`
-
-== Here is a snippet you can use with new filters ==
-
-**Get native excerpt, some themes use them **
-
-	`add_filter('jm_tc_get_excerpt','_jm_tc_modify_excerpt');
-	function _jm_tc_modify_excerpt() {
-	    global $post;
-		return get_excerpt_from_far_far_away($post->ID);
-	}
-
-	function get_excerpt_from_far_far_away( $post_id )
-	{
-		global $wpdb;
-		$query = 'SELECT post_excerpt FROM '. $wpdb->posts .' WHERE ID = '. $post_id .' LIMIT 1';
-		$result = $wpdb->get_results($query, ARRAY_A);
-		$post_excerpt = $result[0]['post_excerpt'];
-		return $post_excerpt;
-	}`
-
-**Hack source image e.g if you use relative paths**
-
-	`add_filter('jm_tc_image_source', '_jm_tc_relative_paths');
-	function _jm_tc_relative_paths($content) {
-		return trailingslashit( home_url() ).$content;
-	}`
+[find useful snippets](https://github.com/TweetPressFr/jm-twitter-cards-snippets)
 
 **BE CAREFUL WITH THIS! DO NOT USE IF YOU DO NOT KNOW WHAT YOU ARE DOING, YOU CAN BREAK YOUR CARDS WITH THIS !!!**
 
@@ -192,6 +163,18 @@ Vous devez utiliser le shortcode [gallery] pour obtenir une card galerie (c'est 
 Meant to help developers only. You'll have to code to use them.
 
 == Changelog ==
+
+= 5.4 =
+* 22 Nov 2014
+* Refactoring code
+* Delete messy parts of it
+* Kinda MVC structure
+* Fix missing translations for documentation
+* Remove useless functions from main file and put them into JM_TC_Init class
+* No needs for inheritance actually, not even logical, options cannot inherit from utitilities 
+* Get post object from get_queried_object() in markup class - seems safer considering global $post often get screwed
+* Delete trailingslashit function (kinda heavy while doing nothing really helpful here)
+* Small fixes on admin CSS
 
 = 5.3.7 =
 * 12 Oct 2014

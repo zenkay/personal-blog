@@ -66,7 +66,7 @@ font-size: 15px !important;
 .connectedSortable { 
 background-color: #ffffff;
 border: 1px solid #dfdfdf;
-min-height: 432px;
+min-height: 495px;
 min-width: 150px;
 font-size: 12px;
 font-weight: light;
@@ -92,7 +92,6 @@ background-image: linear-gradient(to top,#ececec,#f9f9f9);border: 1px solid #c0b
 .chosen { padding: 10px 20px 10px 10px; border-right: 1px solid #dfdfdf; border-top: 1px solid #dfdfdf; border-bottom: 1px solid #dfdfdf; }
 
 .ssba-box {
-
 width:345px;
 padding:20px;
 background: #fff;
@@ -102,6 +101,24 @@ border: 1px solid #dfdfdf;
 -webkit-box-shadow: 7px 7px 5px 0px rgba(50, 50, 50, 0.36);
 -moz-box-shadow:    7px 7px 5px 0px rgba(50, 50, 50, 0.36);
 box-shadow:         7px 7px 5px 0px rgba(50, 50, 50, 0.36);
+}
+.ssba-box a {
+color:#19a68c;
+}
+
+.ssbp-more {
+font-size:18px;
+padding:10px;
+width: 100%;
+color:#fff;
+background-color: #19a68c !important;
+border: #148470 3px solid;
+}
+.ssbp-more:hover {
+cursor: pointer;
+color:#fff;
+background-color: #106959 !important;
+border-color: #0c5447 !important;
 }
 
 .centerme {

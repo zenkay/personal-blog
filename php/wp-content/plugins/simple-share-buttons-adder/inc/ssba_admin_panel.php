@@ -10,15 +10,14 @@ function ssba_admin_panel($arrSettings, $htmlSettingsSaved) {
 	
 		//logo
 		$htmlShareButtonsForm .= '<div id="ssba-logo">';
-			$htmlShareButtonsForm .= '<a href="http://www.simplesharebuttons.com" target="_blank"><img src="' . plugins_url() . '/simple-share-buttons-adder/images/simplesharebuttons.png' . '" class="ssba-logo-img" /></a>';
+			$htmlShareButtonsForm .= '<a href="https://simplesharebuttons.com" target="_blank"><img src="' . plugins_url() . '/simple-share-buttons-adder/images/simplesharebuttons.png' . '" class="ssba-logo-img" /></a>';
 		$htmlShareButtonsForm .= '</div>';
 		
 		// top nav
 		$htmlShareButtonsForm .= '<div id="ssba-top-nav">';
 			$htmlShareButtonsForm .= '<a href="http://wordpress.org/support/plugin/simple-share-buttons-adder" target="_blank">Support</a>';
-			$htmlShareButtonsForm .= '<a href="http://www.simplesharebuttons.com/wordpress-faq/" target="_blank">FAQ</a>';
-			$htmlShareButtonsForm .= '<a href="http://www.simplesharebuttons.com/showcase/" target="_blank">Showcase</a>';
-			$htmlShareButtonsForm .= '<a href="http://www.simplesharebuttons.com/donate/" target="_blank">Donate</a>';
+			$htmlShareButtonsForm .= '<a href="https://simplesharebuttons.com/wordpress-faq/" target="_blank">FAQ</a>';
+			$htmlShareButtonsForm .= '<a href="https://simplesharebuttons.com/showcase/" target="_blank">Showcase</a>';
 			$htmlShareButtonsForm .= '<a href="https://github.com/davidsneal/simplesharebuttons" target="_blank">GitHub</a>';
 		$htmlShareButtonsForm .= '</div>';
 		
@@ -192,7 +191,22 @@ function ssba_admin_panel($arrSettings, $htmlSettingsSaved) {
 						$htmlShareButtonsForm .= '<td>';
 						$htmlShareButtonsForm .= '<input id="ssba_custom_twitter" type="text" size="50" name="ssba_custom_twitter" value="' . (isset($arrSettings['ssba_custom_twitter']) ? $arrSettings['ssba_custom_twitter'] : NULL)  . '" />';
 						$htmlShareButtonsForm .= '<input id="upload_twitter_button" data-ssba-input="ssba_custom_twitter" class="button customUpload" type="button" value="Upload Image" />';
-						$htmlShareButtonsForm .= '<p class="description">Enter the URLs of your images or upload from here.<br/>Simply leave any blank you do not wish to include.</p></td>';
+						$htmlShareButtonsForm .= '</td>';
+					$htmlShareButtonsForm .= '</tr>';
+					$htmlShareButtonsForm .= '<tr valign="top">';
+						$htmlShareButtonsForm .= '<th scope="row" style="width: 120px;"><label>VK:</label></th>';
+						$htmlShareButtonsForm .= '<td>';
+						$htmlShareButtonsForm .= '<input id="ssba_custom_vk" type="text" size="50" name="ssba_custom_vk" value="' . (isset($arrSettings['ssba_custom_vk']) ? $arrSettings['ssba_custom_vk'] : NULL)  . '" />';
+						$htmlShareButtonsForm .= '<input id="upload_vk_button" data-ssba-input="ssba_custom_vk" class="button customUpload" type="button" value="Upload Image" />';
+						$htmlShareButtonsForm .= '</td>';
+					$htmlShareButtonsForm .= '</tr>';
+					$htmlShareButtonsForm .= '<tr valign="top">';
+						$htmlShareButtonsForm .= '<th scope="row" style="width: 120px;"><label>Yummly:</label></th>';
+						$htmlShareButtonsForm .= '<td>';
+						$htmlShareButtonsForm .= '<input id="ssba_custom_yummly" type="text" size="50" name="ssba_custom_yummly" value="' . (isset($arrSettings['ssba_custom_yummly']) ? $arrSettings['ssba_custom_yummly'] : NULL)  . '" />';
+						$htmlShareButtonsForm .= '<input id="upload_yummly_button" data-ssba-input="ssba_custom_yummly" class="button customUpload" type="button" value="Upload Image" />';
+						$htmlShareButtonsForm .= '<p class="description">Enter the URLs of your images or upload from here.<br/>Simply leave any blank you do not wish to include.</p>';
+						$htmlShareButtonsForm .= '</td>';
 					$htmlShareButtonsForm .= '</tr>';
 				$htmlShareButtonsForm .= '</table>';
 				$htmlShareButtonsForm .= '</div>';
@@ -545,7 +559,7 @@ CODE;
 		// save button
 		$htmlShareButtonsForm .= '<table class="form-table">';
 				$htmlShareButtonsForm .= '<tr valign="top">';
-					$htmlShareButtonsForm .= '<td><input type="submit" value="Save changes" id="submit" class="button button-primary"/></td>';
+					$htmlShareButtonsForm .= '<td><input type="submit" value="Save all changes" id="submit" class="button button-primary"/></td>';
 				$htmlShareButtonsForm .= '</tr>';
 			$htmlShareButtonsForm .= '</table>';
 		$htmlShareButtonsForm .= '</form>';
@@ -554,12 +568,12 @@ CODE;
 	$htmlShareButtonsForm .= '</td><td style="vertical-align: top;">';	
 	
 	// author div
-	$htmlShareButtonsForm .= '	<div class="ssba-box ssba-shadow">
+	$htmlShareButtonsForm .= '<div class="ssba-box ssba-shadow">
 									<table class="centerme">
 										<tr>
 											<td>
-												<a href="http://www.simplesharebuttons.com/plus"><h2>Simple Share Buttons Plus</h2></a>
-												<p class="description"><a href="http://www.simplesharebuttons.com/plus">www.simplesharebuttons.com/plus</a></p>
+												<a href="https://simplesharebuttons.com/plus/"><h2>Simple Share Buttons Plus</h2></a>
+												<p class="description"><a href="https://simplesharebuttons.com/plus/">simplesharebuttons.com/plus</a></p>
 											</td>
 										</tr>
 										<tr>
@@ -569,17 +583,29 @@ CODE;
 										</tr>
 										<tr>
 											<td>
+												<a href="https://simplesharebuttons.com/plus/features/api/" target="_blank">Facebook share count API</a></br>
+												<a href="https://simplesharebuttons.com/plus/features/geoip/" target="_blank">GeoIP Tracking built-in</a></br>
+												<a href="https://simplesharebuttons.com/ortsh/" target="_blank">Exclusive ort.sh URL shortener</a></br>
 												Floating/responsive share bar</br>
-												Developer support</br>
+												<a href="https://simplesharebuttons.com/forums/forum/simple-share-buttons-plus/" target="_blank">Developer support</a></br>
 												Popup share windows</br>
 												Retina-ready CSS Sprites</br>
-												Built-in tracking</br>
-												Hover and click effects</br>
-												Bitly support</br>
+												Hover and click effects
+												<h3>Only $9.99</h3>
+												<a href="https://simplesharebuttons.com/plus/" target="_blank"><button class="ssbp-more">Find out more</button></a>
 											</td>
 										</tr>
 									</table>
+								</div>';
+
+	// author div
+	$htmlShareButtonsForm .= '<div class="ssba-box ssba-shadow">
 									<table class="centerme">
+										<tr>
+											<td colspan=2>
+												<h2>Simple Share Buttons Adder</h2>
+											</td>
+										</tr>
 										<tr>
 											<td><form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
 <input type="hidden" name="cmd" value="_s-xclick">
@@ -643,7 +669,7 @@ function getAvailableSSBA($strSelectedSSBA) {
 	$arrSelectedSSBA = explode(',', $strSelectedSSBA);
 	
 	// create array of all available buttons
-	$arrAllAvailableSSBA = array('buffer', 'diggit', 'email', 'facebook', 'flattr', 'google', 'linkedin', 'pinterest', 'print', 'reddit', 'stumbleupon', 'tumblr', 'twitter');
+	$arrAllAvailableSSBA = array('buffer', 'diggit', 'email', 'facebook', 'flattr', 'google', 'linkedin', 'pinterest', 'print', 'reddit', 'stumbleupon', 'tumblr', 'twitter', 'vk', 'yummly');
 	
 	// explode saved include list and add to a new array
 	$arrAvailableSSBA = array_diff($arrAllAvailableSSBA, $arrSelectedSSBA);

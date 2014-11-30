@@ -1,10 +1,10 @@
 === Simple Share Buttons Adder ===
 Contributors: DavidoffNeal
 Donate link: http://www.simplesharebuttons.com/donate/
-Tags: share buttons, facebook, twitter, google+, share, share links, stumble upon, linkedin, pinterest
+Tags: share buttons, facebook, twitter, google+, share, share links, stumble upon, linkedin, pinterest, yummly, vk
 Requires at least: 3.5.1
-Tested up to: 4.0
-Stable tag: 4.8
+Tested up to: 4.0.1
+Stable tag: 5.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -14,15 +14,13 @@ A simple plugin that enables you to add share buttons to all of your posts and/o
 
 The Simple Share Buttons Adder does exactly what it says on the tin – adds share buttons to all of your posts and pages, simply.
 
-This plugin has a dedicated website! Check out <a href="http://www.simplesharebuttons.com" target="_blank">www.simplesharebuttons.com</a>
+This plugin has a dedicated website! Check out <a href="https://simplesharebuttons.com" target="_blank">simplesharebuttons.com</a>
 
 No hotlinking to another website to slow downloading or for tracking use, it's simple, as promised.
 
 You can even upload and use your own custom images if you wish!
 
 Visit <a href="http://make.simplesharebuttons.com" target="_blank">make.simplesharebuttons.com</a> to make your own custom-coloured share buttons!
-
-I have now uploaded the source to GitHub so please use this to suggest any fixes/improvements! https://github.com/davidsneal/simplesharebuttons
 
 The Simple Share Buttons Adder utilises features that, as a WordPress user, you will be familiar with. A self-explanatory administration screen will have you showing your Share Buttons on your posts and pages in no time!
 
@@ -63,6 +61,12 @@ A step by step guide on how to configure this plugin can be found <a href="http:
 9. Use the widget option to add share buttons!
 
 == Changelog ==
+
+= 5.0 =
+* Feature: Add Yummly button!
+* Feature: Add VK button!
+* Update: Compatible up to tag 4.0.1
+* Fix: Undefined ssba_excerpts notice
 
 = 4.8 =
 * Fix: Undefined ssba_excerpts
