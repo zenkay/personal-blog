@@ -3,8 +3,8 @@ Contributors: DavidoffNeal
 Donate link: http://www.simplesharebuttons.com/donate/
 Tags: share buttons, facebook, twitter, google+, share, share links, stumble upon, linkedin, pinterest, yummly, vk
 Requires at least: 3.5.1
-Tested up to: 4.0.1
-Stable tag: 5.0
+Tested up to: 4.1
+Stable tag: 5.1
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,6 +61,10 @@ A step by step guide on how to configure this plugin can be found <a href="http:
 9. Use the widget option to add share buttons!
 
 == Changelog ==
+
+= 5.1 =
+* Tweak: Button images approved by Yummly
+* Update: Compatible up to tag 4.1
 
 = 5.0 =
 * Feature: Add Yummly button!
