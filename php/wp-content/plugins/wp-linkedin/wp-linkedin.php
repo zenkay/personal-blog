@@ -5,7 +5,7 @@ Plugin URI: http://vedovini.net/plugins/?utm_source=wordpress&utm_medium=plugin&
 Description: This plugin enables you to add various part of your LinkedIn profile to your Wordpress blog.
 Author: Claude Vedovini
 Author URI: http://vedovini.net/?utm_source=wordpress&utm_medium=plugin&utm_campaign=wp-linkedin
-Version: 1.17.1
+Version: 1.18.1
 Text Domain: wp-linkedin
 
 # The code in this plugin is free software; you can redistribute the code aspects of
@@ -24,7 +24,11 @@ Text Domain: wp-linkedin
 # See the GNU lesser General Public License for more details.
 */
 
-define('WP_LINKEDIN_VERSION', '1.17.1');
+define('WP_LINKEDIN_VERSION', '1.18.1');
+
+if (!defined('LI_DEBUG')) {
+	define('LI_DEBUG', WP_DEBUG);
+}
 
 if (!defined('LINKEDIN_FIELDS_RECOMMENDATIONS')) {
 	define('LINKEDIN_FIELDS_RECOMMENDATIONS', 'recommendations-received:(recommendation-text,recommender:(first-name,last-name,public-profile-url))');
@@ -43,21 +47,33 @@ include 'class-card-widget.php';
 include 'class-profile-widget.php';
 include 'class-updates-widget.php';
 
+add_action('plugins_loaded', array('WPLinkedInPlugin', 'get_instance'));
 
 class WPLinkedInPlugin {
 
-	function WPLinkedInPlugin() {
+	private static $instance;
+
+	public static function get_instance() {
+		if (!self::$instance) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
+	function __construct() {
+		register_deactivation_hook(__FILE__, 'flush_rewrite_rules');
 		add_action('init', array(&$this, 'init'));
 		add_action('widgets_init', array(&$this, 'widgets_init'));
 		add_action('admin_menu', array(&$this, 'admin_init'));
-	}
 
-	function init() {
 		// Make plugin available for translation
 		// Translations can be filed in the /languages/ directory
 		add_filter('load_textdomain_mofile', array(&$this, 'smarter_load_textdomain'), 10, 2);
 		load_plugin_textdomain('wp-linkedin', false, dirname(plugin_basename(__FILE__)) . '/languages/' );
+	}
 
+	function init() {
 		wp_register_script('jquery.tools', plugins_url('jquery.tools.min.js', __FILE__), array('jquery'), '1.2.7', true);
 		wp_register_script('responsive-scrollable', plugins_url('responsive-scrollable.js', __FILE__), array('jquery.tools'), WP_LINKEDIN_VERSION, true);
 		wp_register_style('wp-linkedin', plugins_url('style.css', __FILE__), false, WP_LINKEDIN_VERSION);
@@ -67,10 +83,82 @@ class WPLinkedInPlugin {
 		add_shortcode('li_profile', 'wp_linkedin_profile');
 		add_shortcode('li_card', 'wp_linkedin_card');
 		add_shortcode('li_updates', 'wp_linkedin_updates');
+		add_shortcode('li_picture', 'wp_linkedin_picture');
 
 		$post_types = $this->get_post_types();
 		if (!empty($post_types)) {
 			add_filter('the_content', array(&$this, 'filter_content'), 1);
+		}
+
+		$this->setup_rewrite_rules();
+	}
+
+	function setup_rewrite_rules() {
+		if (isset($_GET['action']) && $_GET['action'] == 'deactivate' &&
+				$_GET['plugin'] == 'wp-linkedin/wp-linkedin.php') {
+			// Don't do anything if we're deactivating this plugin
+			return;
+		}
+
+		add_rewrite_rule('oauth/linkedin/?$', 'index.php?oauth=linkedin', 'top');
+		add_filter('query_vars', array(&$this, 'query_vars'));
+		add_action('template_redirect', array(&$this, 'template_redirect'));
+
+		$rules = get_option('rewrite_rules');
+		if (!isset($rules['oauth/linkedin/?$'])) {
+			flush_rewrite_rules();
+		}
+	}
+
+	function query_vars($vars) {
+		$vars[] = 'oauth';
+		$vars[] = 'code';
+		$vars[] = 'state';
+		$vars[] = 'r';
+		return $vars;
+	}
+
+	function template_redirect() {
+		if (is_user_logged_in() && get_query_var('oauth') == 'linkedin') {
+			$linkedin = wp_linkedin_connection();
+			$state = get_query_var('state');
+			$code = get_query_var('code');
+			$r = get_query_var('r');
+
+			if ($linkedin->check_state_token($state)) {
+				$retcode = $linkedin->set_access_token($code, $r);
+
+				if (!is_wp_error($retcode)) {
+					$linkedin->clear_cache();
+					$this->redirect($r, 'success');
+				} else {
+					$this->redirect($r, 'error', $retcode->get_error_message());
+				}
+			} else {
+				$this->redirect($r, 'error', __('Invalid state', 'wp-linkedin'));
+			}
+
+			exit;
+		}
+	}
+
+	function redirect($path, $status, $message=false) {
+		$query = array('oauth_status' => $status);
+		if ($message) $query['oauth_message'] = urlencode($message);
+		$path = add_query_arg($query, $path);
+		$location = $path;
+
+		$notice = __('Please click <a href="%s">here</a> if you are not redirected immediately.');
+		echo '<p><strong>' . sprintf($notice, $location) . '</strong></p>';
+
+		if (!LI_DEBUG) {
+			if (headers_sent()) {
+				// If the headers have already been sent then use Javascript
+				echo "<script>window.location='$location';</script>";
+			} else {
+				// Otherwise, just use a normal redirect
+				wp_redirect($location);
+			}
 		}
 	}
 
@@ -126,7 +214,7 @@ class WPLinkedInPlugin {
 
 
 function wp_linkedin_error($message) {
-	if (WP_DEBUG) {
+	if (LI_DEBUG) {
 		return "<p class='error'>$message</p>";
 	} else {
 		return "<!-- $message -->";
@@ -158,7 +246,7 @@ function wp_linkedin_load_template($name, $args, $plugin=__FILE__) {
 
 	extract($args);
 	ob_start();
-	if (WP_DEBUG) echo '<!-- template path: ' . $template . ' -->';
+	if (LI_DEBUG) echo '<!-- template path: ' . $template . ' -->';
 	require($template);
 	return ob_get_clean();
 }
@@ -245,6 +333,41 @@ function wp_linkedin_updates($atts=array()) {
 }
 
 
+function wp_linkedin_original_profile_picture_url() {
+	$linkedin = wp_linkedin_connection();
+	$picture_urls = $linkedin->api_call('https://api.linkedin.com/v1/people/~/picture-urls::(original)');
+
+	if (!is_wp_error($picture_urls)) {
+		return $picture_urls->values[0];
+	} elseif (LI_DEBUG) {
+		return $picture_urls->get_error_message();
+	} else {
+		return false;
+	}
+}
+
+
+function wp_linkedin_picture($atts=array()) {
+	$atts = shortcode_atts(array(
+			'class' => false,
+			'width' => false,
+			'height' => false
+	), $atts, 'li_picture');
+	extract($atts);
+
+	$picture_url = wp_linkedin_original_profile_picture_url();
+
+	if ($picture_url) {
+		$output = "<img src=\"$picture_url\"";
+		if ($width) $output .= " width=\"$width\"";
+		if ($height) $output .= " height=\"$height\"";
+		if ($class) $output .= " class=\"$class\"";
+		$output .= '/>';
+		return $output;
+	}
+}
+
+
 function wp_linkedin_excerpt($str, $length, $postfix='[...]') {
 	$length++;
 
@@ -302,7 +425,3 @@ function wp_linkedin_cause($cause_name) {
 
 	return $causes[$cause_name];
 }
-
-
-global $the_wp_linked_plugin;
-$the_wp_linked_plugin = new WPLinkedInPlugin();

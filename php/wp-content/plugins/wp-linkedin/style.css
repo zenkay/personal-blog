@@ -56,6 +56,7 @@
 	.linkedin .profile .project,
 	.linkedin .profile .publication,
 	.linkedin .profile .education,
+	.linkedin .profile .honor,
 	.linkedin .profile .volunteer {
 	margin-bottom: 20px;
 }
@@ -70,6 +71,7 @@
 
 .linkedin .profile .position .company,
 	.linkedin .profile .publication .publisher,
+	.linkedin .profile .honor .issuer,
 	.linkedin .profile .volunteer .organization {
 	font-weight: bolder;
 }

@@ -15,10 +15,23 @@ function ssba_admin_panel($arrSettings, $htmlSettingsSaved) {
 		
 		// top nav
 		$htmlShareButtonsForm .= '<div id="ssba-top-nav">';
-			$htmlShareButtonsForm .= '<a href="http://wordpress.org/support/plugin/simple-share-buttons-adder" target="_blank">Support</a>';
+			$htmlShareButtonsForm .= '<a id="ssba_support" href="#">Support</a>';
 			$htmlShareButtonsForm .= '<a href="https://simplesharebuttons.com/wordpress-faq/" target="_blank">FAQ</a>';
 			$htmlShareButtonsForm .= '<a href="https://simplesharebuttons.com/showcase/" target="_blank">Showcase</a>';
-			$htmlShareButtonsForm .= '<a href="https://github.com/davidsneal/simplesharebuttons" target="_blank">GitHub</a>';
+		$htmlShareButtonsForm .= '</div>';
+
+		// hidden modal content
+		$htmlShareButtonsForm .= '<div id="ssba-support-modal">';
+			$htmlShareButtonsForm .= '<div id="ssba-support-modal-content">';
+				$htmlShareButtonsForm .= '<span class="ssba-support-modal-close"></span>';
+				$htmlShareButtonsForm .= '<h2>Simple Share Buttons Support</h2>';
+				$htmlShareButtonsForm .= '<p>Please note that the this plugin relies on WordPress community support from other  users.</p><p>If you wish to receive official support, please consider purchasing <a href="https://simplesharebuttons.com/plus/" target="_blank"><b>Simple Share Buttons Plus</a>.';
+				$htmlShareButtonsForm .= '<table style="text-align:center;width:100%"><tr><td>';
+					$htmlShareButtonsForm .= '<a href="https://wordpress.org/support/plugin/simple-share-buttons-adder" target="_blank"><button class="ssbp-more ssbp-more-grey">Continue to community support</button></a></td>';
+					$htmlShareButtonsForm .= '<td><a href="https://simplesharebuttons.com/plus/" target="_blank"><button class="ssbp-more">Check out Simple Share Buttons Plus</button></a></td>';
+				$htmlShareButtonsForm .= '</tr></table>';
+				$htmlShareButtonsForm .= '<p class="description"><a href="https://simplesharebuttons.com" target="_blank">simplesharebuttons.com</a></p>';
+			$htmlShareButtonsForm .= '</div>';
 		$htmlShareButtonsForm .= '</div>';
 		
 	// close header
@@ -553,6 +566,20 @@ CODE;
 					$htmlShareButtonsForm .= '<td><input type="text" name="ssba_buffer_text" style="width: 250px;" id="ssba_buffer_text" value="' . $arrSettings['ssba_buffer_text'] . '" />';
 					$htmlShareButtonsForm .= '<p class="description">Add some custom text for when people share via Buffer</p></td>';
 				$htmlShareButtonsForm .= '</tr>';
+				$htmlShareButtonsForm .= '<tr><td><h3>Pinterest</h3></td></tr>';
+				$htmlShareButtonsForm .= '<tr valign="top">';
+					$htmlShareButtonsForm .= '<th scope="row" style="width: 120px;"><label>Use Featured Images:</label></th>';
+					$htmlShareButtonsForm .= '<td>';
+					$htmlShareButtonsForm .= 'Yes&nbsp;<input type="checkbox" name="ssba_pinterest_featured" id="ssba_pinterest_featured" ' . ($arrSettings['ssba_pinterest_featured'] == 'Y'   ? 'checked' : NULL) . ' value="Y" />';
+					$htmlShareButtonsForm .= '<p class="description">Force the use of featured images for posts/pages when pinning</p></td>';
+				$htmlShareButtonsForm .= '</tr>';
+				$htmlShareButtonsForm .= '<tr valign="top">';
+						$htmlShareButtonsForm .= '<th scope="row" style="width: 120px;"><label>Default Pinterest Image:</label></th>';
+						$htmlShareButtonsForm .= '<td>';
+						$htmlShareButtonsForm .= '<input id="ssba_default_pinterest" type="text" size="50" name="ssba_default_pinterest" value="' . (isset($arrSettings['ssba_default_pinterest']) ? $arrSettings['ssba_default_pinterest'] : NULL)  . '" />';
+						$htmlShareButtonsForm .= '<input id="upload_ssba_default_pinterest_button" data-ssba-input="ssba_default_pinterest" class="button customUpload" type="button" value="Upload Image" />';
+						$htmlShareButtonsForm .= '</td>';
+					$htmlShareButtonsForm .= '</tr>';
 			$htmlShareButtonsForm .= '</table>';
 		$htmlShareButtonsForm .= '</div>';
 		

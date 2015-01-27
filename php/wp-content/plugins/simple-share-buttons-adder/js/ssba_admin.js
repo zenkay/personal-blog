@@ -107,7 +107,18 @@
 		
 		// add selected tab class
 		jQuery('#ssba_tab_advanced').addClass('ssba-selected-tab');
-	}); 
+	});
+
+	// support modal
+	jQuery('#ssba_support').click(function(){
+		// show support modal
+		jQuery("#ssba-support-modal").show();
+	});
+	// support modal
+	jQuery('#ssba-support-modal').click(function(){
+		// show support modal
+		jQuery("#ssba-support-modal").hide();
+	});
 	
 	// color picker
 	jQuery('#ssba_font_color').wpColorPicker();

@@ -141,4 +141,10 @@ switch ($update->updateType) {
 <?php else: ?>
 <p><?php _e('No updates', 'wp-lnkedin'); ?></p>
 <?php endif; ?>
+
+<?php if (LI_DEBUG): ?>
+<!--
+<?php print_r($updates); ?>
+-->
+<?php endif; ?>
 </div>

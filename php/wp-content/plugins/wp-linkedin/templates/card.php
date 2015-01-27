@@ -9,4 +9,10 @@
 <div class="summary"><?php echo wpautop(wp_linkedin_excerpt($profile->summary, $summary_length)); ?></div>
 <?php endif; ?>
 
-</div></div>
+</div>
+<?php if (LI_DEBUG): ?>
+<!--
+<?php print_r($profile); ?>
+-->
+<?php endif; ?>
+</div>

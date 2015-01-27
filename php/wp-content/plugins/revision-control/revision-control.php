@@ -1,18 +1,18 @@
 <?php
-/*
-Plugin Name: Revision Control
-Plugin URI: http://dd32.id.au/wordpress-plugins/revision-control/
-Description: Allows finer control over the number of Revisions stored on a global & per-type/page basis.
-Author: Dion Hulse
-Version: 2.3
-*/
+/**
+ * Plugin Name: Revision Control
+ * Plugin URI: http://dd32.id.au/wordpress-plugins/revision-control/
+ * Description: Allows finer control over the number of Revisions stored on a global & per-type/page basis.
+ * Author: Dion Hulse
+ * Version: 2.3.1
+ */
 
-$GLOBALS['revision_control'] = new Plugin_Revision_Control( plugin_basename(__FILE__) );
+$GLOBALS['revision_control'] = new Plugin_Revision_Control( plugin_basename( __FILE__ ) );
 class Plugin_Revision_Control {
 	var $basename = '';
 	var $folder = '';
-	var $version = '2.3';
-	
+	var $version = '2.3.1';
+
 	var $define_failure = false;
 	var $options = array( 'per-type' => array('post' => 'unlimited', 'page' => 'unlimited', 'all' => 'unlimited'), 'revision-range' => '2..5,10,20,50,100' );
 
@@ -24,15 +24,15 @@ class Plugin_Revision_Control {
 		// Load options - Must be done on inclusion as they're needed by plugins_loaded
 		$this->load_options();
 
-		add_action('plugins_loaded', array(&$this, 'define_WP_POST_REVISIONS'));
+		add_action('plugins_loaded', array($this, 'define_WP_POST_REVISIONS'));
 
 		if ( ! is_admin() )
 			return;
 
 		//Register general hooks.
-		add_action('init', array(&$this, 'load_translations')); // Needs to be done before admin_menu.
-		add_action('admin_menu', array(&$this, 'admin_menu'));
-		add_action('admin_init', array(&$this, 'admin_init'));
+		add_action('init', array($this, 'load_translations')); // Needs to be done before admin_menu.
+		add_action('admin_menu', array($this, 'admin_menu'));
+		add_action('admin_init', array($this, 'admin_init'));
 	}
 
 	function load_translations() {
@@ -43,7 +43,7 @@ class Plugin_Revision_Control {
 	function admin_init() {
 		// Register post/page hook:
 		foreach ( array('load-post-new.php', 'load-post.php', 'load-page-new.php', 'load-page.php') as $page )
-			add_action($page, array(&$this, 'meta_box'));
+			add_action($page, array($this, 'meta_box'));
 
 		wp_register_script('revision-control', plugins_url( $this->folder . '/revision-control.js' ), array('jquery', 'wp-ajax-response'), $this->version . time());
 		wp_register_style('revision-control', plugins_url( $this->folder . '/revision-control.css' ), array(), $this->version);
@@ -60,15 +60,15 @@ class Plugin_Revision_Control {
 		add_action('admin_post_revision-control-options', array('Plugin_Revision_Control_Ajax', 'save_options'));
 		add_action('admin_post_revision-control-revision-compare', array('Plugin_Revision_Control_UI', 'compare_revisions_iframe'));
 		
-		add_action('save_post', array(&$this, 'save_post'), 10, 2);
+		add_action('save_post', array($this, 'save_post'), 10, 2);
 		
 		// Version the terms.
-		add_action('_wp_put_post_revision', array(&$this, 'version_terms') );
+		add_action('_wp_put_post_revision', array($this, 'version_terms') );
 		//Delete the terms
-		add_action('wp_delete_post_revision', array(&$this, 'delete_terms'), 10, 2 );
+		add_action('wp_delete_post_revision', array($this, 'delete_terms'), 10, 2 );
 
 		// Version the postmeta
-		add_action('_wp_put_post_revision', array(&$this, 'version_postmeta') );
+		add_action('_wp_put_post_revision', array($this, 'version_postmeta') );
 		// Postmeta deletion is handled by core.
 	}
 	
@@ -243,7 +243,7 @@ class Plugin_Revision_Control {
 
 	}
 	
-	function sort_revisions_by_time($a, $b) {
+	static function sort_revisions_by_time($a, $b) {
 		return strtotime($a->post_modified_gmt) < strtotime($b->post_modified_gmt);
 	}
 	
@@ -299,7 +299,7 @@ class Plugin_Revision_Control {
 }
 
 class Plugin_Revision_Control_Compat {
-	function postmeta($meta, $post) {
+	static function postmeta($meta, $post) {
 		if ( is_array($meta) )
 			return $meta;
 
@@ -318,7 +318,7 @@ class Plugin_Revision_Control_Compat {
 		return $_meta;
 	}
 
-	function options($options) {
+	static function options($options) {
 		$_options = $options;
 		if ( ! is_array($options) ) { // Upgrade from 1.0 to 1.1
 			$options = array( 'post' => $options, 'page' => $options );
@@ -344,7 +344,7 @@ class Plugin_Revision_Control_Compat {
 }
 
 class Plugin_Revision_Control_Ajax {
-	function delete_revisions() {
+	static function delete_revisions() {
 		//Add nonce check
 		check_admin_referer('revision-control-delete');
 		
@@ -372,7 +372,8 @@ class Plugin_Revision_Control_Ajax {
 		$x->add( array('data' => 1, 'supplemental' => array('revisions' => implode(',', $deleted)) ) );
 		$x->send();
 	}
-	function save_options() {
+
+	static function save_options() {
 		global $revision_control;
 		check_Admin_referer('revision-control-options');
 
@@ -389,7 +390,7 @@ class Plugin_Revision_Control_Ajax {
 }
 
 class Plugin_Revision_Control_UI {
-	function compare_revisions_iframe() {
+	static function compare_revisions_iframe() {
 		//add_action('admin_init', 'register_admin_colors', 1);
 
 		set_current_screen('revision-edit');
@@ -518,7 +519,7 @@ class Plugin_Revision_Control_UI {
 		iframe_footer();
 	}
 
-	function revisions_meta_box( $post_id = 0 ) {
+	static function revisions_meta_box( $post_id = 0 ) {
 		global $revision_control;
 
 		if ( empty($post_id) )
@@ -602,7 +603,7 @@ class Plugin_Revision_Control_UI {
 		else
 			$actions[] = '<a href="#" class="unlock">' . __('Unlock', 'revision-control') . '</a>';*/
 		if ( ! $revision_is_current && !wp_is_post_autosave($revision) && $can_edit_post ) {
-			$actions[] = '<a href="' . wp_nonce_url( add_query_arg( array( 'revision' => $revision->ID, 'diff' => false, 'action' => 'restore' ), 'revision.php' ), "restore-post_$post->ID|$revision->ID" ) . '">' . __( 'Restore', 'revision-control' ) . '</a>';
+			$actions[] = '<a href="' . wp_nonce_url( add_query_arg( array( 'revision' => $revision->ID, 'diff' => false, 'action' => 'restore' ), 'revision.php' ), "restore-post_{$revision->ID}" ) . '">' . __( 'Restore', 'revision-control' ) . '</a>';
 			//$actions[] = '<a href="#" class="hide-if-no-js delete">' . __( 'Delete', 'revision-control' ) . '</a>';
 		}
 
@@ -680,7 +681,7 @@ class Plugin_Revision_Control_UI {
 	<?php
 	}
 	
-	function admin_page() {
+	static function admin_page() {
 		global $revision_control;
 
 		echo "<div class='wrap'>";

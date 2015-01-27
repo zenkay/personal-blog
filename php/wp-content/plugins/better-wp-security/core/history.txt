@@ -187,3 +187,12 @@
 	Fixed: Lockout count in emails should now be more accurate
 1.12.0 - 2014-12-16 - Chris Wiegman
 	New Pro Feature: Google reCAPTCHA
+1.12.1 - 2015-01-05 - Chris Wiegman
+	New Feature: Add file/folder permissions check to Dashboard
+	Fix/Enhancement: Minor refactoring of various core components
+1.12.2 - 2015-01-12 - Chris Wiegman
+	Fix: Fixed duplicate module listsing on log page dropdown
+	Fix: Fixed missing lockouts on iThemes Sync dashboard
+1.13.0 - 2015-01-21 - Chris Wiegman
+	New Feature: Change WordPress Salts
+	Enhancement: Refactored ITSEC_Lib and ITSEC_Files for better usability and new functions to make changing salts possible

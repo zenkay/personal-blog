@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Simple Share Buttons Adder
-Plugin URI: http://www.simplesharebuttons.com
+Plugin URI: https://simplesharebuttons.com
 Description: A simple plugin that enables you to add share buttons to all of your posts and/or pages.
-Version: 5.1
-Author: David S. Neal
-Author URI: http://www.davidsneal.co.uk/
+Version: 5.5
+Author: Simple Share Buttons
+Author URI: https://simplesharebuttons.com
 License: GPLv2
 
 Copyright 2014 Simple Share Buttons admin@simplesharebuttons.com
@@ -26,7 +26,7 @@ GNU General Public License for more details.
 	}
 
 	// set version number constant
-	define('SSBA_VERSION', '5.1');
+	define('SSBA_VERSION', '5.5');
 	
 	// make sure we have settings ready
 	// this has been introduced to exclude from excerpts
@@ -44,7 +44,7 @@ GNU General Public License for more details.
 	function ssba_activate() {
 	
 		// insert default options for ssba
-		add_option('ssba_version', 				'background-size:450px 30px;');
+		add_option('ssba_version', 				SSBA_VERSION);
 		add_option('ssba_image_set', 			'somacro');
 		add_option('ssba_size', 				'35');
 		add_option('ssba_pages',				'');
@@ -69,6 +69,8 @@ GNU General Public License for more details.
 		add_option('ssba_share_count_once',		'Y');
 		add_option('ssba_widget_text',			'');
 		add_option('ssba_rel_nofollow',			'');
+		add_option('ssba_default_pinterest',	'');
+		add_option('ssba_pinterest_featured',	'');
 		
 		// share container
 		add_option('ssba_div_padding', 			'');
@@ -140,6 +142,8 @@ GNU General Public License for more details.
 		delete_option('ssba_share_count_once');
 		delete_option('ssba_widget_text');
 		delete_option('ssba_rel_nofollow');
+		delete_option('ssba_default_pinterest');
+		delete_option('ssba_pinterest_featured');
 		
 		// share container
 		delete_option('ssba_div_padding');
@@ -372,6 +376,12 @@ GNU General Public License for more details.
 		// added in 5.0
 		add_option('ssba_custom_vk', 	 '');
 		add_option('ssba_custom_yummly', '');
+
+		// added in 5.2
+		add_option('ssba_default_pinterest', '');
+
+		// added in 5.5
+		add_option('ssba_pinterest_featured', '');
 	
 		// update version number
 		update_option('ssba_version', SSBA_VERSION);
@@ -428,6 +438,8 @@ GNU General Public License for more details.
 				update_option('ssba_share_count_once',		(isset($_POST['ssba_share_count_once']) ? $_POST['ssba_share_count_once'] : NULL));
 				update_option('ssba_widget_text',			$_POST['ssba_widget_text']);
 				update_option('ssba_rel_nofollow',			(isset($_POST['ssba_rel_nofollow']) ? $_POST['ssba_rel_nofollow'] : NULL));
+				update_option('ssba_default_pinterest',		(isset($_POST['ssba_default_pinterest']) ? $_POST['ssba_default_pinterest'] : NULL));
+				update_option('ssba_pinterest_featured',	(isset($_POST['ssba_pinterest_featured']) ? $_POST['ssba_pinterest_featured'] : NULL));
 				
 				// share container
 				update_option('ssba_div_padding', 			$_POST['ssba_div_padding']);
@@ -682,9 +694,12 @@ GNU General Public License for more details.
 			else 								
 				// use normal share text
 				$strShareText = $arrSettings['ssba_share_text'];
+
+			// post id
+			$intPostID = get_the_ID();
 				
 			// if post type is download (EDD clashes)
-			if(get_post_type( get_the_ID()) == "download") {
+			if(get_post_type($intPostID) == "download") {
 
 				// check for and remove added text
 				preg_match_all("/>(.*?)>/", $strPageTitle, $matches);
@@ -707,7 +722,7 @@ GNU General Public License for more details.
 				if ($arrSettings['ssba_link_to_ssb'] == 'Y') {
 				
 					// share text with link
-					$htmlShareButtons .= '<a href="http://www.simplesharebuttons.com" target="_blank">' . $strShareText . '</a>';
+					$htmlShareButtons .= '<a href="https://simplesharebuttons.com" target="_blank">' . $strShareText . '</a>';
 				}
 				
 				// just display the share text
@@ -735,7 +750,7 @@ GNU General Public License for more details.
 			}	
 			
 			// the buttons!
-			$htmlShareButtons.= get_share_buttons($arrSettings, $urlCurrentPage, $strPageTitle);
+			$htmlShareButtons.= get_share_buttons($arrSettings, $urlCurrentPage, $strPageTitle, $intPostID);
 			
 			// add custom text if set and set to placement right or below
 			if (($strShareText != '') && ($arrSettings['ssba_text_placement'] == 'right' || $arrSettings['ssba_text_placement'] =='below')) {
@@ -747,7 +762,7 @@ GNU General Public License for more details.
 				if ($arrSettings['ssba_link_to_ssb'] == 'Y') {
 				
 					// share text with link
-					$htmlShareButtons .= '<a href="http://www.simplesharebuttons.com" target="_blank">' . $strShareText . '</a>';
+					$htmlShareButtons .= '<a href="https://simplesharebuttons.com" target="_blank">' . $strShareText . '</a>';
 				}
 				
 				// just display the share text
@@ -835,27 +850,8 @@ GNU General Public License for more details.
 		return $urlCurrentPage;
 	}
 	
-	// shorten URL with bit.ly
-	function ssba_shorten($urlLong) {
-	
-		// get results from bitly and return short url
-		$hmtlBitly = file_get_contents('http://api.bit.ly/v3/shorten?login=simplesharebuttons&apiKey=R_555eddf50da1370b8ab75670a3de2fe6&longUrl=' . $urlLong);
-		$arrBitly = json_decode($hmtlBitly, true);
-		$urlShort =  $arrBitly['data'];
-		$urlShort =  $urlShort['url'];
-		$hmtlBitly = str_replace('[\]', '', $hmtlBitly);
-		
-		if ($urlShort != '') {
-		
-			return $urlShort;
-		} else {
-		
-			return $urlLong;
-		}; 
-	}
-	
 	// get set share buttons
-	function get_share_buttons($arrSettings, $urlCurrentPage, $strPageTitle) {
+	function get_share_buttons($arrSettings, $urlCurrentPage, $strPageTitle, $intPostID) {
 
 	// variables
 	$htmlShareButtons = '';
@@ -865,6 +861,9 @@ GNU General Public License for more details.
 	
 	// check if array is not empty
 	if ($arrSettings['ssba_selected_buttons'] != '') {
+
+		// add post ID to settings array
+		$arrSettings['post_id'] = $intPostID;
 	
 		// if show counters option is selected
 		if ($arrSettings['ssba_show_share_count'] == 'Y') {
@@ -1185,9 +1184,33 @@ function getLinkedinShareCount($urlCurrentPage) {
 // get pinterest button
 function ssba_pinterest($arrSettings, $urlCurrentPage, $strPageTitle, $booShowShareCount) {
 
-	// pinterest share link
-	$htmlShareButtons = "<a class='ssba_pinterest_share' href='javascript:void((function()%7Bvar%20e=document.createElement(&apos;script&apos;);e.setAttribute(&apos;type&apos;,&apos;text/javascript&apos;);e.setAttribute(&apos;charset&apos;,&apos;UTF-8&apos;);e.setAttribute(&apos;src&apos;,&apos;//assets.pinterest.com/js/pinmarklet.js?r=&apos;+Math.random()*99999999);document.body.appendChild(e)%7D)());'>";
-	
+	// if using featured images for Pinteres
+	if($arrSettings['ssba_pinterest_featured'] == 'Y')
+	{
+		// if this post has a featured image
+		if(has_post_thumbnail($arrSettings['post_id']))
+		{
+			// get the featured image
+			$urlPostThumb = wp_get_attachment_image_src(get_post_thumbnail_id($arrSettings['post_id']), 'full');
+			$urlPostThumb = $urlPostThumb[0];
+		}
+		// no featured image set
+		else
+		{
+			// use the pinterest default
+			$urlPostThumb = $arrSettings['ssba_default_pinterest'];
+		}
+
+		// pinterest share link
+		$htmlShareButtons = '<a href="http://pinterest.com/pin/create/bookmarklet/?is_video=false&url='.$urlCurrentPage.'&media='.$urlPostThumb.'&description='.$strPageTitle.'" class="ssba_pinterest_share ssba_share_link" '.($arrSettings['ssba_share_new_window'] == 'Y' ? ' target="_blank" ' : NULL) . ($arrSettings['ssba_rel_nofollow'] == 'Y' ? ' rel="nofollow" ' : NULL).'>';
+	}
+	// not using featured images for pinterest
+	else
+	{
+		// use the choice of pinnable images approach
+		$htmlShareButtons = "<a class='ssba_pinterest_share' href='javascript:void((function()%7Bvar%20e=document.createElement(&apos;script&apos;);e.setAttribute(&apos;type&apos;,&apos;text/javascript&apos;);e.setAttribute(&apos;charset&apos;,&apos;UTF-8&apos;);e.setAttribute(&apos;src&apos;,&apos;//assets.pinterest.com/js/pinmarklet.js?r=&apos;+Math.random()*99999999);document.body.appendChild(e)%7D)());'>";
+	}
+
 	// if image set is not custom
 	if ($arrSettings['ssba_image_set'] != 'custom') {
 	

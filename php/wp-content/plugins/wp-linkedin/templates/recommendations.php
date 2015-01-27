@@ -21,4 +21,9 @@
 		<?php  endforeach; ?>
 		</div>
 	</div>
+<?php if (LI_DEBUG): ?>
+<!--
+<?php print_r($recommendations); ?>
+-->
+<?php endif; ?>
 </div>

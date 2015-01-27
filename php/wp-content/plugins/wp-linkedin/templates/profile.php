@@ -36,8 +36,17 @@ if (isset($profile->educations->values) &&
 	echo wp_linkedin_load_template('profile-educations', array('profile' => $profile));
 }
 
+if (isset($profile->honorsAwards->values) &&
+		is_array($profile->honorsAwards->values)) {
+	echo wp_linkedin_load_template('profile-honors', array('profile' => $profile));
+}
+
 if (isset($profile->recommendationsReceived->values) &&
 		is_array($profile->recommendationsReceived->values)) {
 	echo wp_linkedin_load_template('profile-recommendations', array('profile' => $profile));
+}
+
+if (LI_DEBUG) {
+	echo wp_linkedin_load_template('profile-debug', array('profile' => $profile));
 }
 ?></div></div>

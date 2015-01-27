@@ -114,6 +114,16 @@ color:#fff;
 background-color: #19a68c !important;
 border: #148470 3px solid;
 }
+
+.ssbp-more-grey {
+font-size:18px;
+padding:10px;
+width: 100%;
+color:#fff;
+background-color: #7E7E7E !important;
+border-color: #565656 !important;
+}
+
 .ssbp-more:hover {
 cursor: pointer;
 color:#fff;
@@ -131,3 +141,50 @@ width:100%;
 .blueme {}
 
 .ssbp-info p {font-size:18px;margin:0;}
+
+#ssba-support-modal {
+padding:10%;
+text-align: center;
+display:none;
+position: fixed;
+display: none;
+z-index: 99999;
+top: 0;
+left: 0;
+width: 80%;
+height: 100%;
+background-color: rgba(0,0,0,0.7);
+}
+
+#ssba-support-modal p {
+font-size:15px !important;
+}
+
+#ssba-support-modal-content {
+	padding:20px;
+	background-color:#fff;
+}
+
+#ssba-support-modal-content a {
+	color: #19a68c;
+	text-decoration: none;
+}
+
+#ssba-support-modal-content a:hover {
+	text-decoration: underline;
+}
+
+.ssba-support-modal-close {
+	cursor: pointer;
+}
+
+.ssba-support-modal-close:after {
+position: relative;
+right: 24px;
+top: 10px;
+float: right;
+text-align: right;
+color: #19a68c;
+content: "x";
+font-size: 22px;
+}

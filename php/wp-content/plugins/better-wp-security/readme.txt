@@ -1,10 +1,10 @@
 === iThemes Security (formerly Better WP Security) ===
-Contributors: ithemes, ChrisWiegman, mattdanner, chrisjean
+Contributors: ithemes, ChrisWiegman, gerroald, mattdanner, chrisjean
 Donate link: https://ithemes.com/security
 Tags: security, malware, secure, multi-site, network, mu, login, lockdown, htaccess, hack, header, cleanup, ban, restrict, access, protect, protection, disable, images, image, hotlink, admin, username, database, prefix, wp-content, rename, directory, directories, secure, SSL, iThemes, BackupBuddy, Exchange, iThemes Exchange
-Requires at least: 3.9
+Requires at least: 4.0
 Tested up to: 4.1
-Stable tag: 4.5.6
+Stable tag: 4.6.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -195,6 +195,21 @@ Free support may be available with the help of the community in the <a href="htt
 5. Easy-to-navigate Security dashboard
 
 == Changelog ==
+
+= 4.6.2 =
+* New Feature: Change WordPress Salts
+* Enhancement: Refactored ITSEC_Lib and ITSEC_Files for better usability and new functions to make changing salts possible
+
+= 4.5.10 =
+* Fix: Fixed typo on file change warning emails.
+* Fix: Fixed duplicate module listsing on log page dropdown
+* Fix: Fixed missing lockouts on iThemes Sync dashboard
+
+= 4.5.8 =
+* New Feature: Add file/folder permissions check to Dashboard
+* Fix/Enhancement: Code refactoring of numerous modules
+* Fix: Hiding available updates in multi-site will no longer block wp-cli from detecting updates.
+* Fix: Removed leftover JavaScript debugging statements.
 
 = 4.5.6 =
 * New Pro Feature: Google reCAPTCHA
@@ -1347,6 +1362,15 @@ This release is a complete rewrite from the ground up. Special thanks to Cory Mi
 * First alpha release including simple feature set.
 
 == Upgrade Notice ==
+
+= 4.6.2 =
+Version 4.6.2 contains new features and enhancements and is recommended for all users.
+
+= 4.5.10 =
+Version 4.5.10 contains minor bugfixes and is recommended for all users.
+
+= 4.5.8 =
+Version 4.5.8 contains minor bugfixes and enhancements and is recommended for all users.
 
 = 4.5.6 =
 Version 4.5.6 contains a minor bugfix and is recommended for all users.

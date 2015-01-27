@@ -338,3 +338,20 @@
 	Fixed: Removed unneeded fields in malware
 4.5.6 - 2014-12-16 - Packaging Bot (core)
 	New Pro Feature: Google reCAPTCHA
+4.5.7 - 2015-01-05 - Packaging Bot (modules/free)
+	Fix/Enhancement: Code refactoring of numerous modules
+	Fix: Hiding available updates in multi-site will no longer block wp-cli from detecting updates.
+	Fix: Removed leftover JavaScript debugging statements.
+4.5.8 - 2015-01-05 - Packaging Bot (core)
+	New Feature: Add file/folder permissions check to Dashboard
+	Fix/Enhancement: Minor refactoring of various core components
+4.5.9 - 2015-01-12 - Packaging Bot (modules/free)
+	Updated modules/free to version 1.5.3
+4.5.10 - 2015-01-12 - Packaging Bot (core)
+	Fix: Fixed duplicate module listsing on log page dropdown
+	Fix: Fixed missing lockouts on iThemes Sync dashboard
+4.6.1 - 2015-01-21 - Packaging Bot (modules/free)
+	Updated modules/free to version 1.6.0
+4.6.2 - 2015-01-21 - Packaging Bot (core)
+	New Feature: Change WordPress Salts
+	Enhancement: Refactored ITSEC_Lib and ITSEC_Files for better usability and new functions to make changing salts possible
