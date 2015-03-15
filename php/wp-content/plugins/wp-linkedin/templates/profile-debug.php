@@ -1,3 +1,3 @@
 <!--
-<?php print_r($profile); ?>
+<?php echo json_encode($profile); ?>
 -->

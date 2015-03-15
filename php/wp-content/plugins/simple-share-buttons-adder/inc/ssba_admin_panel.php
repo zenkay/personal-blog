@@ -618,7 +618,7 @@ CODE;
 												Popup share windows</br>
 												Retina-ready CSS Sprites</br>
 												Hover and click effects
-												<h3>Only $9.99</h3>
+												<h3>Only $10</h3>
 												<a href="https://simplesharebuttons.com/plus/" target="_blank"><button class="ssbp-more">Find out more</button></a>
 											</td>
 										</tr>

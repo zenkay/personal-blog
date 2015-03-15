@@ -5,8 +5,7 @@
 	<div class="recommendation"><?php  echo nl2br($v->recommendationText); ?></div>
 	<div class="recommender"><?php if (isset($v->recommender->publicProfileUrl)): ?>
 		<a href="<?php echo esc_url($v->recommender->publicProfileUrl); ?>"
-		target="_blank"><?php echo $v->recommender->firstName; ?>
-		<?php echo $v->recommender->lastName; ?></a>
+		target="_blank"><?php echo $v->recommender->firstName; ?> <?php echo $v->recommender->lastName; ?></a>
 		<?php else: ?>
 		<?php  _e('Anonymous', 'wp-linkedin'); ?>
 	<?php endif; ?></div>

@@ -64,8 +64,10 @@ switch ($update->updateType) {
 		break;
 	case 'VIRL':
 		echo '<li class="type-'.strtolower($update->updateType) . '">';
-		printf(__('%1$s likes: %2$s', 'wp-linkedin'), $profile_name,
-				li_find_links($p->updateAction->originalUpdate->updateContent->currentShare->comment));
+		$like = $update->updateContent->updateAction->originalUpdate->updateContent->person;
+		$author = li_profile_name($like);
+		printf(__('%1$s likes: %2$s by %3$s', 'wp-linkedin'), $profile_name,
+				li_find_links($like->currentShare->comment), $author);
 		echo '</li>';
 		break;
 	case 'JGRP':
@@ -132,7 +134,7 @@ switch ($update->updateType) {
 		break;
 	default:
 		echo "<!--\n";
-		print_r($update);
+		echo json_encode($update);
 		echo "\n-->";
 }
 ?>
@@ -144,7 +146,7 @@ switch ($update->updateType) {
 
 <?php if (LI_DEBUG): ?>
 <!--
-<?php print_r($updates); ?>
+<?php echo json_encode($updates); ?>
 -->
 <?php endif; ?>
 </div>

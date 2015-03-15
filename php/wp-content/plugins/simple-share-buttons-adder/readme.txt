@@ -3,8 +3,8 @@ Contributors: DavidoffNeal
 Donate link: https://simplesharebuttons.com/donate/
 Tags: share buttons, facebook, twitter, google+, share, share links, stumble upon, linkedin, pinterest, yummly, vk
 Requires at least: 3.5.1
-Tested up to: 4.1
-Stable tag: 5.5
+Tested up to: 4.1.1
+Stable tag: 5.6
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,6 +61,14 @@ A step by step guide on how to configure this plugin can be found <a href="http:
 9. Use the widget option to add share buttons!
 
 == Changelog ==
+
+= 5.6 =
+* Fix: Remove various PHP notices
+* Tweak: Correct LinkedIn title from Linkedin
+* Tweak: Fix validation error with StumbleUpon link
+* Tweak: Use lowercase 'body' and 'subject' in mailto links
+* Update: Update 'Tested up to' tag to 4.1.1
+* Update: Rebranded settings page
 
 = 5.5 =
 * Tweak: Revert to old Pinterest functionality by default

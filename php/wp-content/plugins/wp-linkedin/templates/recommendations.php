@@ -23,7 +23,7 @@
 	</div>
 <?php if (LI_DEBUG): ?>
 <!--
-<?php print_r($recommendations); ?>
+<?php echo json_encode($recommendations); ?>
 -->
 <?php endif; ?>
 </div>

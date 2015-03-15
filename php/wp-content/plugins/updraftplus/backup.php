@@ -56,6 +56,7 @@ class UpdraftPlus_Backup {
 		# Decide which zip engine to begin with
 		$this->debug = UpdraftPlus_Options::get_updraft_option('updraft_debug_mode');
 		$this->updraft_dir = $updraftplus->backups_dir_location();
+		$this->updraft_dir_realpath = realpath($this->updraft_dir);
 
 		if ('no' === $backup_files) {
 			$this->use_zip_object = 'UpdraftPlus_PclZip';
@@ -1209,6 +1210,8 @@ class UpdraftPlus_Backup {
 				$unlink_files[] = $this->updraft_dir.'/'.$table_file.'.gz';
 			}
 			$sind++;
+			// Came across a database with 7600 tables... adding them all took over 500 seconds; and so when the resumption started up, no activity was detected
+			if ($sind % 100 == 0) $updraftplus->something_useful_happened();
 		}
 
 		if (defined("DB_CHARSET")) {
@@ -1593,6 +1596,10 @@ class UpdraftPlus_Backup {
 				$updraftplus->log(sprintf(__("%s: unreadable file - could not be backed up (check the file permissions)", 'updraftplus'), $fullpath), 'warning');
 			}
 		} elseif (is_dir($fullpath)) {
+			if ($fullpath == $this->updraft_dir_realpath) {
+				$updraftplus->log("Skip directory (UpdraftPlus backup directory): $use_path_when_storing");
+				return true;
+			}
 			if (file_exists($fullpath.'/.donotbackup')) {
 				$updraftplus->log("Skip directory (.donotbackup file found): $use_path_when_storing");
 				return true;

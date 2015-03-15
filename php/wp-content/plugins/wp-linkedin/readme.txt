@@ -4,8 +4,8 @@ Contributors: cvedovini
 Donate link: http://vedovini.net/plugins/?utm_source=wordpress&utm_medium=plugin&utm_campaign=wp-linkedin
 Tags: linkedin,resume,recommendations,profile,network updates
 Requires at least: 2.7
-Tested up to: 4.1
-Stable tag: 1.18.1
+Tested up to: 4.1.1
+Stable tag: 1.18.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -192,6 +192,12 @@ plugin settings page.
 
 
 == Changelog ==
+
+= Version 1.18.3 =
+- Fixing network updates templates that didn't show "Likes" properly.
+
+= Version 1.18.2 =
+- Updated Spanish and Catalan translations.
 
 = Version 1.18.1 =
 - Loading the text domain earlier in the plugin loading process so that
@@ -463,3 +469,4 @@ translations.
 - Ogi Djuraskovic, from [First Site Guide](http://firstsiteguide.com/): Contributed the Serbian translations
 - [Pedro Gaspar](http://twitter.com/pedro_gaspar): Contributed the Portuguese
 translations and corrected internationalization bugs in class-admin.php.
+- [Oriol Torrillas](http://www.otorrillas.tk): Contributed Spanish and Catalan translations
