@@ -3,9 +3,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WP LinkedIn 1.18\n"
-"Report-Msgid-Bugs-To: http://wordpress.org/tag/wp-linkedin\n"
-"POT-Creation-Date: 2015-01-21 04:29:43+00:00\n"
-"PO-Revision-Date: 2015-01-21 11:50+0700\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/wp-linkedin\n"
+"POT-Creation-Date: 2015-03-04 06:20:12+00:00\n"
+"PO-Revision-Date: 2015-03-04 13:37+0700\n"
 "Last-Translator: Claude <claude@vedovini.net>\n"
 "Language-Team: Pedro Mendonça <ped.gaspar@gmail.com>\n"
 "Language: pt\n"
@@ -13,11 +13,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.7.3\n"
+"X-Generator: Poedit 1.7.4\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-Basepath: ../\n"
+"X-POOTLE-MTIME: 1425450978.0\n"
 "X-Poedit-KeywordsList: __();_e()\n"
-"X-POOTLE-MTIME: 1421814983.0\n"
 
 #: class-admin.php:14 class-admin.php:162
 msgid "LinkedIn Options"
@@ -455,23 +455,23 @@ msgstr "Comprimento máximo do resumo (em caracteres):"
 msgid "Specify '0' to hide the summary."
 msgstr "Especificar '0' para esconder o resumo."
 
-#: class-linkedin-connection.php:101
+#: class-linkedin-connection.php:116
 msgid "An unknown error has occured and no token was retrieved."
 msgstr "Ocorreu um erro desconhecido e nenhum token foi obtido."
 
-#: class-linkedin-connection.php:248
+#: class-linkedin-connection.php:263
 msgid "HTTP request returned error code %d."
 msgstr "O pedido HTTP retornou o código de erro %d."
 
-#: class-linkedin-connection.php:260
+#: class-linkedin-connection.php:275
 msgid "No token or token has expired."
 msgstr "Sem token ou o token expirou."
 
-#: class-linkedin-connection.php:269
+#: class-linkedin-connection.php:284
 msgid "Invalid or expired access token"
 msgstr "Token de acesso inválido ou expirado "
 
-#: class-linkedin-connection.php:271
+#: class-linkedin-connection.php:286
 msgid ""
 "The access token for the WP LinkedIn plugin is either invalid or has expired, "
 "please click on the following link to renew it."
@@ -479,11 +479,11 @@ msgstr ""
 "O token de acesso para o plugin WP LinkedIn é inválido ou expirou, por favor "
 "clique no seguinte link para renovar."
 
-#: class-linkedin-connection.php:273
+#: class-linkedin-connection.php:288
 msgid "This link will only be valid for a limited period of time."
 msgstr "Esta ligação será válida por um período limitado de tempo."
 
-#: class-linkedin-connection.php:274
+#: class-linkedin-connection.php:289
 msgid "-Thank you."
 msgstr "-Obrigado."
 
@@ -549,7 +549,7 @@ msgstr "Mostrar só as minhas atualizações"
 
 #: templates/network-updates.php:7 templates/profile-projects.php:21
 #: templates/profile-publications.php:24
-#: templates/profile-recommendations.php:11 templates/recommendations.php:18
+#: templates/profile-recommendations.php:10 templates/recommendations.php:18
 msgid "Anonymous"
 msgstr "Anónimo"
 
@@ -569,37 +569,37 @@ msgstr "%s está registado no LinkedIn."
 msgid "%1$s says: %2$s"
 msgstr "%1$s comentou: %2$s"
 
-#: templates/network-updates.php:67
-msgid "%1$s likes: %2$s"
-msgstr "%1$s gostou de: %2$s"
+#: templates/network-updates.php:69
+msgid "%1$s likes: %2$s by %3$s"
+msgstr "%1$s gostos: %2$s por %3$s"
 
-#: templates/network-updates.php:77
+#: templates/network-updates.php:79
 msgid "%1$s joined the group %2$s."
 msgid_plural "%1$s joined the groups %2$s."
 msgstr[0] "%1$s tornou-se integrante do grupo %2$s."
 msgstr[1] "%1$s tornou-se integrante dos grupos %2$s."
 
-#: templates/network-updates.php:92
+#: templates/network-updates.php:94
 msgid "%s has a new profile picture."
 msgstr "%s alterou sua foto de perfil."
 
-#: templates/network-updates.php:99 templates/network-updates.php:129
+#: templates/network-updates.php:101 templates/network-updates.php:131
 msgid "%s has an updated profile."
 msgstr "%s tem um perfil atualizado."
 
-#: templates/network-updates.php:109
+#: templates/network-updates.php:111
 msgid "%1$s recommends %2$s."
 msgstr "%1$s recomenda %2$s."
 
-#: templates/network-updates.php:116
+#: templates/network-updates.php:118
 msgid "%1$s posted a job: %2$s at %3$s."
 msgstr "%1$s anunciou uma vaga: %2$s em %3$s."
 
-#: templates/network-updates.php:123
+#: templates/network-updates.php:125
 msgid "%1$s is now following %2$s."
 msgstr "%1$s está agora a seguir %2$s."
 
-#: templates/network-updates.php:142
+#: templates/network-updates.php:144
 msgid "No updates"
 msgstr "Nenhuma actualização"
 
@@ -762,3 +762,6 @@ msgid ""
 msgstr ""
 "http://vedovini.net/?utm_source=wordpress&utm_medium=plugin&utm_campaign=wp-"
 "linkedin"
+
+#~ msgid "%1$s likes: %2$s"
+#~ msgstr "%1$s gostou de: %2$s"

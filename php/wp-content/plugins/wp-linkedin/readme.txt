@@ -4,8 +4,8 @@ Contributors: cvedovini
 Donate link: http://vedovini.net/plugins/?utm_source=wordpress&utm_medium=plugin&utm_campaign=wp-linkedin
 Tags: linkedin,resume,recommendations,profile,network updates
 Requires at least: 2.7
-Tested up to: 4.1.1
-Stable tag: 1.18.3
+Tested up to: 4.2
+Stable tag: 1.19
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -33,8 +33,8 @@ on what you uploaded to LinkedIn). Optional attributes are `width`, `height`
 and `class`.
 
 To customize the rendering of the shortcodes you must create a `linkedin` folder
-in your theme and then copy the template file you want to modify.
-The default template files are located in the plugin's `templates` folder.
+in your theme or in the `wp-content` folder and then copy the template file you
+want to modify. The default template files are located in the plugin's `templates` folder.
 
 See this post for more details on customization: [Showing more of your LinkedIn
 profile with WP-LinkedIn](http://vedovini.net/more-wp-linkedin)
@@ -192,6 +192,13 @@ plugin settings page.
 
 
 == Changelog ==
+
+= Version 1.19 =
+- As an option you can now put your customized templates in a `linkedin` folder
+under the `wp-content` folder instead of your theme's folder. No need to create
+a child theme anymore or have the templates overwritten when you update your
+theme.
+- Updated Portuguese translations.
 
 = Version 1.18.3 =
 - Fixing network updates templates that didn't show "Likes" properly.

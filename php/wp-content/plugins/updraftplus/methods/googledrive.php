@@ -455,9 +455,14 @@ class UpdraftPlus_BackupModule_googledrive {
 			set_include_path(UPDRAFTPLUS_DIR.'/includes'.PATH_SEPARATOR.get_include_path());
 		}
 
-		# Workaround for Google Drive CDN plugin's autoloader
+		
 		$spl = spl_autoload_functions();
-		if (is_array($spl) && in_array('wpbgdc_autoloader', $spl)) spl_autoload_unregister('wpbgdc_autoloader');
+		if (is_array($spl)) {
+			// Workaround for Google Drive CDN plugin's autoloader
+			if (in_array('wpbgdc_autoloader', $spl)) spl_autoload_unregister('wpbgdc_autoloader');
+			// http://www.wpdownloadmanager.com/download/google-drive-explorer/
+			if (in_array('google_api_php_client_autoload', $spl)) spl_autoload_unregister('google_api_php_client_autoload');
+		}
 
 		if (!class_exists('Google_Config')) require_once 'Google/Config.php';
 		if (!class_exists('Google_Client')) require_once 'Google/Client.php';
@@ -545,7 +550,7 @@ class UpdraftPlus_BackupModule_googledrive {
 
 	}
 
-	# Returns Google_Service_Drive_DriveFile object
+	// Returns array of Google_Service_Drive_DriveFile objects
 	private function get_subitems($parent_id, $type = 'any', $match = 'backup_') {
 		$q = '"'.$parent_id.'" in parents and trashed = false';
 		if ('dir' == $type) {
@@ -561,7 +566,29 @@ class UpdraftPlus_BackupModule_googledrive {
 				$q .= " and title = '$match'";
 			}
 		}
-		return $this->service->files->listFiles(array('q' => $q))->getItems();
+
+		$result = array();
+		$pageToken = NULL;
+
+		do {
+			try {
+				// Default for maxResults is 100
+				$parameters = array('q' => $q, 'maxResults' => 200);
+				if ($pageToken) {
+					$parameters['pageToken'] = $pageToken;
+				}
+				$files = $this->service->files->listFiles($parameters);
+
+				$result = array_merge($result, $files->getItems());
+				$pageToken = $files->getNextPageToken();
+			} catch (Exception $e) {
+				global $updraftplus;
+				$updraftplus->log("Google Drive: get_subitems: An error occurred (will not fetch further): " . $e->getMessage());
+				$pageToken = NULL;
+			}
+		} while ($pageToken);
+		
+		return $result;
     }
 
 	public function delete($files) {
@@ -742,7 +769,6 @@ class UpdraftPlus_BackupModule_googledrive {
 
 		global $updraftplus;
 		$opts = $this->get_opts();
-
 
 		try {
 			$parent_id = $this->get_parent_id($opts);
