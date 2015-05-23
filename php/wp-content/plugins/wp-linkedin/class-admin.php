@@ -18,6 +18,7 @@ class WPLinkedInAdmin {
 		$this->add_options_field('wp-linkedin_appsecret', __('Application secret', 'wp-linkedin'), 'add_settings_field_appsecret', 'appkeys');
 
 		add_settings_section('default', __('Options', 'wp-linkedin'), false, 'wp-linkedin');
+		$this->add_options_field('wp-linkedin_full_profile', __('Full Profile', 'wp-linkedin'), 'add_settings_field_full_profile');
 		$this->add_options_field('wp-linkedin_fields', __('Profile fields', 'wp-linkedin'), 'add_settings_field_fields');
 		$this->add_options_field('wp-linkedin_profilelanguage', __('Profile language', 'wp-linkedin'), 'add_settings_field_profilelanguage');
 		$this->add_options_field('wp-linkedin_sendmail_on_token_expiry', __('Send mail on token expiry', 'wp-linkedin'), 'add_settings_field_sendmail_on_token_expiry');
@@ -60,6 +61,16 @@ class WPLinkedInAdmin {
 
 	function add_settings_field_appsecret() { ?>
 		<input type="text" name="wp-linkedin_appsecret" value="<?php echo WP_LINKEDIN_APPSECRET; ?>" /><?php
+	}
+
+	function add_settings_field_full_profile() { ?>
+		<label><input type="checkbox" name="wp-linkedin_full_profile"
+			value="1" <?php checked(LINKEDIN_FULL_PROFILE); ?> />&nbsp;
+			<?php _e('Check this option only if you have been authorized by LinkedIn to access the full profile.', 'wp-linkedin') ?></label>
+		<p><em><?php _e('To be authorized you must apply to <a target="_blank" href="https://help.linkedin.com/app/ask/path/api-dvr">the "Apply with LinkedIn" program</a>.',
+				'wp-linkedin'); ?>
+			<?php _e('<a href="http://vedovini.net/2015/04/the-fate-of-the-wp-linkedin-wordpress-plugin-after-may-12/" target="_blank">More information on vedovini.net</a>',
+				'wp-linkedin'); ?></em></p><?php
 	}
 
 	function add_settings_field_fields() { ?>

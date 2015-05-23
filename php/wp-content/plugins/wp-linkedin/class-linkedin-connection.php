@@ -135,8 +135,9 @@ class WPLinkedInConnection {
 	}
 
 	public function get_authorization_url($redirect_uri=false) {
-		$scope = array('r_fullprofile', 'rw_nus');
-		$scope = apply_filters('linkedin_scope', $scope);
+		$scope = array('r_basicprofile');
+		if (LINKEDIN_FULL_PROFILE) $scope[] = 'r_fullprofile';
+		$scope = array_unique(apply_filters('linkedin_scope', $scope));
 
 		if (!$redirect_uri) $redirect_uri = $_SERVER["REQUEST_URI"];
 		$redirect_uri = $this->get_token_process_url($redirect_uri);

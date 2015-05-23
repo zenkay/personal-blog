@@ -5,12 +5,16 @@ Donate link: http://vedovini.net/plugins/?utm_source=wordpress&utm_medium=plugin
 Tags: linkedin,resume,recommendations,profile,network updates
 Requires at least: 2.7
 Tested up to: 4.2
-Stable tag: 1.19
+Stable tag: 2.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 
 == Description ==
+
+Following the modifications to the LinkedIn developer program, version 2.0 of
+this plugin introduces breaking changes. [More information on vedovini.net](http://vedovini.net/2015/04/the-fate-of-the-wp-linkedin-wordpress-plugin-after-may-12/)
+
 
 This plugin provides you with shortcodes to insert your full LinkedIn profile
 and a rotating scroller of your LinkedIn recommendations in any Wordpress page
@@ -178,6 +182,10 @@ profile.
 
 == Upgrade Notice ==
 
+= 2.0 =
+Following the modifications to the LinkedIn developer program, version 2.0 of
+this plugin introduce breaking changes. [More information on vedovini.net](http://vedovini.net/2015/04/the-fate-of-the-wp-linkedin-wordpress-plugin-after-may-12/)
+
 = 1.18 =
 *BREAKING CHANGE* The redirect uri that is used to process the OAuth access
 token has changed in this version. You must update the redirect urls setting
@@ -192,6 +200,10 @@ plugin settings page.
 
 
 == Changelog ==
+
+= Version 2.0 =
+- Updated to follow the restrictions on the API imposed by LinkedIn starting on
+May 12, 2015.[More information on vedovini.net](http://vedovini.net/2015/04/the-fate-of-the-wp-linkedin-wordpress-plugin-after-may-12/)
 
 = Version 1.19 =
 - As an option you can now put your customized templates in a `linkedin` folder
