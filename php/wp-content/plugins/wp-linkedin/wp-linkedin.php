@@ -5,7 +5,7 @@ Plugin URI: http://vedovini.net/plugins/?utm_source=wordpress&utm_medium=plugin&
 Description: This plugin enables you to add various part of your LinkedIn profile to your Wordpress blog.
 Author: Claude Vedovini
 Author URI: http://vedovini.net/?utm_source=wordpress&utm_medium=plugin&utm_campaign=wp-linkedin
-Version: 2.0
+Version: 2.0.1
 Text Domain: wp-linkedin
 
 # The code in this plugin is free software; you can redistribute the code aspects of
@@ -24,7 +24,7 @@ Text Domain: wp-linkedin
 # See the GNU lesser General Public License for more details.
 */
 
-define('WP_LINKEDIN_VERSION', '2.0');
+define('WP_LINKEDIN_VERSION', '2.0.1');
 
 if (!defined('LI_DEBUG')) {
 	define('LI_DEBUG', WP_DEBUG);

@@ -4,8 +4,8 @@ Contributors: cvedovini
 Donate link: http://vedovini.net/plugins/?utm_source=wordpress&utm_medium=plugin&utm_campaign=wp-linkedin
 Tags: linkedin,resume,recommendations,profile,network updates
 Requires at least: 2.7
-Tested up to: 4.2
-Stable tag: 2.0
+Tested up to: 4.2.2
+Stable tag: 2.0.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -200,6 +200,11 @@ plugin settings page.
 
 
 == Changelog ==
+
+= Version 2.0.1 =
+
+- Adding some missing `esc_url` in the templates.
+- Updating portuguese translations
 
 = Version 2.0 =
 - Updated to follow the restrictions on the API imposed by LinkedIn starting on

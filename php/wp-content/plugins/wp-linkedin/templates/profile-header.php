@@ -1,5 +1,6 @@
 <div id ="cartouche" class="section">
-	<a href="<?php echo esc_url($profile->publicProfileUrl); ?>"><img class="picture" src="<?php echo $profile->pictureUrl; ?>" width="80"
+	<a href="<?php echo esc_url($profile->publicProfileUrl); ?>"><img class="picture"
+		src="<?php echo esc_url($profile->pictureUrl); ?>" width="80"
 		alt="<?php echo $profile->firstName; ?> <?php echo $profile->lastName; ?>"/></a>
 	<div class="name"><a href="<?php echo esc_url($profile->publicProfileUrl); ?>"><?php echo $profile->firstName; ?> <?php echo $profile->lastName; ?></a></div>
 	<div class="headline"><?php echo $profile->headline; ?></div>
