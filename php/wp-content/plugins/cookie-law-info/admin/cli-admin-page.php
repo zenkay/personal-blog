@@ -177,6 +177,18 @@ function cookielawinfo_print_admin_page() {
 								</select>
 							</td>
 						</tr>
+
+						<!-- header_fix code here -->
+						<tr valign="top">
+							<th scope="row"><label for="header_fix_field">Fix Cookie Bar to Header?</label></th>
+							<td>
+								<input type="radio" id="header_fix_field_yes" name="header_fix_field" class="styled" value="true" <?php echo ( $the_options['header_fix'] == true ) ? ' checked="checked" />' : ' />'; ?> Yes
+								<input type="radio" id="iheader_fix_field_no" name="header_fix_field" class="styled" value="false" <?php echo ( $the_options['header_fix'] == false ) ? ' checked="checked" />' : ' />'; ?> No
+								<span class="cli-plugin-example">If you select "Header" then you can optionally stick the cookie bar to the header. Will not have any effect if you select "Footer".</span>
+							</td>
+						</tr>
+						<!-- /header_fix -->
+
 						<tr valign="top">
 							<th scope="row"><label for="notify_animate_show_field">On load</label></th>
 							<td>
@@ -212,8 +224,8 @@ function cookielawinfo_print_admin_page() {
 							</td>
 						</tr>
 						
-						<!-- NEW: SHOW ONCE / TIMER -->
-						<tr valign="top">
+						<!-- SHOW ONCE / TIMER -->
+						<tr valign="top" class="hr-top">
 							<th scope="row"><label for="show_once_yn_field">Auto-hide cookie bar after delay?</label></th>
 							<td>
 								<input type="radio" id="show_once_yn_yes" name="show_once_yn_field" class="styled" value="true" <?php echo ( $the_options['show_once_yn'] == true ) ? ' checked="checked" />' : ' />'; ?> Yes
@@ -225,6 +237,29 @@ function cookielawinfo_print_admin_page() {
 							<td>
 								<input type="text" name="show_once_field" value="<?php echo $the_options['show_once'] ?>" />
 								<span class="cli-plugin-example">Specify milliseconds (not seconds) e.g. <em>8000 = 8 seconds</em></span>
+							</td>
+						</tr>
+
+						<!-- NEW: CLOSE ON SCROLL -->
+						<tr valign="top" class="hr-top">
+							<th scope="row"><label for="scroll_close_field">Auto-hide cookie bar if the user scrolls?</label></th>
+							<td>
+								<input type="radio" id="scroll_close_yes" name="scroll_close_field" class="styled" value="true" <?php echo ( $the_options['scroll_close'] == true ) ? ' checked="checked" />' : ' />'; ?> Yes
+								<input type="radio" id="scroll_close_no" name="scroll_close_field" class="styled" value="false" <?php echo ( $the_options['scroll_close'] == false ) ? ' checked="checked" />' : ' />'; ?> No
+							</td>
+						</tr>
+						<tr valign="top" class="hr-bottom">
+							<th scope="row"><label for="scroll_close_reload_field">Reload after "scroll accept" event?</label></th>
+							<td>
+								<!-- <input type="text" name="scroll_close_reload_field" value="<?php echo $the_options['scroll_close_reload'] ?>" />
+								<span class="cli-plugin-example">If the user accepts, do you want to reload the page? This feature is mostly for Italian users who have to deal with a very specific interpretation of the cookie law.</span>
+									-->
+
+
+								<input type="radio" id="scroll_close_reload_yes" name="scroll_close_reload_field" class="styled" value="true" <?php echo ( $the_options['scroll_close_reload'] == true ) ? ' checked="checked" />' : ' />'; ?> Yes
+								<input type="radio" id="scroll_close_reload_no" name="scroll_close_reload_field" class="styled" value="false" <?php echo ( $the_options['scroll_close_reload'] == false ) ? ' checked="checked" />' : ' />'; ?> No
+
+
 							</td>
 						</tr>
 						
@@ -570,18 +605,17 @@ function cookielawinfo_print_admin_page() {
 				<p>It's time for a completely new version! Cookie Law Info will always be free but there will also be a PRO version for those who want a bit more. You can <a href="http://cookielawinfo.com/cookie-law-info-2-0/">read about it here</a>. For both versions, you can sign up to the BETA version and be the first to try it out. It's completely free of charge and you could even win a free PRO version!</p>
 				<br />
 
+				<h3>Like this plugin?</h3>
+				<p>If you find this plugin useful please show your support and rate it <a href="http://wordpress.org/support/view/plugin-reviews/cookie-law-info?filter=5" target="_blank">★★★★★</a> on <a href="http://wordpress.org/support/view/plugin-reviews/cookie-law-info?filter=5" target="_blank">WordPress.org</a> - much appreciated! :)</p>
+				<br />
+
 				<h3>Help</h3>
 				<ul>
-					<li><a href="http://cookielawinfo.com/wordpress-plugin/">Plugin Homepage</a></li>
 					<li><a href="http://cookielawinfo.com/support/">Help and Support</a></li>
 					<li><a href="http://wordpress.org/support/plugin/cookie-law-info/">Report a Bug</a></li>
 					<li><a href="http://cookielawinfo.com/contact/">Suggest a Feature</a></li>
 					<li><a href="http://cookielawinfo.com">About the law</a></li>
 				</ul>
-				<br />
-
-				<h3>Like this plugin?</h3>
-				<p>If you find this plugin useful please show your support and rate it <a href="http://wordpress.org/support/view/plugin-reviews/cookie-law-info?filter=5" target="_blank">★★★★★</a> on <a href="http://wordpress.org/support/view/plugin-reviews/cookie-law-info?filter=5" target="_blank">WordPress.org</a> - much appreciated! :)</p>
 				<br />
 				
 				<div>

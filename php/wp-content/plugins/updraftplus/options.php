@@ -9,6 +9,10 @@ class UpdraftPlus_Options {
 		return current_user_can(apply_filters('option_page_capability_updraft-options-group', 'manage_options'));
 	}
 
+	public static function options_table() {
+		return 'options';
+	}
+
 	public static function admin_page_url() {
 		return admin_url('options-general.php');
 	}
@@ -21,6 +25,7 @@ class UpdraftPlus_Options {
 		return get_option($option, $default);
 	}
 
+	// The apparently unused parameter is used in the alternative class in the Multisite add-on
 	public static function update_updraft_option($option, $value, $use_cache = true) {
 		update_option($option, $value);
 	}

@@ -56,8 +56,8 @@ Setup of this plugin is so easy. You don't need to modify the .htacces file. It 
 * 日本語 (by KUCKLU)
 * Português
 * Română
-* Русский
-* Svenska (Linus Wileryd)
+* Русский (by Maxim)
+* Svenska (by Linus Wileryd)
 * Türkçe
 
 == Installation ==
@@ -81,6 +81,25 @@ Setup of this plugin is so easy. You don't need to modify the .htacces file. It 
 10. CDN
 
 == Changelog ==
+
+= 0.8.5.4 =
+* to be compatible with Guideline
+
+= 0.8.5.3 =
+* to check zlib extension for downloading premium automatically
+* to update Portuguese and Turkish languages
+* to be compatible with sub-directory installation with renamed wp-content
+* refactoring of js-utilities.php
+* to fix delete comment issue
+
+= 0.8.5.2 =
+* to replace https:// and http:// to // after converting inline css to link
+* to replace https:// and http:// to // after converting inline js to link
+* to ignore the empty css files
+* to optimize exclude page feature
+* to fix mobile cache issue for ipad user if wp touch is used
+* to prevent caching js files whose type is text/template
+* to update Portuguese language
 
 = 0.8.5.1 =
 * <strong>[FEATURE]</strong> to add MaxCDN

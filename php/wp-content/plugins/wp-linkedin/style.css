@@ -38,6 +38,8 @@
 	float: left;
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
+    margin-right: 0;
+    margin-left: 0;
 }
 
 .linkedin .profile .section {

@@ -50,6 +50,7 @@ function cookielawinfo_get_default_settings() {
 		'button_2_button_colour' 		=> '#333',
 		'button_2_button_size' 			=> 'medium',
 		'font_family' 					=> 'inherit', // Pick the family, not the easy name (see helper function below)
+		'header_fix'                    => false,
 		'is_on' 						=> true,
 		'notify_animate_hide'			=> true,
 		'notify_animate_show'			=> false,
@@ -57,6 +58,8 @@ function cookielawinfo_get_default_settings() {
 		'notify_position_horizontal'	=> 'right',	// left | right
 		'notify_position_vertical'		=> 'bottom', // 'top' = header | 'bottom' = footer
 		'notify_message'				=> addslashes ( 'This website uses cookies to improve your experience. We\'ll assume you\'re ok with this, but you can opt-out if you wish.[cookie_button] [cookie_link]' ),
+		'scroll_close'                  => false,
+		'scroll_close_reload'           => false,
 		'showagain_background' 			=> '#fff',
 		'showagain_border' 				=> '#000',
 		'showagain_text'	 			=> addslashes ( 'Privacy & Cookies Policy' ),
@@ -271,7 +274,10 @@ function cookielawinfo_sanitise($key, $value) {
 		case 'button_1_as_button':
 		case 'button_2_new_win':
 		case 'button_2_as_button':
+		case 'scroll_close':
+		case 'scroll_close_reload':
 		case 'show_once_yn':
+		case 'header_fix':
 			if ( $value == 'true' || $value === true ) {
 				$ret = true;
 			}
@@ -348,25 +354,6 @@ function cookielawinfo_custom_dashboard_styles( $hook ) {
     
 	wp_register_style( 'cookielawinfo-admin-style', plugins_url('/cookie-law-info/css/cli-admin-style.css') );
     wp_enqueue_style( 'cookielawinfo-admin-style' );
-	
-	/** RICHARDASHBY EDIT: remove old colourpicker */
-	/*
-	if ( cookielawinfo_colourpicker_enabled() ) {
-		wp_enqueue_script('spectrum-colorpicker', plugins_url('/cookie-law-info/admin/bgrins-spectrum/spectrum.js'), array('jquery'));
-		wp_register_style( 'spectrum-style', plugins_url('/cookie-law-info/admin/bgrins-spectrum/spectrum.css') );
-		wp_enqueue_style( 'spectrum-style' );
-    }
-    */
-    
-    /** RICHARDASHBY EDIT: remove jqueryUI (js and CSS) for accordion tabs */
-    /** @todo Replace UI with own jQuery, far simpler! */
-    /*
-    wp_enqueue_script('jquery-ui-custom', plugins_url('/cookie-law-info/js/jquery-ui-1.8.20.custom.min.js'), array('jquery'));
-	wp_enqueue_script('admin-ui-controller', plugins_url('/cookie-law-info/js/admin-ui-controller.js'), array('jquery'));
-	
-    wp_register_style( 'jquery-ui-custom', plugins_url('/cookie-law-info/css/smoothness/jquery-ui-1.8.20.custom.css') );
-    wp_enqueue_style( 'jquery-ui-custom' );
-    */
 }
 
 
@@ -380,13 +367,6 @@ function cookielawinfo_custom_dashboard_styles_my_colours() {
 	if ( $screen->post_type != 'cookielawinfo' ) {
 		return;
 	}
-	
-	/** RICHARDASHBY EDIT: remove old colourpicker */
-	/*
-	if( cookielawinfo_colourpicker_enabled() ) {
-    	wp_enqueue_script('spectrum-custom', plugins_url('/cookie-law-info/admin/bgrins-spectrum/my-colours.js'));
-	}
-	*/
 }
 
 

@@ -7,6 +7,9 @@
 		private $err = "";
 
 		public function __construct(){
+			//to fix: PHP Notice: Undefined index: HTTP_USER_AGENT
+			$_SERVER['HTTP_USER_AGENT'] = isset($_SERVER['HTTP_USER_AGENT']) && $_SERVER['HTTP_USER_AGENT'] ? $_SERVER['HTTP_USER_AGENT'] : "Empty User Agent";
+			
 			$this->options = $this->getOptions();
 
 			$this->checkActivePlugins();
@@ -50,8 +53,13 @@
 		public function createCache(){
 			if(isset($this->options->wpFastestCacheStatus)){
 				$this->startTime = microtime(true);
+				add_action( 'get_footer', array($this, "wp_print_scripts_action"));
 				ob_start(array($this, "callback"));
 			}
+		}
+
+		public function wp_print_scripts_action(){
+			echo "<!--WPFC_FOOTER_START-->";
 		}
 
 		public function ignored(){
@@ -213,13 +221,35 @@
 					$this->err = $css->getError();
 				}
 
+				if(isset($this->options->wpFastestCacheCombineJs) || isset($this->options->wpFastestCacheMinifyJs) || isset($this->options->wpFastestCacheCombineJsPowerFul)){
+					require_once "js-utilities.php";
+				}
+
 				if(isset($this->options->wpFastestCacheCombineJs)){
-					$content = $this->combineJs($content, false);
+					preg_match("/<head(.*?)<\/head>/si", $content, $head);
+
+					if(isset($this->options->wpFastestCacheMinifyJs) && $this->options->wpFastestCacheMinifyJs){
+						$js = new JsUtilities($this, $head[1], true);
+					}else{
+						$js = new JsUtilities($this, $head[1]);
+					}
+
+					$tmp_head = $js->combine_js();
+
+					$content = str_replace($head[1], $tmp_head, $content);
 				}
 
 				if(class_exists("WpFastestCachePowerfulHtml")){
 					$powerful_html = new WpFastestCachePowerfulHtml();
 					$powerful_html->set_html($content);
+
+					if(isset($this->options->wpFastestCacheCombineJsPowerFul) && method_exists("WpFastestCachePowerfulHtml", "combine_js_in_footer")){
+						if(isset($this->options->wpFastestCacheMinifyJs) && $this->options->wpFastestCacheMinifyJs){
+							$content = $powerful_html->combine_js_in_footer($this, true);
+						}else{
+							$content = $powerful_html->combine_js_in_footer($this);
+						}
+					}
 					
 					if(isset($this->options->wpFastestCacheRemoveComments)){
 						$content = $powerful_html->remove_head_comments();
@@ -245,6 +275,14 @@
 						// url()
 						$content = preg_replace_callback("/url\([^\)]+\)/i", array($this, 'cdn_replace_urls'), $content);
 					}
+
+					if(isset($this->options->wpFastestCacheDeferCss) && method_exists("WpFastestCachePowerfulHtml", "defer_css")){
+						$content = $powerful_html->defer_css($content);
+					}
+
+					
+					$content = str_replace("<!--WPFC_FOOTER_START-->", "", $content);
+
 					$this->createFolder($cachFilePath, $content);
 					return $buffer."<!-- need to refresh to see cached version -->";
 				}
@@ -396,63 +434,6 @@
 			if(count($out) > 0){
 				$content = preg_replace("/<link[^>]+".preg_quote($out[1], "/")."[^>]+>/", $replace, $content);
 			}
-
-			return $content;
-		}
-
-		public function combineJs($content, $minify = false){
-			$minify = true;
-			if(isset($this->options->wpFastestCacheCombineJs)){
-				require_once "js-utilities.php";
-				$js = new JsUtilities($this, $content);
-
-				if(count($js->getJsLinks()) > 0){
-					$prev = array("content" => "", "value" => array());
-					foreach ($js->getJsLinks() as $key => $value) {
-						if($href = $js->checkInternal($value)){
-							if(strpos($js->getJsLinksExcept(), $href) === false){
-								if(!preg_match("/<script[^>]+json[^>]+>.+/", $value)){
-									$minifiedJs = $js->minify($href, $minify);
-
-									if($minifiedJs){
-										if(!is_dir($minifiedJs["cachFilePath"])){
-
-											if(isset($this->options->wpFastestCacheCombineJsPowerFul)){
-												$powerful_html = new WpFastestCachePowerfulHtml();
-												$minifiedJs["jsContent"] = $powerful_html->minify_js($minifiedJs["jsContent"]);
-											}
-
-
-											$prefix = time();
-											$this->createFolder($minifiedJs["cachFilePath"], $minifiedJs["jsContent"], "js", $prefix);
-										}
-
-										if($jsFiles = @scandir($minifiedJs["cachFilePath"], 1)){
-											if($jsContent = $js->file_get_contents_curl($minifiedJs["url"]."/".$jsFiles[0]."?v=".time())){
-												$prev["content"] = $prev["content"]."\n".$jsContent;
-												array_push($prev["value"], $value);
-											}
-										}
-									}
-								}else{
-									$content = $js->mergeJs($prev, $this);
-									$prev = array("content" => "", "value" => array());
-								}
-							}else{
-								$content = $js->mergeJs($prev, $this);
-								$prev = array("content" => "", "value" => array());
-							}
-						}else{
-							$content = $js->mergeJs($prev, $this);
-							$prev = array("content" => "", "value" => array());
-						}
-					}
-					$content = $js->mergeJs($prev, $this);
-				}
-			}
-
-			$content = preg_replace("/(<!-- )+/","<!-- ", $content);
-			$content = preg_replace("/( -->)+/"," -->", $content);
 
 			return $content;
 		}

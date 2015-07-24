@@ -5,7 +5,7 @@ Donate link: http://vedovini.net/plugins/?utm_source=wordpress&utm_medium=plugin
 Tags: linkedin,resume,recommendations,profile,network updates
 Requires at least: 2.7
 Tested up to: 4.2.2
-Stable tag: 2.0.1
+Stable tag: 2.0.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -200,6 +200,12 @@ plugin settings page.
 
 
 == Changelog ==
+
+= Version 2.0.2 =
+
+- CSS fix for some cases when blockquotes have horizontal margins in the scroller
+- Template fix to accomodate a bug whereby content see `<br/>` tags  introduced
+in the middle of HTML `<img>` tags containing line breaks
 
 = Version 2.0.1 =
 

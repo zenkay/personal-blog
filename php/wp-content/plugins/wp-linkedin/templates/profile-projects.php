@@ -24,14 +24,9 @@
 			if (isset($p->headline)) $name .= ' - ' . $p->headline;
 
 			if (isset($p->publicProfileUrl)): ?>
-				<a href="<?php echo esc_url($p->publicProfileUrl); ?>"
-					width="35" height="35"
-					target="_blank"><img src="<?php echo esc_url($pictureUrl); ?>"
-					alt="<?php echo $name; ?>" title="<?php echo $name; ?>"></a><?php
+				<a href="<?php echo esc_url($p->publicProfileUrl); ?>" target="_blank"><img src="<?php echo esc_url($pictureUrl); ?>" width="35" height="35" alt="<?php echo $name; ?>" title="<?php echo $name; ?>"></a><?php
 			else: ?>
-				<img src="<?php echo esc_url($pictureUrl); ?>"
-					width="35" height="35"
-					alt="<?php echo $name; ?>" title="<?php echo $name; ?>"><?php
+				<img src="<?php echo esc_url($pictureUrl); ?>" width="35" height="35" alt="<?php echo $name; ?>" title="<?php echo $name; ?>"><?php
 			endif;
 		endforeach; ?>
 	</div>

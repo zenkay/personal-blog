@@ -5,9 +5,11 @@
 		private $cssLinksExcept = "";
 		private $url = "";
 		private $err = "";
+		private $wpfc;
 
 		public function __construct($wpfc, $html){
 			//$this->html = preg_replace("/\s+/", " ", ((string) $html));
+			$this->wpfc = $wpfc;
 			$this->html = $html;
 
 			$ini = 0;
@@ -80,12 +82,12 @@
 
 						if($cssFiles = @scandir($cachFilePath, 1)){
 							$cssLink = str_replace(array("http://", "https://"), "//", $cssLink);
-							$link_tag = "<link rel='stylesheet' href='".$cssLink."/".$cssFiles[0]."'".$inline_style_prefix." />";
+							$link_tag = "<link rel='stylesheet' href='".$cssLink."/".$cssFiles[0]."' wpfc-inline='true' ".$inline_style_prefix." />";
 
 							// $data = substr_replace($data, " -->\n".$link_tag."\n", $value["end"]+1, 0);
 							// $data = substr_replace($data, "<!-- ", $value["start"], 0);
 
-							$data = substr_replace($data, "<!--\n".$inline_style_data."\n-->\n".$link_tag, $value["start"], ($value["end"] - $value["start"] + 1));
+							$data = substr_replace($data, $link_tag, $value["start"], ($value["end"] - $value["start"] + 1));
 
 						}
 					}
@@ -243,27 +245,63 @@
 
 		public function fixRules($css){
 			$css = $this->fixImportRules($css);
+			$css = preg_replace_callback('/@import\s+url\(([^\)]+)\);/i', array($this, 'fix_import_rules'), $css);
 			$css = $this->fixCharset($css);
 			//$css = preg_replace("/@media/i","\n@media",$css);
 			return $css;
 		}
 
 		public function fixImportRules($css){
-			preg_match_all('/@import\s+url\([^\)]+\);/i', $css, $imports);
+			preg_match_all('/@import\s+url\(([^\)]+)\);/i', $css, $imports);
 
 			if(count($imports[0]) > 0){
-				//$css = preg_replace('/@import\s+url\([^\)]+\);/i', "/* @import is moved to the top */", $css);
 				for ($i = count($imports[0])-1; $i >= 0; $i--) {
-					$css = $imports[0][$i]."\n".$css;
+					
+					if(!$this->is_internal_css($imports[1][$i])){
+						$css = $imports[0][$i]."\n".$css;
+					}
 				}
 			}
 			return $css;
 		}
 
+		public function fix_import_rules($matches){
+			if($this->is_internal_css($matches[1])){
+				if($cssContent = $this->file_get_contents_curl($matches[1]."?v=".time())){
+					$tmp_url = $this->url;
+					$this->url = $matches[1];
+					$cssContent = $this->fixPathsInCssContent($cssContent);
+					$cssContent = $this->fixRules($cssContent); 
+					$this->url = $tmp_url;
+					return "/* ".$matches[0]." */"."\n".$cssContent;
+				}
+			}
+
+			return $matches[0];
+		}
+
+		public function is_internal_css($url){
+			$http_host = trim($_SERVER["HTTP_HOST"], "www.");
+
+			$url = trim($url);
+			$url = trim($url, "'");
+			$url = trim($url, '"');
+			$url = trim($url, 'https://');
+			$url = trim($url, 'http://');
+			$url = trim($url, '//');
+			$url = trim($url, 'www.');
+
+			if($url && preg_match("/".$http_host."/i", $url)){
+				return true;
+			}
+
+			return false;
+		}
+
 		public function fixCharset($css){
 			preg_match_all('/@charset[^\;]+\;/i', $css, $charsets);
 			if(count($charsets[0]) > 0){
-				//$css = preg_replace('/@charset[^\;]+\;/i', "/* @charset is moved to the top */", $css);
+				$css = preg_replace('/@charset[^\;]+\;/i', "/* @charset is moved to the top */", $css);
 				foreach($charsets[0] as $charset){
 					$css = $charset."\n".$css;
 				}
@@ -368,6 +406,30 @@
 								$minifiedCss["cssContent"] = $powerful_html->minify_css($minifiedCss["cssContent"]);
 							}
 
+							if(preg_match("/wpfc\-inline/", $value)){
+								//$prev["content"] = $this->fixRules($prev["content"]);
+								$this->mergeCss($wpfc, $prev);
+								$prev = array("content" => "", "value" => array(), "name" => "");
+
+								$attributes = preg_replace("/.+wpfc\-inline\=\'true\'([^\>]+)\/>/", "$1", $value);
+								$attributes = $attributes ? " ".trim($attributes) : "";
+								$this->html = $wpfc->replaceLink($value, "<style".$attributes.">".$minifiedCss["cssContent"]."</style>", $this->html);
+
+								continue;
+							}
+
+							$minifiedCss["cssContent"] = $this->fixRules($minifiedCss["cssContent"]);
+
+							if(isset($this->wpfc->options->wpFastestCacheMinifyCss) && $this->wpfc->options->wpFastestCacheMinifyCss){
+								$minifiedCss["cssContent"] = $this->_process($minifiedCss["cssContent"]);
+							}
+
+							if(isset($this->wpfc->options->wpFastestCacheMinifyCssPowerFul) && $this->wpfc->options->wpFastestCacheMinifyCssPowerFul){
+								$powerful_html = new WpFastestCachePowerfulHtml();
+								$minifiedCss["cssContent"] = $powerful_html->minify_css($minifiedCss["cssContent"]);
+							}
+
+
 							if(!is_dir($minifiedCss["cachFilePath"])){
 								$prefix = time();
 								$wpfc->createFolder($minifiedCss["cachFilePath"], $minifiedCss["cssContent"], "css", $prefix);
@@ -410,6 +472,20 @@
 									$minifiedCss["cssContent"] = $powerful_html->minify_css($minifiedCss["cssContent"]);
 								}
 
+								if(preg_match("/wpfc\-inline/", $value)){
+									//$prev["content"] = $this->fixRules($prev["content"]);
+									$this->mergeCss($wpfc, $prev);
+									$prev = array("content" => "", "value" => array(), "name" => "");
+
+									$attributes = preg_replace("/.+wpfc\-inline\=\'true\'([^\>]+)\/>/", "$1", $value);
+									$attributes = $attributes ? " ".trim($attributes) : "";
+									$this->html = $wpfc->replaceLink($value, "<style".$attributes.">".$minifiedCss["cssContent"]."</style>", $this->html);
+
+									continue;
+								}
+
+
+
 								if(!is_dir($minifiedCss["cachFilePath"])){
 									$prefix = time();
 									$wpfc->createFolder($minifiedCss["cachFilePath"], $minifiedCss["cssContent"], "css", $prefix);
@@ -424,17 +500,17 @@
 								}
 							}
 						}else{
-							$prev["content"] = $this->fixRules($prev["content"]);
+							//$prev["content"] = $this->fixRules($prev["content"]);
 							$this->mergeCss($wpfc, $prev);
-							$prev = array("content" => "", "value" => array());
+							$prev = array("content" => "", "value" => array(), "name" => "");
 						}
 					}else{
-						$prev["content"] = $this->fixRules($prev["content"]);
+						//$prev["content"] = $this->fixRules($prev["content"]);
 						$this->mergeCss($wpfc, $prev);
-						$prev = array("content" => "", "value" => array());
+						$prev = array("content" => "", "value" => array(), "name" => "");
 					}
 				}
-				$prev["content"] = $this->fixRules($prev["content"]);
+				//$prev["content"] = $this->fixRules($prev["content"]);
 				$this->mergeCss($wpfc, $prev);
 			}
 
@@ -452,8 +528,29 @@
 						$name = md5($prev["name"]);
 						$cachFilePath = WPFC_WP_CONTENT_DIR."/cache/wpfc-minified/".$name;
 
-						if(!is_dir($cachFilePath)){
-							$wpfc->createFolder($cachFilePath, $prev["content"], "css", time());
+						$prev["content"] = $this->fixRules($prev["content"]);
+
+						if(isset($this->wpfc->options->wpFastestCacheMinifyCss) && $this->wpfc->options->wpFastestCacheMinifyCss){
+							$prev["content"] = $this->_process($prev["content"]);
+						}
+
+						if(isset($this->wpfc->options->wpFastestCacheMinifyCssPowerFul) && $this->wpfc->options->wpFastestCacheMinifyCssPowerFul){
+							$powerful_html = new WpFastestCachePowerfulHtml();
+							$prev["content"] = $powerful_html->minify_css($prev["content"]);
+						}
+
+						/* 
+							The css files are saved in the previous function.
+							If only one css file is in the array, there is need to save again.
+						*/
+						if(count($prev["value"]) == 1){
+							if($cssFiles = @scandir($cachFilePath, 1)){
+								file_put_contents($cachFilePath."/".$cssFiles[0], $prev["content"]);
+							}
+						}else{
+							if(!is_dir($cachFilePath)){
+								$wpfc->createFolder($cachFilePath, $prev["content"], "css", time());
+							}
 						}
 
 						if($cssFiles = @scandir($cachFilePath, 1)){

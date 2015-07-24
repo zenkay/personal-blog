@@ -1,5 +1,5 @@
 function cli_show_cookiebar(p) {
-	
+	/* plugin version 1.5.2 */
 	var Cookie = {
 		set: function(name,value,days) {
 			if (days) {
@@ -34,7 +34,6 @@ function cli_show_cookiebar(p) {
 	
 	var ACCEPT_COOKIE_NAME = 'viewed_cookie_policy',
 		ACCEPT_COOKIE_EXPIRE = 365,
-		html = p.html,
 		json_payload = p.settings;
 	
 	if (typeof JSON.parse !== "function") {
@@ -42,9 +41,7 @@ function cli_show_cookiebar(p) {
 		return;
 	}
 	var settings = JSON.parse(json_payload);
-	jQuery('body').prepend(html);
-	
-	
+
 	var cached_header = jQuery(settings.notify_div_id),
 		cached_showagain_tab = jQuery(settings.showagain_div_id),
 		btn_accept = jQuery('#cookie_hdr_accept'),
@@ -62,6 +59,15 @@ function cli_show_cookiebar(p) {
 		'color': settings.text,
 		'font-family': settings.font_family
 	};
+	if ( settings.notify_position_vertical == "top" ) {
+		if ( settings.header_fix === true ) {
+			hdr_args['position'] = 'fixed';
+		}
+		hdr_args['top'] = '0';
+	} else {
+		hdr_args['bottom'] = '0';
+	}
+	
 	var showagain_args = {
 		'background-color': settings.background,
 		'color': l1hs(settings.text),
@@ -103,7 +109,6 @@ function cli_show_cookiebar(p) {
 		cached_header.hide();
 	}
 	
-	// Show once code:
 	if ( settings.show_once_yn ) {
 		setTimeout(close_header, settings.show_once);
 	}
@@ -139,30 +144,24 @@ function cli_show_cookiebar(p) {
 		});
 	}
 	
-	// Action event listener for "show header" event:
-	cached_showagain_tab.click(function() {	
+	cached_showagain_tab.click(function(e) {	
+		e.preventDefault();
 		cached_showagain_tab.slideUp(settings.animate_speed_hide, function slideShow() {
 			cached_header.slideDown(settings.animate_speed_show);
 		});
 	});
 	
-	// Action event listener to capture delete cookies shortcode click. This simply deletes the viewed_cookie_policy cookie. To use:
-	// <a href='#' id='cookielawinfo-cookie-delete' class='cookie_hdr_btn'>Delete Cookies</a>
 	jQuery("#cookielawinfo-cookie-delete").click(function() {
 		Cookie.erase(ACCEPT_COOKIE_NAME);
 		return false;
 	});
 	
-	// Action event listener for debug cookies value link. To use:
-	// <a href='#' id='cookielawinfo-debug-cookie'>Show Cookie Value</a>
-	jQuery("#cookielawinfo-debug-cookie").click(function() {
-		alert("Cookie value: " + Cookie.read(ACCEPT_COOKIE_NAME));
-		return false;
+	jQuery("#cookie_action_close_header").click(function(e) {
+		e.preventDefault();
+		accept_close();
 	});
-	
-	// action event listeners to capture "accept/continue" events:
-	jQuery("#cookie_action_close_header").click(function() {
-		// Set cookie then hide header:
+
+	function accept_close() {
 		Cookie.set(ACCEPT_COOKIE_NAME, 'yes', ACCEPT_COOKIE_EXPIRE);
 		
 		if (settings.notify_animate_hide) {
@@ -173,7 +172,20 @@ function cli_show_cookiebar(p) {
 		}
 		cached_showagain_tab.slideDown(settings.animate_speed_show);
 		return false;
-	});
+	}
+
+	function closeOnScroll() {
+		if (window.pageYOffset > 100 && !Cookie.read(ACCEPT_COOKIE_NAME)) {
+			accept_close();
+			if (settings.scroll_close_reload === true) {
+				location.reload();
+			}
+			window.removeEventListener("scroll", closeOnScroll, false);
+		}
+	}
+	if (settings.scroll_close === true) {
+		window.addEventListener("scroll", closeOnScroll, false);
+	}
 	
 	function displayHeader() {
 		if (settings.notify_animate_show) {
