@@ -5,7 +5,7 @@ Donate link: http://vedovini.net/plugins/?utm_source=wordpress&utm_medium=plugin
 Tags: linkedin,resume,recommendations,profile,network updates
 Requires at least: 2.7
 Tested up to: 4.2.2
-Stable tag: 2.0.2
+Stable tag: 2.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -200,6 +200,13 @@ plugin settings page.
 
 
 == Changelog ==
+
+= Version 2.1 =
+
+- Removed everything related to network updates
+- Changed some defaults
+- Moved most of the profile templates to the Advanced Templates plugin and left
+only what's necessary for the basic profile fields
 
 = Version 2.0.2 =
 

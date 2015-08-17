@@ -27,6 +27,7 @@
 				'parent'=> 'wpfc-toolbar-parent',
 				'meta' => array("class" => "wpfc-toolbar-child")
 			));
+
 			?>
 			<script type="text/javascript">
 

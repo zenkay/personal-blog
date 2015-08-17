@@ -22,9 +22,11 @@
 			if($cdn_values){
 				$std = json_decode($cdn_values);
 
+				$std->originurl = trim($std->originurl);
 				$std->originurl = trim($std->originurl, "/");
 				$std->originurl = preg_replace("/http(s?)\:\/\/(www\.)?/i", "", $std->originurl);
 
+				$std->cdnurl = trim($std->cdnurl);
 				$std->cdnurl = trim($std->cdnurl, "/");
 				$std->cdnurl = preg_replace("/http(s?)\:\/\/(www\.)?/i", "", $std->cdnurl);
 				$this->cdn = $std;
@@ -143,7 +145,7 @@
 				return $buffer."<!-- Wp Fastest Cache: XML Content -->";
 			}else if (is_user_logged_in() || $this->isCommenter()){
 				return $buffer;
-			} else if(preg_match("/json/i", $_SERVER["HTTP_ACCEPT"])){
+			} else if(isset($_SERVER["HTTP_ACCEPT"]) && preg_match("/json/i", $_SERVER["HTTP_ACCEPT"])){
 				return $buffer;
 			}else if($this->checkWoocommerceSession()){
 				if($this->checkHtml($buffer)){
@@ -203,22 +205,14 @@
 
 				$content = $buffer;
 
-				if(isset($this->options->wpFastestCacheCombineCss) && isset($this->options->wpFastestCacheMinifyCss)){
+				if(isset($this->options->wpFastestCacheCombineCss)){
 					require_once "css-utilities.php";
 					$css = new CssUtilities($this, $content);
-					$content = $css->combineCss($this, true);
-					//to minify css files which are NOT "media='all'"
-					$content = $css->minifyCss($this, true);
-					$this->err = $css->getError();
-				}else if(isset($this->options->wpFastestCacheCombineCss)){
-					require_once "css-utilities.php";
-					$css = new CssUtilities($this, $content);
-					$content = $css->combineCss($this, false);
+					$content = $css->combineCss();
 				}else if(isset($this->options->wpFastestCacheMinifyCss)){
 					require_once "css-utilities.php";
 					$css = new CssUtilities($this, $content);
-					$content = $css->minifyCss($this, false);
-					$this->err = $css->getError();
+					$content = $css->minifyCss();
 				}
 
 				if(isset($this->options->wpFastestCacheCombineJs) || isset($this->options->wpFastestCacheMinifyJs) || isset($this->options->wpFastestCacheCombineJsPowerFul)){

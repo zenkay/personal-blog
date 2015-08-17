@@ -21,7 +21,7 @@ if (!is_array(UpdraftPlus_Options::get_updraft_option('updraft_s3generic')) && '
 
 class UpdraftPlus_BackupModule_s3generic extends UpdraftPlus_BackupModule_s3 {
 
-	protected function set_region($obj, $region = '') {
+	protected function set_region($obj, $region = '', $bucket_name = '') {
 		$config = $this->get_config();
 		$endpoint = ($region != '' && $region != 'n/a') ? $region : $config['endpoint'];
 		global $updraftplus;
@@ -33,7 +33,7 @@ class UpdraftPlus_BackupModule_s3generic extends UpdraftPlus_BackupModule_s3 {
 		return array('updraft_s3generic');
 	}
 
-	function get_config() {
+	protected function get_config() {
 		global $updraftplus;
 		$opts = $updraftplus->get_job_option('updraft_s3generic');
 		if (!is_array($opts)) $opts = array('accesskey' => '', 'secretkey' => '', 'path' => '');
