@@ -1,11 +1,11 @@
 === WP LinkedIn ===
 Author: Claude Vedovini
 Contributors: cvedovini
-Donate link: http://vedovini.net/plugins/?utm_source=wordpress&utm_medium=plugin&utm_campaign=wp-linkedin
+Donate link: http://paypal.me/vdvn
 Tags: linkedin,resume,recommendations,profile,network updates
 Requires at least: 2.7
-Tested up to: 4.2.2
-Stable tag: 2.1
+Tested up to: 4.3
+Stable tag: 2.2.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -13,12 +13,12 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 == Description ==
 
 Following the modifications to the LinkedIn developer program, version 2.0 of
-this plugin introduces breaking changes. [More information on vedovini.net](http://vedovini.net/2015/04/the-fate-of-the-wp-linkedin-wordpress-plugin-after-may-12/)
+this plugin introduces breaking changes. [More information on vedovini.net](http://vdvn.me/p2lg)
 
 
 This plugin provides you with shortcodes to insert your full LinkedIn profile
 and a rotating scroller of your LinkedIn recommendations in any Wordpress page
-or post. Please check <a href="http://vedovini.net/">vedovini.net</a> for
+or post. Please check <a href="http://vdvn.me/">vedovini.net</a> for
 examples.
 
 The following shortcodes are available:
@@ -41,7 +41,7 @@ in your theme or in the `wp-content` folder and then copy the template file you
 want to modify. The default template files are located in the plugin's `templates` folder.
 
 See this post for more details on customization: [Showing more of your LinkedIn
-profile with WP-LinkedIn](http://vedovini.net/more-wp-linkedin)
+profile with WP-LinkedIn](http://vdvn.net/more-wp-linkedin)
 
 There are also several widgets. One widget displays the recommendations
 scroller, one displays your network updates, and two widgets show a "profile
@@ -55,14 +55,18 @@ custom template: `wp_enqueue_script('responsive-scrollable');`
 
 We welcome volunteers to translate that plugin into more languages. If you wish
 to help then contact [@cvedovini](https://twitter.com/cvedovini) on Twitter or
-use that [contact form](http://vedovini.net/contact/).
+use that [contact form](http://vdvn.net/contact/).
 
-Please check the [WP-LinkedIn Multi-Users](http://vedovini.net/downloads/wp-linkedin-multi-users/?utm_source=wordpress&utm_medium=plugin&utm_campaign=wp-linkedin)
+Please check the [WP-LinkedIn Multi-Users](http://vdvn.me/p1nd)
 extension if you need to show the profiles of multiple users.
 
 And if you need to show company profiles or company updates, please check the
-[WP-LinkedIn for Companies](http://vedovini.net/downloads/wp-linkedin-co/?utm_source=wordpress&utm_medium=plugin&utm_campaign=wp-linkedin)
+[WP-LinkedIn for Companies](http://vdvn.me/p1nr)
 extension.
+
+Also available is the [WP-LinkedIn Advanced Templates](http://vdvn.me/p2ub)
+extension that provides extended profile templates (including most of the
+profile sections) and a more sofisticated template for company page updates.
 
 
 == Installation ==
@@ -79,7 +83,7 @@ days so you will have to regenerate them from time to time)
 1. The `Profile fields` field is the list of fields that will be available to
 the profile template for rendering - see this post for more details on
 customization: [Showing more of your LinkedIn profile with
-WP-LinkedIn](http://vedovini.net/more-wp-linkedin)
+WP-LinkedIn](http://vdvn.me/more-wp-linkedin)
 
 
 == Frequently Asked Questions ==
@@ -87,14 +91,14 @@ WP-LinkedIn](http://vedovini.net/more-wp-linkedin)
 = Does the plugin support multiple user profiles? =
 
 No, it doesn't. But there is a premiun extension,
-[WP-LinkedIn Multi-Users](http://vedovini.net/downloads/wp-linkedin-multi-users/?utm_source=wordpress&utm_medium=plugin&utm_campaign=wp-linkedin)
+[WP-LinkedIn Multi-Users](http://vdvn.me/p1nd)
 that changes the behavior of this plugin so that shortcodes and widgets show
 the data of the author of the post or page.
 
 = Does the plugin support company profiles? =
 
 No, it doesn't. But there is a premiun extension,
-[WP-LinkedIn for Companies](http://vedovini.net/downloads/wp-linkedin-co/?utm_source=wordpress&utm_medium=plugin&utm_campaign=wp-linkedin)
+[WP-LinkedIn for Companies](http://vdvn.me/p1nr)
 that provides shortcodes and widgets for company profiles and company updates.
 
 = How to add the volunteer experiences section from my profile? =
@@ -135,7 +139,7 @@ of fields:
 = How to add other sections to my profile? =
 
 For other sections see [Showing more of your LinkedIn profile with
-WP-LinkedIn](http://vedovini.net/more-wp-linkedin).
+WP-LinkedIn](http://vdvn.me/more-wp-linkedin).
 
 = I have a slider somewhere and it doesn't work anymore when I add the recommendations' scroller =
 
@@ -184,7 +188,7 @@ profile.
 
 = 2.0 =
 Following the modifications to the LinkedIn developer program, version 2.0 of
-this plugin introduce breaking changes. [More information on vedovini.net](http://vedovini.net/2015/04/the-fate-of-the-wp-linkedin-wordpress-plugin-after-may-12/)
+this plugin introduce breaking changes. [More information on vedovini.net](http://vdvn.me/p2lg)
 
 = 1.18 =
 *BREAKING CHANGE* The redirect uri that is used to process the OAuth access
@@ -200,6 +204,23 @@ plugin settings page.
 
 
 == Changelog ==
+
+= Version 2.2.1 =
+- Updating pot file
+- Updating Portuguese and French translations
+- Fixing a missing call to gettext
+
+= Version 2.2 =
+- Better error management and added flexibility to the authentication process
+
+= Version 2.1.2 =
+- Updating instructions to create the LinkedIn API application to match the
+changes on their side
+
+= Version 2.1.1 =
+- Changes for WordPress 4.3
+- Fixing labels for Client ID and Client Secret in settings page
+- Updating pot file and French translations
 
 = Version 2.1 =
 
@@ -221,7 +242,7 @@ in the middle of HTML `<img>` tags containing line breaks
 
 = Version 2.0 =
 - Updated to follow the restrictions on the API imposed by LinkedIn starting on
-May 12, 2015.[More information on vedovini.net](http://vedovini.net/2015/04/the-fate-of-the-wp-linkedin-wordpress-plugin-after-may-12/)
+May 12, 2015.[More information on vedovini.net](http://vdvn.me/p2lg)
 
 = Version 1.19 =
 - As an option you can now put your customized templates in a `linkedin` folder

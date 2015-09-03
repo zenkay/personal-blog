@@ -24,6 +24,7 @@ class WPLinkedInConnection {
 	public function __construct() {
 		$this->app_key = WP_LINKEDIN_APPKEY;
 		$this->app_secret = WP_LINKEDIN_APPSECRET;
+		$this->access_token = $this->get_cache('wp-linkedin_oauthtoken');
 	}
 
 	public function set_cache($key, $value, $expires=0) {
@@ -54,10 +55,11 @@ class WPLinkedInConnection {
 	}
 
 	public function get_access_token() {
-		return $this->get_cache('wp-linkedin_oauthtoken');
+		return $this->access_token;
 	}
 
 	public function invalidate_access_token() {
+		$this->access_token = false;
 		$this->delete_cache('wp-linkedin_oauthtoken');
 	}
 
@@ -90,16 +92,27 @@ class WPLinkedInConnection {
 	}
 
 	public function set_access_token($code, $redirect_uri=false) {
+		$token = $this->retrieve_access_token($code, $redirect_uri);
+		if (!is_wp_error($token)) {
+			$this->set_cache('wp-linkedin_invalid_token_mail_sent', false);
+			$this->access_token = $token->access_token;
+			return $this->set_cache('wp-linkedin_oauthtoken', $token->access_token, $token->expires_in);
+		} else {
+			return $response;
+		}
+	}
+
+	public function retrieve_access_token($code, $redirect_uri=false) {
 		if (!$redirect_uri) $redirect_uri = $_SERVER["REQUEST_URI"];
 		$redirect_uri = $this->get_token_process_url($redirect_uri);
 
 		$this->set_last_error();
 		$url = 'https://www.linkedin.com/uas/oauth2/accessToken?' . http_build_query(array(
-			'grant_type' => 'authorization_code',
-			'code' => $code,
-			'redirect_uri' => $redirect_uri,
-			'client_id' => $this->app_key,
-			'client_secret' => $this->app_secret), '', '&');
+				'grant_type' => 'authorization_code',
+				'code' => $code,
+				'redirect_uri' => $redirect_uri,
+				'client_id' => $this->app_key,
+				'client_secret' => $this->app_secret), '', '&');
 
 		if (LI_DEBUG) echo '<!-- token access url: ' . $url . ' -->';
 
@@ -108,12 +121,13 @@ class WPLinkedInConnection {
 			$body = json_decode($response['body']);
 
 			if (isset($body->access_token)) {
-				$this->set_cache('wp-linkedin_invalid_token_mail_sent', false);
-				return $this->set_cache('wp-linkedin_oauthtoken', $body->access_token, $body->expires_in);
+				return $body;
 			} elseif (isset($body->error)) {
-				return new WP_Error('set_access_token', $body->error . ': ' . $body->error_description);
+				$error = $body->error;
+				$error_description = $body->error_description;
+				return new WP_Error('retrieve_access_token', "$error_description ($error)");
 			} else {
-				return new WP_Error('set_access_token', __('An unknown error has occured and no token was retrieved.', 'wp-linkedin'));
+				return new WP_Error('retrieve_access_token', __('An unknown error has occured and no token was retrieved.', 'wp-linkedin'));
 			}
 		} else {
 			return $response;
@@ -121,7 +135,7 @@ class WPLinkedInConnection {
 	}
 
 	public function is_access_token_valid() {
-		return $this->get_access_token() !== false;
+		return $this->access_token !== false;
 	}
 
 	public function get_state_token() {
@@ -148,6 +162,51 @@ class WPLinkedInConnection {
 				'scope' => implode(' ', $scope),
 				'state' => $this->get_state_token(),
 				'redirect_uri' => $redirect_uri), '', '&');
+	}
+
+	public function process_authorization($code, $state, $redirect_uri=false) {
+		if (is_user_logged_in()) {
+			if (isset($_REQUEST['error'])) {
+				$error = $_REQUEST['error'];
+				$error_description = $_REQUEST['error_description'];
+				$this->redirect($redirect_uri, 'error', "$error_description ($error)");
+			} elseif ($this->check_state_token($state)) {
+				$retcode = $this->set_access_token($code, $redirect_uri);
+
+				if (!is_wp_error($retcode)) {
+					$this->clear_cache();
+					$this->redirect($redirect_uri, 'success');
+				} else {
+					$this->redirect($redirect_uri, 'error', $retcode->get_error_message());
+				}
+			} else {
+				$this->redirect($redirect_uri, 'error', __('Invalid state', 'wp-linkedin'));
+			}
+		} else {
+			wp_redirect(wp_login_url($_SERVER[REQUEST_URI]));
+		}
+	}
+
+	public function redirect($path, $status, $message=false) {
+		$query = array('oauth_status' => $status);
+		if ($message) $query['oauth_message'] = urlencode($message);
+		$path = add_query_arg($query, $path);
+		$location = $path;
+
+		$notice = __('Please click <a href="%s">here</a> if you are not redirected immediately.', 'wp-lnkedin');
+		echo '<p><strong>' . sprintf($notice, $location) . '</strong></p>';
+
+		if (LI_DEBUG) {
+			echo "<script>setTimeout(function(){window.location='$location';},5000);</script>";
+		} else {
+			if (headers_sent()) {
+				// If the headers have already been sent then use Javascript
+				echo "<script>window.location='$location';</script>";
+			} else {
+				// Otherwise, just use a normal redirect
+				wp_redirect($location);
+			}
+		}
 	}
 
 	public function clear_cache() {
@@ -228,11 +287,9 @@ class WPLinkedInConnection {
 	}
 
 	public function api_call($url, $lang='', $params=false) {
-		$access_token = $this->get_access_token();
-
-		if ($access_token) {
+		if ($this->access_token) {
 			if (!is_array($params)) $params = array();
-			$params['oauth2_access_token'] = $access_token;
+			$params['oauth2_access_token'] = $this->access_token;
 			$url .= '?' . http_build_query($params, '', '&');
 
 			$headers = array(

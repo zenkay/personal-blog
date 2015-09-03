@@ -1748,7 +1748,8 @@ class Updraft_Restorer extends WP_Upgrader {
 		if ($table == $import_table_prefix.UpdraftPlus_Options::options_table()) $this->restore_configuration_bundle($table);
 
 		if (preg_match('/^([\d+]_)?options$/', substr($table, strlen($import_table_prefix)), $matches)) {
-			if (($this->is_multisite && !empty($matches[1])) || !$this->is_multisite && $table == $import_table_prefix.'options') {
+			// The second prefix here used to have a '!$this->is_multisite' on it (i.e. 'options' table on non-multisite). However, the user_roles entry exists in the main options table on multisite too.
+			if (($this->is_multisite && !empty($matches[1])) || $table == $import_table_prefix.'options') {
 
 				$mprefix = (empty($matches[1])) ? '' : $matches[1];
 

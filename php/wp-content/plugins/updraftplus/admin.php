@@ -2028,7 +2028,15 @@ class UpdraftPlus_Admin {
 		?>
 
 			<div id="updraft-hidethis">
-			<p><strong><?php _e('Warning:', 'updraftplus'); ?> <?php _e("If you can still read these words after the page finishes loading, then there is a JavaScript or jQuery problem in the site.", 'updraftplus'); ?> <a href="https://updraftplus.com/do-you-have-a-javascript-or-jquery-error/"><?php _e('Go here for more information.', 'updraftplus'); ?></a></strong></p>
+			<p>
+			<strong><?php _e('Warning:', 'updraftplus'); ?> <?php _e("If you can still read these words after the page finishes loading, then there is a JavaScript or jQuery problem in the site.", 'updraftplus'); ?></strong>
+
+			<?php if (false !== strpos(basename(UPDRAFTPLUS_URL), ' ')) { ?>
+				<strong><?php _e('The UpdraftPlus directory in wp-content/plugins has white-space in it; WordPress does not like this. You should rename the directory to wp-content/plugins/updraftplus to fix this problem.', 'updraftplus');?></strong>
+			<?php } else { ?>
+				<a href="https://updraftplus.com/do-you-have-a-javascript-or-jquery-error/"><?php _e('Go here for more information.', 'updraftplus'); ?></a>
+			<?php } ?>
+			</p>
 			</div>
 
 			<?php

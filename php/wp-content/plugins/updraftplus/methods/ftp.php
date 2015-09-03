@@ -179,7 +179,7 @@ class UpdraftPlus_BackupModule_ftp {
 
 		$opts = $this->get_opts();
 
-		if (is_array($ftparr['ftp_object']) && isset($ftparr['ftp_object'])) {
+		if (is_array($ftparr) && isset($ftparr['ftp_object'])) {
 			$ftp = $ftparr['ftp_object'];
 		} else {
 			$ftp = $this->getFTP(

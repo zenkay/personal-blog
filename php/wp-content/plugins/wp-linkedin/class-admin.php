@@ -2,7 +2,7 @@
 
 class WPLinkedInAdmin {
 
-	function WPLinkedInAdmin($plugin) {
+	function __construct($plugin) {
 		$this->plugin = $plugin;
 		$this->linkedin = wp_linkedin_connection();
 		$this->add_settings();
@@ -14,8 +14,8 @@ class WPLinkedInAdmin {
 		add_submenu_page('options-general.php', __('LinkedIn Options', 'wp-linkedin'), __('LinkedIn', 'wp-linkedin'), 'manage_options', 'wp-linkedin', array(&$this, 'options_page'));
 
 		add_settings_section('appkeys', __('API Access', 'wp-linkedin'), array(&$this, 'api_access_section'), 'wp-linkedin');
-		$this->add_options_field('wp-linkedin_appkey', __('Application key', 'wp-linkedin'), 'add_settings_field_appkey', 'appkeys');
-		$this->add_options_field('wp-linkedin_appsecret', __('Application secret', 'wp-linkedin'), 'add_settings_field_appsecret', 'appkeys');
+		$this->add_options_field('wp-linkedin_appkey', __('Client ID', 'wp-linkedin'), 'add_settings_field_appkey', 'appkeys');
+		$this->add_options_field('wp-linkedin_appsecret', __('Client secret', 'wp-linkedin'), 'add_settings_field_appsecret', 'appkeys');
 
 		add_settings_section('default', __('Options', 'wp-linkedin'), false, 'wp-linkedin');
 		$this->add_options_field('wp-linkedin_full_profile', __('Full Profile', 'wp-linkedin'), 'add_settings_field_full_profile');
@@ -43,24 +43,21 @@ class WPLinkedInAdmin {
 				be registered, thus forcing every plugin installation to have
 				its own application key/secret pair and register the corresponding
 				redirect uri.', 'wp-linkedin'); ?></p>
-		<p><?php _e('Please follow those instructions:', 'wp-linkedin'); ?></p>
-		<ol>
-			<li><a href="https://www.linkedin.com/secure/developer" target="_blank"><?php _e('Go to the LinkedIn Developer Network', 'wp-linkedin'); ?></a></li>
-			<li><?php _e('Select the <code>Add a new application</code> link at the bottom of the page', 'wp-linkedin'); ?></li>
-			<li><?php _e('Fill-in the mandatory fields on the <code>Add New Application</code> form', 'wp-linkedin'); ?></li>
-			<li><?php printf(__('In the <code>OAuth 2.0 Redirect URLs</code> field specify the following URL', 'wp-linkedin')); ?>:
-				<a href="<?php echo $redirect_uri; ?>"><?php echo $redirect_uri; ?></a></li>
-			<li><?php _e('Click on the <code>Add Application</code> button', 'wp-linkedin'); ?></li>
-			<li><?php _e('Copy the <code>API Key</code> and the <code>Secret Key</code> in the corresponding fields below', 'wp-linkedin'); ?></li>
-		</ol><?php
+		<p><?php _e('Please follow the instructions on <a href="http://vdvn.me/p2tt" target="_blank">how to create a LinkedIn API application for the WP-LinkedIn plugin</a>.', 'wp-linkedin'); ?></p>
+		<table class="form-table">
+			<tr>
+				<th scope="row"><?php _e('Redirect URL', 'wp-linkedin'); ?></th>
+				<td><input type="text" class="regular-text" readonly value="<?php echo $redirect_uri; ?>"</td>
+			</tr>
+		</table><?php
 	}
 
 	function add_settings_field_appkey() { ?>
-		<input type="text" name="wp-linkedin_appkey" value="<?php echo WP_LINKEDIN_APPKEY; ?>" /><?php
+		<input type="text" name="wp-linkedin_appkey" class="regular-text" value="<?php echo WP_LINKEDIN_APPKEY; ?>" /><?php
 	}
 
 	function add_settings_field_appsecret() { ?>
-		<input type="text" name="wp-linkedin_appsecret" value="<?php echo WP_LINKEDIN_APPSECRET; ?>" /><?php
+		<input type="text" name="wp-linkedin_appsecret" class="regular-text" value="<?php echo WP_LINKEDIN_APPSECRET; ?>" /><?php
 	}
 
 	function add_settings_field_full_profile() { ?>
@@ -69,7 +66,7 @@ class WPLinkedInAdmin {
 			<?php _e('Check this option only if you have been authorized by LinkedIn to access the full profile.', 'wp-linkedin') ?></label>
 		<p><em><?php _e('To be authorized you must apply to <a target="_blank" href="https://help.linkedin.com/app/ask/path/api-dvr">the "Apply with LinkedIn" program</a>.',
 				'wp-linkedin'); ?>
-			<?php _e('<a href="http://vedovini.net/2015/04/the-fate-of-the-wp-linkedin-wordpress-plugin-after-may-12/" target="_blank">More information on vedovini.net</a>',
+			<?php _e('<a href="http://vdvn.me/p2lg" target="_blank">More information on vedovini.net</a>',
 				'wp-linkedin'); ?></em></p><?php
 	}
 
@@ -144,8 +141,9 @@ class WPLinkedInAdmin {
 
 		if (isset($_GET['oauth_status'])) {
 			switch ($_GET['oauth_status']) {
-				case 'success': ?>
-					<div class="updated"><p><strong><?php _e('The access token has been successfully updated.', 'wp-linkedin'); ?></strong></p></div><?php
+				case 'success':
+					$message = isset($_GET['oauth_message']) ? $_GET['oauth_message'] : __('The access token has been successfully updated.', 'wp-linkedin'); ?>
+					<div class="updated"><p><strong><?php echo $message; ?></strong></p></div><?php
 					break;
 
 				case 'error':
@@ -170,7 +168,7 @@ class WPLinkedInAdmin {
 		} ?>
 <div class="wrap">
 	<?php screen_icon(); ?>
-	<h2><?php _e('LinkedIn Options', 'wp-linkedin'); ?></h2>
+	<h1><?php _e('LinkedIn Options', 'wp-linkedin'); ?></h1>
 	<div id="main-container" class="postbox-container metabox-holder" style="width:75%;"><div style="margin-right:16px;">
 		<form method="POST" action="options.php"><?php
 			settings_fields('wp-linkedin');
@@ -218,7 +216,7 @@ class WPLinkedInAdmin {
 					</form>
 				</div>
 				<p><?php _e('We also need volunteers to translate that plugin into more languages.', 'wp-linkedin'); ?>
-					<?php _e('If you wish to help then contact <a href="https://twitter.com/cvedovini">@cvedovini</a> on Twitter or use that <a href="http://vedovini.net/contact/">contact form</a>.', 'wp-linkedin'); ?></p>
+					<?php _e('If you wish to help then contact <a href="https://twitter.com/cvedovini">@cvedovini</a> on Twitter or use that <a href="http://vdvn.me/contact/">contact form</a>.', 'wp-linkedin'); ?></p>
 			</div> <!-- .inside -->
 		</div> <!-- .postbox -->
 		<div>

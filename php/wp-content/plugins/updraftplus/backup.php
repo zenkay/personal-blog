@@ -286,7 +286,7 @@ class UpdraftPlus_Backup {
 			}
 			if (class_exists($objname)) {
 				$remote_obj = new $objname;
-				$pass_to_prune = $null;
+				$pass_to_prune = null;
 				$prune_services[$service] = array($remote_obj, null);
 			} else {
 				$updraftplus->log("Could not prune from service $service: remote method not found");
@@ -493,7 +493,9 @@ class UpdraftPlus_Backup {
 						if (!empty($data)) {
 							$size_key = $key.'-size';
 							$size = isset($backup_to_examine[$size_key]) ? $backup_to_examine[$size_key] : null;
-							foreach ($services as $service => $sd) $this->prune_file($service, $data, $sd[0], $sd[1], array($size));
+							foreach ($services as $service => $sd) {
+								$this->prune_file($service, $data, $sd[0], $sd[1], array($size));
+							}
 						}
 						unset($backup_to_examine[$key]);
 						$updraftplus->record_still_alive();
@@ -551,10 +553,13 @@ class UpdraftPlus_Backup {
 				}
 			}
 
-			# Actually delete the files
-			foreach ($services as $service => $sd) {
-				$this->prune_file($service, $files_to_prune, $sd[0], $sd[1], $file_sizes);
-				$updraftplus->record_still_alive();
+			// Sending an empty array is not itself a problem - except that the remote storage method may not check that before setting up a connection, which can waste time: especially if this is done every time around the loop.
+			if (!empty($files_to_prune)) {
+				# Actually delete the files
+				foreach ($services as $service => $sd) {
+					$this->prune_file($service, $files_to_prune, $sd[0], $sd[1], $file_sizes);
+					$updraftplus->record_still_alive();
+				}
 			}
 
 			// Get new result, post-deletion; anything left in this set?

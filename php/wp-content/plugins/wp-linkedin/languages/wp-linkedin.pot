@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the WP LinkedIn package.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP LinkedIn 2.0.1\n"
-"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/wp-linkedin\n"
-"POT-Creation-Date: 2015-05-26 16:05:34+00:00\n"
+"Project-Id-Version: WP LinkedIn 2.2.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-linkedin\n"
+"POT-Creation-Date: 2015-09-02 10:09:06+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: class-admin.php:14 class-admin.php:173
+#: class-admin.php:14 class-admin.php:171
 msgid "LinkedIn Options"
 msgstr ""
 
@@ -25,11 +25,11 @@ msgid "API Access"
 msgstr ""
 
 #: class-admin.php:17
-msgid "Application key"
+msgid "Client ID"
 msgstr ""
 
 #: class-admin.php:18
-msgid "Application secret"
+msgid "Client secret"
 msgstr ""
 
 #: class-admin.php:20
@@ -73,345 +73,323 @@ msgid ""
 msgstr ""
 
 #: class-admin.php:46
-msgid "Please follow those instructions:"
-msgstr ""
-
-#: class-admin.php:48
-msgid "Go to the LinkedIn Developer Network"
+msgid ""
+"Please follow the instructions on <a href=\"http://vdvn.me/p2tt\" target="
+"\"_blank\">how to create a LinkedIn API application for the WP-LinkedIn "
+"plugin</a>."
 msgstr ""
 
 #: class-admin.php:49
-msgid ""
-"Select the <code>Add a new application</code> link at the bottom of the page"
+msgid "Redirect URL"
 msgstr ""
 
-#: class-admin.php:50
-msgid ""
-"Fill-in the mandatory fields on the <code>Add New Application</code> form"
-msgstr ""
-
-#: class-admin.php:51
-msgid ""
-"In the <code>OAuth 2.0 Redirect URLs</code> field specify the following URL"
-msgstr ""
-
-#: class-admin.php:53
-msgid "Click on the <code>Add Application</code> button"
-msgstr ""
-
-#: class-admin.php:54
-msgid ""
-"Copy the <code>API Key</code> and the <code>Secret Key</code> in the "
-"corresponding fields below"
-msgstr ""
-
-#: class-admin.php:69
+#: class-admin.php:66
 msgid ""
 "Check this option only if you have been authorized by LinkedIn to access the "
 "full profile."
 msgstr ""
 
-#: class-admin.php:70
+#: class-admin.php:67
 msgid ""
 "To be authorized you must apply to <a target=\"_blank\" href=\"https://help."
 "linkedin.com/app/ask/path/api-dvr\">the \"Apply with LinkedIn\" program</a>."
 msgstr ""
 
-#: class-admin.php:72
+#: class-admin.php:69
 msgid ""
-"<a href=\"http://vedovini.net/2015/04/the-fate-of-the-wp-linkedin-wordpress-"
-"plugin-after-may-12/\" target=\"_blank\">More information on vedovini.net</a>"
+"<a href=\"http://vdvn.me/p2lg\" target=\"_blank\">More information on "
+"vedovini.net</a>"
 msgstr ""
 
-#: class-admin.php:79
+#: class-admin.php:76
 msgid "Comma separated list of fields to show on the profile."
 msgstr ""
 
-#: class-admin.php:80
+#: class-admin.php:77
 msgid ""
 "You can overide this setting in the shortcode with the `fields` attribute."
 msgstr ""
 
-#: class-admin.php:81
+#: class-admin.php:78
 msgid ""
 "See the <a href=\"https://developers.linkedin.com/documents/profile-fields\" "
 "target=\"_blank\">LinkedIn API documentation</a> for the complete list of "
 "fields."
 msgstr ""
 
-#: class-admin.php:89
+#: class-admin.php:86
 msgid "Default"
 msgstr ""
 
-#: class-admin.php:95
+#: class-admin.php:92
 msgid ""
 "The language of the profile to display if you have several profiles in "
 "different languages."
 msgstr ""
 
-#: class-admin.php:96
+#: class-admin.php:93
 msgid ""
 "You can overide this setting in the shortcode with the `lang` attribute."
 msgstr ""
 
-#: class-admin.php:97
+#: class-admin.php:94
 msgid ""
 "See \"Selecting the profile language\" <a href=\"https://developer.linkedin."
 "com/documents/profile-api\" target=\"_blank\">LinkedIn API documentation</a> "
 "for details."
 msgstr ""
 
-#: class-admin.php:103
+#: class-admin.php:100
 msgid ""
 "Check this option if you want the plugin to send you an email when the token "
 "has expired or is invalid."
 msgstr ""
 
-#: class-admin.php:109
+#: class-admin.php:106
 msgid ""
 "Uncheck this option only if you have SSL certificate issues on your server."
 msgstr ""
 
-#: class-admin.php:119
+#: class-admin.php:116
 msgid "Check the content types where you want your LinkedIn card inserted."
 msgstr ""
 
-#: class-admin.php:124
+#: class-admin.php:121
 msgid ""
 "Your must create an application key/secret to access the LinkedIn API. "
 "Please follow the instructions <a href=\"%s\">on the settings page</a>."
 msgstr ""
 
-#: class-admin.php:133
+#: class-admin.php:130
 msgid "An error has occured while retrieving the profile:"
 msgstr ""
 
-#: class-admin.php:137
+#: class-admin.php:134
 msgid ""
 "Your LinkedIn access token is invalid or has expired, please <a href=\"%s"
 "\">click here</a> to get a new one."
 msgstr ""
 
-#: class-admin.php:148
+#: class-admin.php:145
 msgid "The access token has been successfully updated."
 msgstr ""
 
-#: class-admin.php:154
+#: class-admin.php:152
 msgid "An error has occured while updating the access token, please try again."
 msgstr ""
 
-#: class-admin.php:155
+#: class-admin.php:153
 msgid "Error message: "
 msgstr ""
 
-#: class-admin.php:162 class-admin.php:169
+#: class-admin.php:160 class-admin.php:167
 msgid "The cache has been cleared."
 msgstr ""
 
-#: class-admin.php:196
+#: class-admin.php:194
 msgid "Administration"
 msgstr ""
 
-#: class-admin.php:199
+#: class-admin.php:197
 msgid "Regenerate LinkedIn Access Token"
 msgstr ""
 
-#: class-admin.php:200
+#: class-admin.php:198
 msgid "Clear the Cache"
 msgstr ""
 
-#: class-admin.php:208
+#: class-admin.php:206
 msgid "Do you like this Plugin?"
 msgstr ""
 
-#: class-admin.php:210
+#: class-admin.php:208
 msgid "Please consider a donation."
 msgstr ""
 
-#: class-admin.php:220
+#: class-admin.php:218
 msgid "We also need volunteers to translate that plugin into more languages."
 msgstr ""
 
-#: class-admin.php:221
+#: class-admin.php:219
 msgid ""
 "If you wish to help then contact <a href=\"https://twitter.com/cvedovini"
-"\">@cvedovini</a> on Twitter or use that <a href=\"http://vedovini.net/"
-"contact/\">contact form</a>."
+"\">@cvedovini</a> on Twitter or use that <a href=\"http://vdvn.me/contact/"
+"\">contact form</a>."
 msgstr ""
 
-#: class-admin.php:237
+#: class-admin.php:235
 msgid "Bahasa Indonesia"
 msgstr ""
 
-#: class-admin.php:238
+#: class-admin.php:236
 msgid "Czech"
 msgstr ""
 
-#: class-admin.php:239
+#: class-admin.php:237
 msgid "Danish"
 msgstr ""
 
-#: class-admin.php:240
+#: class-admin.php:238
 msgid "Dutch"
 msgstr ""
 
-#: class-admin.php:241
+#: class-admin.php:239
 msgid "French"
 msgstr ""
 
-#: class-admin.php:242
+#: class-admin.php:240
 msgid "German"
 msgstr ""
 
-#: class-admin.php:243
+#: class-admin.php:241
 msgid "Italian"
 msgstr ""
 
-#: class-admin.php:244
+#: class-admin.php:242
 msgid "Japanese"
 msgstr ""
 
-#: class-admin.php:245
+#: class-admin.php:243
 msgid "Korean"
 msgstr ""
 
-#: class-admin.php:246
+#: class-admin.php:244
 msgid "Malay"
 msgstr ""
 
-#: class-admin.php:247
+#: class-admin.php:245
 msgid "Norwegian"
 msgstr ""
 
-#: class-admin.php:248
+#: class-admin.php:246
 msgid "Polish"
 msgstr ""
 
-#: class-admin.php:249
+#: class-admin.php:247
 msgid "Portuguese"
 msgstr ""
 
-#: class-admin.php:250
+#: class-admin.php:248
 msgid "Romanian"
 msgstr ""
 
-#: class-admin.php:251
+#: class-admin.php:249
 msgid "Russian"
 msgstr ""
 
-#: class-admin.php:252
+#: class-admin.php:250
 msgid "Spanish"
 msgstr ""
 
-#: class-admin.php:253
+#: class-admin.php:251
 msgid "Swedish"
 msgstr ""
 
-#: class-admin.php:254
+#: class-admin.php:252
 msgid "Turkish"
 msgstr ""
 
-#: class-admin.php:255
+#: class-admin.php:253
 msgid "Albanian"
 msgstr ""
 
-#: class-admin.php:256
+#: class-admin.php:254
 msgid "Armenian"
 msgstr ""
 
-#: class-admin.php:257
+#: class-admin.php:255
 msgid "Bosnian"
 msgstr ""
 
-#: class-admin.php:258
+#: class-admin.php:256
 msgid "Burmese (Myanmar)"
 msgstr ""
 
-#: class-admin.php:259
+#: class-admin.php:257
 msgid "Chinese (Simplified)"
 msgstr ""
 
-#: class-admin.php:260
+#: class-admin.php:258
 msgid "Chinese (Traditional)"
 msgstr ""
 
-#: class-admin.php:261
+#: class-admin.php:259
 msgid "Croatian"
 msgstr ""
 
-#: class-admin.php:262
+#: class-admin.php:260
 msgid "Finnish"
 msgstr ""
 
-#: class-admin.php:263
+#: class-admin.php:261
 msgid "Greek"
 msgstr ""
 
-#: class-admin.php:264
+#: class-admin.php:262
 msgid "Hindi"
 msgstr ""
 
-#: class-admin.php:265
+#: class-admin.php:263
 msgid "Hungarian"
 msgstr ""
 
-#: class-admin.php:266
+#: class-admin.php:264
 msgid "Icelandic"
 msgstr ""
 
-#: class-admin.php:267
+#: class-admin.php:265
 msgid "Javanese"
 msgstr ""
 
-#: class-admin.php:268
+#: class-admin.php:266
 msgid "Kannada"
 msgstr ""
 
-#: class-admin.php:269
+#: class-admin.php:267
 msgid "Latvian"
 msgstr ""
 
-#: class-admin.php:270
+#: class-admin.php:268
 msgid "Lithuanian"
 msgstr ""
 
-#: class-admin.php:271
+#: class-admin.php:269
 msgid "Malayalam"
 msgstr ""
 
-#: class-admin.php:272
+#: class-admin.php:270
 msgid "Serbian"
 msgstr ""
 
-#: class-admin.php:273
+#: class-admin.php:271
 msgid "Slovak"
 msgstr ""
 
-#: class-admin.php:274
+#: class-admin.php:272
 msgid "Tagalog"
 msgstr ""
 
-#: class-admin.php:275
+#: class-admin.php:273
 msgid "Tamil"
 msgstr ""
 
-#: class-admin.php:276
+#: class-admin.php:274
 msgid "Telugu"
 msgstr ""
 
-#: class-admin.php:277
+#: class-admin.php:275
 msgid "Thai"
 msgstr ""
 
-#: class-admin.php:278
+#: class-admin.php:276
 msgid "Ukrainian"
 msgstr ""
 
-#: class-admin.php:279
+#: class-admin.php:277
 msgid "Vietnamese"
 msgstr ""
 
-#: class-admin.php:280
+#: class-admin.php:278
 msgid "Other"
 msgstr ""
 
@@ -424,7 +402,7 @@ msgid "A widget displaying your LinkedIn card"
 msgstr ""
 
 #: class-card-widget.php:40 class-profile-widget.php:44
-#: class-recommendations-widget.php:45 class-updates-widget.php:39
+#: class-recommendations-widget.php:45
 msgid "Title:"
 msgstr ""
 
@@ -440,33 +418,42 @@ msgstr ""
 msgid "Specify '0' to hide the summary."
 msgstr ""
 
-#: class-linkedin-connection.php:116
+#: class-linkedin-connection.php:130
 msgid "An unknown error has occured and no token was retrieved."
 msgstr ""
 
-#: class-linkedin-connection.php:264
+#: class-linkedin-connection.php:183
+msgid "Invalid state"
+msgstr ""
+
+#: class-linkedin-connection.php:196
+msgid ""
+"Please click <a href=\"%s\">here</a> if you are not redirected immediately."
+msgstr ""
+
+#: class-linkedin-connection.php:321
 msgid "HTTP request returned error code %d."
 msgstr ""
 
-#: class-linkedin-connection.php:276
+#: class-linkedin-connection.php:333
 msgid "No token or token has expired."
 msgstr ""
 
-#: class-linkedin-connection.php:285
+#: class-linkedin-connection.php:342
 msgid "Invalid or expired access token"
 msgstr ""
 
-#: class-linkedin-connection.php:287
+#: class-linkedin-connection.php:344
 msgid ""
 "The access token for the WP LinkedIn plugin is either invalid or has "
 "expired, please click on the following link to renew it."
 msgstr ""
 
-#: class-linkedin-connection.php:289
+#: class-linkedin-connection.php:346
 msgid "This link will only be valid for a limited period of time."
 msgstr ""
 
-#: class-linkedin-connection.php:290
+#: class-linkedin-connection.php:347
 msgid "-Thank you."
 msgstr ""
 
@@ -509,201 +496,83 @@ msgstr ""
 msgid "Scroller's speed:"
 msgstr ""
 
-#: class-updates-widget.php:6
-msgid "LinkedIn Network Updates"
-msgstr ""
-
-#: class-updates-widget.php:7
-msgid "A widget displaying your LinkedIn network updates"
-msgstr ""
-
-#: class-updates-widget.php:43
-msgid "Number of updates to show:"
-msgstr ""
-
-#: class-updates-widget.php:48
-msgid "Show my updates only"
-msgstr ""
-
-#: templates/network-updates.php:7 templates/profile-projects.php:21
-#: templates/profile-publications.php:24
-#: templates/profile-recommendations.php:10 templates/recommendations.php:18
-msgid "Anonymous"
-msgstr ""
-
-#: templates/network-updates.php:41
-msgid "%1$s is now connected to %2$s."
-msgstr ""
-
-#: templates/network-updates.php:47
-msgid "%s is now a connection."
-msgstr ""
-
-#: templates/network-updates.php:52
-msgid "%s has joined LinkedIn."
-msgstr ""
-
-#: templates/network-updates.php:57 templates/network-updates.php:62
-msgid "%1$s says: %2$s"
-msgstr ""
-
-#: templates/network-updates.php:69
-msgid "%1$s likes: %2$s by %3$s"
-msgstr ""
-
-#: templates/network-updates.php:79
-msgid "%1$s joined the group %2$s."
-msgid_plural "%1$s joined the groups %2$s."
-msgstr[0] ""
-msgstr[1] ""
-
-#: templates/network-updates.php:94
-msgid "%s has a new profile picture."
-msgstr ""
-
-#: templates/network-updates.php:101 templates/network-updates.php:131
-msgid "%s has an updated profile."
-msgstr ""
-
-#: templates/network-updates.php:111
-msgid "%1$s recommends %2$s."
-msgstr ""
-
-#: templates/network-updates.php:118
-msgid "%1$s posted a job: %2$s at %3$s."
-msgstr ""
-
-#: templates/network-updates.php:125
-msgid "%1$s is now following %2$s."
-msgstr ""
-
-#: templates/network-updates.php:144
-msgid "No updates"
-msgstr ""
-
-#: templates/profile-educations.php:2 wp-linkedin.php:421
-msgid "Education"
-msgstr ""
-
-#: templates/profile-educations.php:5 templates/profile-positions.php:5
-#: templates/profile-projects.php:8 templates/profile-volunteer.php:6
-msgid "Present"
-msgstr ""
-
-#: templates/profile-educations.php:8
-msgid "Activities and societies"
-msgstr ""
-
-#: templates/profile-header.php:12
+#: templates/profile-header.php:10
 msgid "Summary"
 msgstr ""
 
-#: templates/profile-header.php:19
+#: templates/profile-header.php:17
 msgid "Specialties"
-msgstr ""
-
-#: templates/profile-honors.php:2
-msgid "Honors & Awards"
-msgstr ""
-
-#: templates/profile-languages.php:2
-msgid "Languages"
 msgstr ""
 
 #: templates/profile-positions.php:2
 msgid "Experience"
 msgstr ""
 
-#: templates/profile-projects.php:2
-msgid "Projects"
+#: templates/profile-positions.php:5
+msgid "Present"
 msgstr ""
 
-#: templates/profile-projects.php:11
-msgid "%d team members"
+#: templates/recommendations.php:16
+msgid "Anonymous"
 msgstr ""
 
-#: templates/profile-publications.php:2
-msgid "Publications"
-msgstr ""
-
-#: templates/profile-publications.php:14
-msgid "%d authors"
-msgstr ""
-
-#: templates/profile-recommendations.php:2
-msgid "Recommendations"
-msgstr ""
-
-#: templates/profile-skills.php:2
-msgid "Skills &amp; Expertise"
-msgstr ""
-
-#: templates/profile-volunteer.php:2
-msgid "Volunteer Experiences"
-msgstr ""
-
-#: wp-linkedin.php:139
-msgid "Invalid state"
-msgstr ""
-
-#: wp-linkedin.php:152
-msgid ""
-"Please click <a href=\"%s\">here</a> if you are not redirected immediately."
-msgstr ""
-
-#: wp-linkedin.php:317
+#: wp-linkedin.php:280
 msgid "You don't have any recommendation to show."
 msgstr ""
 
-#: wp-linkedin.php:415
+#: wp-linkedin.php:378
 msgid "Animal Welfare"
 msgstr ""
 
-#: wp-linkedin.php:416
+#: wp-linkedin.php:379
 msgid "Arts and Culture"
 msgstr ""
 
-#: wp-linkedin.php:417
+#: wp-linkedin.php:380
 msgid "Children"
 msgstr ""
 
-#: wp-linkedin.php:418
+#: wp-linkedin.php:381
 msgid "Civil Rights and Social Action"
 msgstr ""
 
-#: wp-linkedin.php:419
+#: wp-linkedin.php:382
 msgid "Disaster and Humanitarian Relief"
 msgstr ""
 
-#: wp-linkedin.php:420
+#: wp-linkedin.php:383
 msgid "Economic Empowerment"
 msgstr ""
 
-#: wp-linkedin.php:422
+#: wp-linkedin.php:384
+msgid "Education"
+msgstr ""
+
+#: wp-linkedin.php:385
 msgid "Environment"
 msgstr ""
 
-#: wp-linkedin.php:423
+#: wp-linkedin.php:386
 msgid "Health"
 msgstr ""
 
-#: wp-linkedin.php:424
+#: wp-linkedin.php:387
 msgid "Human Rights"
 msgstr ""
 
-#: wp-linkedin.php:425
+#: wp-linkedin.php:388
 msgid "Politics"
 msgstr ""
 
-#: wp-linkedin.php:426
+#: wp-linkedin.php:389
 msgid "Poverty Alleviation"
 msgstr ""
 
-#: wp-linkedin.php:427
+#: wp-linkedin.php:390
 msgid "Science and Technology"
 msgstr ""
 
-#: wp-linkedin.php:428
+#: wp-linkedin.php:391
 msgid "Social Services"
 msgstr ""
 
@@ -712,9 +581,7 @@ msgid "WP LinkedIn"
 msgstr ""
 
 #. Plugin URI of the plugin/theme
-msgid ""
-"http://vedovini.net/plugins/?"
-"utm_source=wordpress&utm_medium=plugin&utm_campaign=wp-linkedin"
+msgid "http://vdvn.me/pga"
 msgstr ""
 
 #. Description of the plugin/theme
@@ -728,7 +595,5 @@ msgid "Claude Vedovini"
 msgstr ""
 
 #. Author URI of the plugin/theme
-msgid ""
-"http://vedovini.net/?utm_source=wordpress&utm_medium=plugin&utm_campaign=wp-"
-"linkedin"
+msgid "http://vdvn.me/"
 msgstr ""

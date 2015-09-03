@@ -3,7 +3,7 @@ Contributors: Backup with UpdraftPlus, DavidAnderson
 Tags: backup, backups, restore, amazon backup, s3 backup, dropbox backup, google drive backup, rackspace cloud files, rackspace backup, dreamhost, dreamobjects backup, ftp backup, webdav backup, google cloud storage, onedrive, microsoft one drive, back up, multisite, restoration, sftp backup, ftps, scp backup, migrate, duplicate, copy, mysql backup, database backup, db backups, website backup, wordpress backup, full backup, openstack backup, sicherung
 Requires at least: 3.2
 Tested up to: 4.3
-Stable tag: 1.11.3
+Stable tag: 1.11.5
 Author URI: https://updraftplus.com
 Donate link: http://david.dw-perspective.org.uk/donate
 License: GPLv3 or later
@@ -16,7 +16,7 @@ Backup and restoration made easy. Complete backups; manual or scheduled (backup 
 
 <strong>Top-quality:</strong> UpdraftPlus is the <a href="http://rankwp.com/plugins/updraftplus">highest-ranking backup plugin on wordpress.org</a> (ranks in the top 40 out of over 30,000 WordPress plugins for quality on rankwp.com).
 
-<strong>Over half a million currently active installs:</strong> widely tested and reliable (over 2.6 million downloads). The #1 most installed scheduled backup plugin, according to wordpress.org. Millions of backups completed!
+<strong>Over half a million currently active installs:</strong> widely tested and reliable (over 2.7 million downloads). The #1 most installed scheduled backup plugin, according to wordpress.org. Millions of backups completed!
 
 * Supports WordPress backups to UpdraftPlus Vault, Amazon S3 (or compatible), Dropbox, Rackspace Cloud Files, Google Drive, Google Cloud Storage, DreamHost DreamObjects, FTP, OpenStack (Swift) and email. Also (via a paid add-on) backup to Microsoft OneDrive, Copy.Com, FTP over SSL, SFTP, SCP, and WebDAV (and compatible services, e.g. Yandex, Cubby). Examples of S3-compatible providers: Cloudian, Connectria, Constant, Eucalyptus, Nifty, Nimbula, Cloudn.
 * Quick restore (both file and database backups)
@@ -118,7 +118,21 @@ Thanks for asking; yes, we've got a few. Check out this profile page - https://p
 
 The <a href="https://updraftplus.com/news/">UpdraftPlus backup blog</a> is the best place to learn in more detail about any important changes.
 
-N.B. Paid versions of UpdraftPlus Backup / Restore have a version number which is 1 higher in the first digit, and has an extra component on the end, but the changelog below still applies. i.e. changes listed for 1.10.3 of the free version correspond to changes made in 2.10.3.x of the paid version.
+N.B. Paid versions of UpdraftPlus Backup / Restore have a version number which is 1 higher in the first digit, and has an extra component on the end, but the changelog below still applies. i.e. changes listed for 1.11.4 of the free version correspond to changes made in 2.11.4.x of the paid version.
+
+= 1.11.5 - 22/Aug/2015 =
+
+* FIX: phpseclib fix relating to generation of random numbers on some systems (affecting SFTP on some systems)
+
+= 1.11.4 - 19/Aug/2015 =
+
+* FIX: Perform previously missing tweak on the database after restoring a multisite backup to an install with a different table prefix, which inhibited the ability to create new users on the main site in a network.
+* TWEAK: Remove an inefficiency when examining files to prune from Google Drive, reducing the amount of time needed.
+* TWEAK: Show a warning if UpdraftPlus's directory in wp-content/plugins has been manually renamed to include a space, which WordPress does not support
+* TWEAK: Skip search/replacing of the 'guid' column in the posts table when migrating (improves performance - and prevents possible re-appearances of blog articles in peoples' feed readers if double-migrating)
+* TWEAK: Upgraded the bundled phpseclib Math, Net and File libraries to current versions (1.0 branch)
+* TWEAK: Prevent PHP notice in log file when deleting FTP backup from dashboard
+* TRANSLATIONS: Updated translations, including Greek
 
 = 1.11.3 - 13/Aug/2015 =
 
@@ -1607,4 +1621,4 @@ We recognise and thank the following for code and/or libraries used and/or modif
 
 
 == Upgrade Notice ==
-* 1.11.3 : Fixes for PHP 5.2 users for S3/Vault storage in some regions
+* 1.11.5 : Random number generation was halting on some systems due to phpseclib issue in 1.11.4
