@@ -38,4 +38,11 @@ server {
     location / {
         try_files $uri $uri/ /index.php?q=$request_uri;
     }
+
+    # Rewrites for WordPress SEO XML Sitemap
+    rewrite ^/sitemap_index.xml$ /index.php?sitemap=1 last;
+    rewrite ^/([^/]+?)-sitemap([0-9]+)?.xml$ /index.php?sitemap=$1&sitemap_n=$2 last;
+
+    # Robots.txt
+    rewrite ^/robots\.txt$ /index.php?robots=1 last;
 }
